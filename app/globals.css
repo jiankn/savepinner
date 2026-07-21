@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  /* SavePinner brand — PRD §8.3.3: Pinterest red, white base, gray secondary. */
+  --color-brand: #e60023;
+  --color-brand-dark: #b8001c;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background-color: #ffffff;
+  color: var(--color-gray-900);
+}
+
+/* Consistent, visible keyboard focus (PRD §10.2). */
+:where(a, button, input, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
