@@ -1,20 +1,73 @@
 @import "tailwindcss";
 
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 0.5rem;
+  background: #111827;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 @theme {
-  /* SavePinner brand — PRD §8.3.3: Pinterest red, white base, gray secondary. */
   --color-brand: #e60023;
   --color-brand-dark: #b8001c;
+  --color-brand-rose: #ff3d71;
+  --color-brand-coral: #ff6548;
+  --color-brand-blush: #fff3f5;
+  --color-brand-ink: #18181b;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 }
 
-body {
-  background-color: #ffffff;
-  color: var(--color-gray-900);
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
 }
 
-/* Consistent, visible keyboard focus (PRD §10.2). */
+body {
+  background-color: #ffffff;
+  color: var(--color-brand-ink);
+}
+
 :where(a, button, input, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
+}
+
+.aurora-hero {
+  background:
+    radial-gradient(ellipse 62% 56% at 50% 18%, rgb(255 255 255 / 96%) 0%, rgb(255 255 255 / 76%) 42%, transparent 100%),
+    radial-gradient(circle at 8% 78%, rgb(255 101 72 / 88%) 0%, transparent 36%),
+    radial-gradient(circle at 92% 66%, rgb(255 61 113 / 88%) 0%, transparent 38%),
+    linear-gradient(150deg, #fff8f9 0%, #ffd6e0 32%, #ff718c 64%, #e60023 100%);
+}
+
+.aurora-footer {
+  background:
+    radial-gradient(circle at 86% 10%, rgb(255 185 205 / 88%) 0%, transparent 36%),
+    radial-gradient(circle at 12% 18%, rgb(255 101 72 / 90%) 0%, transparent 38%),
+    linear-gradient(145deg, #ff6548 0%, #e60023 45%, #ff3d71 78%, #ffd6e0 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

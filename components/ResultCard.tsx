@@ -1,102 +1,72 @@
 "use client";
 
-/**
- * Result card — PRD §6.3 (FR-006). Preview + media info + verified versions,
- * each download button labelled with format and dimensions. No auto-download;
- * links expire in 5 minutes (PRD §11.3).
- */
+import type { ResolvedMedia, ResolvedVariant } from "@/lib/api-types";
 
-import type { ResolveSuccess } from "@/lib/api-types";
-import { formatBytes } from "@/lib/format";
+function safeFilename(title: string, variant: ResolvedVariant): string {
+  const base = title
+    .normalize("NFKD")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "savepinner";
+  const quality = variant.quality.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return `${base}-${quality}.${variant.ext}`;
+}
 
-const TYPE_LABEL: Record<ResolveSuccess["type"], string> = {
-  image: "Image",
-  gif: "GIF",
-  video: "Video",
-};
+function buttonLabel(type: ResolvedMedia["type"], variant: ResolvedVariant): string {
+  if (type === "video") return `Download ${variant.quality}`;
+  if (variant.quality === "Original" && variant.width) return `Download Original (${variant.width}x)`;
+  if (variant.quality === "Original") return "Download Original";
+  if (variant.quality.startsWith("Thumbnail")) return "Download Thumbnail (236x)";
+  return `Download ${variant.quality}`;
+}
 
-export default function ResultCard({
-  result,
-  onReset,
-}: {
-  result: ResolveSuccess;
-  onReset: () => void;
-}) {
+function mediaLabel(type: ResolvedMedia["type"]): string {
+  if (type === "gif") return "GIF · Original Quality · Animated";
+  if (type === "video") return "Video · HD Quality";
+  return "Image · Original Quality";
+}
+
+export default function ResultCard({ result, onReset }: { result: ResolvedMedia; onReset: () => void }) {
   return (
-    <section
-      aria-label="Resolved media"
-      className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5"
-    >
-      <div className="flex flex-col gap-4 sm:flex-row">
-        {result.previewUrl && (
-          // eslint-disable-next-line @next/next/no-img-element -- token-guarded dynamic proxy URL; next/image cannot know its dimensions
+    <section aria-label="Download result" className="bg-white p-4 shadow-md sm:p-6">
+      <div className="flex flex-col gap-6 md:flex-row md:items-center">
+        {result.thumbnail && (
+          // eslint-disable-next-line @next/next/no-img-element -- Pinterest CDN URL is returned dynamically by the resolver.
           <img
-            src={result.previewUrl}
-            alt={result.title ? `Preview of ${result.title}` : "Pin media preview"}
-            className="h-40 w-full rounded-xl border border-gray-100 object-cover sm:w-40"
-            loading="lazy"
+            src={result.thumbnail}
+            alt={result.title ? `Preview of ${result.title}` : "Pinterest media preview"}
+            className="mx-auto max-h-[420px] w-full max-w-[400px] rounded-xl object-contain"
           />
         )}
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-brand">
-              {TYPE_LABEL[result.type]}
-            </span>
-            <span className="text-xs text-gray-400">
-              {result.variants.length} verified version{result.variants.length === 1 ? "" : "s"}
-            </span>
-          </div>
-          <h2 className="mt-1 truncate text-base font-semibold text-gray-900">
-            {result.title ?? "Pinterest media"}
-          </h2>
-
-          <ul className="mt-3 space-y-2">
-            {result.variants.map((variant, index) => (
-              <li
-                key={variant.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-gray-50 px-3 py-2"
-              >
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <span className="font-medium">{variant.label}</span>
-                  <span className="rounded-md bg-white px-1.5 py-0.5 text-xs font-semibold uppercase text-gray-500">
-                    {variant.format || "file"}
-                  </span>
-                  <span className="text-xs text-gray-400">{formatBytes(variant.bytes)}</span>
-                  {index === 0 && (
-                    <span className="rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-medium text-brand">
-                      Highest available
-                    </span>
-                  )}
-                </div>
+        <div className="min-w-0 flex-1 text-left">
+          <p className="text-sm font-semibold text-brand">{mediaLabel(result.type)}</p>
+          <h2 className="mt-2 text-xl font-bold text-gray-900 text-balance">{result.title}</h2>
+          <div className="mt-5 flex flex-col gap-2.5">
+            {result.variants.map((variant, index) => {
+              const query = new URLSearchParams({
+                url: variant.url,
+                name: safeFilename(result.title, variant),
+              });
+              return (
                 <a
-                  href={`/api/download/${variant.downloadToken}`}
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
-                  aria-label={`Download ${TYPE_LABEL[result.type]} version ${variant.label}`}
+                  key={`${variant.quality}-${variant.url}`}
+                  href={`/api/dl/?${query.toString()}`}
+                  className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold ${
+                    index === 0
+                      ? "bg-brand text-white hover:bg-brand-dark"
+                      : "border border-gray-300 bg-white text-gray-800 hover:bg-gray-50"
+                  }`}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
-                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-                  </svg>
-                  Download
+                  <span aria-hidden="true">↓</span>
+                  {buttonLabel(result.type, variant)}
                 </a>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-3 text-xs text-gray-400">
-            Download links expire in 5 minutes. Only save content you own or have permission to use.
-          </p>
+              );
+            })}
+          </div>
+          <button type="button" onClick={onReset} className="mt-4 text-sm font-medium text-brand hover:underline">
+            Download another Pin
+          </button>
         </div>
-      </div>
-
-      <div className="mt-4 border-t border-gray-100 pt-3 text-center">
-        <button
-          type="button"
-          onClick={onReset}
-          className="text-sm font-medium text-brand hover:underline"
-        >
-          Download another link →
-        </button>
       </div>
     </section>
   );

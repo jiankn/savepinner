@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ContentPage from "@/components/ContentPage";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: { absolute: "Contact SavePinner" },
   description:
     "How to reach the SavePinner team: bug reports, feedback, error corrections and copyright requests.",
   alternates: { canonical: "/contact/" },
@@ -32,7 +32,7 @@ export default function ContactPage() {
             shown), your device/browser, and roughly when it happened.
           </li>
           <li>
-            <strong>Copyright requests:</strong> see the <a href="/copyright/">Copyright page</a> for
+            <strong>Copyright requests:</strong> see the <a href="/dmca/">DMCA page</a> for
             the required details.
           </li>
           <li>
@@ -44,11 +44,7 @@ export default function ContactPage() {
 
       <section>
         <h2>Before you write</h2>
-        <p>
-          Many issues are explained by the error message on the page or by{" "}
-          <a href="/how-to-use/">How to Use</a> — unsupported link types, private Pins and expired
-          download links are the most common causes.
-        </p>
+        <p>Please include enough detail for us to reproduce the issue, but do not send passwords or private account information.</p>
       </section>
     </ContentPage>
   );

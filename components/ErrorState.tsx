@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 /**
  * Error state — PRD §6.4 (FR-008): specific message per error code plus an
  * actionable next step ("try again" / "check the link").
@@ -37,21 +39,14 @@ export default function ErrorState({
       className="rounded-xl border border-red-200 bg-red-50 p-4 sm:p-5"
     >
       <div className="flex items-start gap-3">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <Image
+          src="/icons/error.png"
+          alt=""
+          width={22}
+          height={22}
           aria-hidden="true"
-          className="mt-0.5 shrink-0 text-brand"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 8v4m0 4h.01" />
-        </svg>
+          className="mt-0.5 shrink-0"
+        />
         <div className="min-w-0 flex-1">
           <h2 className="text-sm font-semibold text-gray-900">{message}</h2>
           {hint && <p className="mt-1 text-sm text-gray-600">{hint}</p>}

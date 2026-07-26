@@ -11,6 +11,14 @@ function pwsData(pin: Record<string, unknown>) {
   return { props: { initialReduxState: { pins: { "123": pin } } } };
 }
 
+function htmlWithRelayData(pinId: string, pin: Record<string, unknown>): string {
+  const variables = encodeURIComponent(JSON.stringify({ variables: { pinId } }));
+  const payload = JSON.stringify({
+    data: { v3GetPinQueryv2: { data: { ...pin, entityId: pinId, __typename: "Pin" } } },
+  });
+  return `<!doctype html><html><body><script data-relay-completed-request="true">window.__PWS_RELAY_REGISTER_COMPLETED_REQUEST__("${variables}", ${payload});</script></body></html>`;
+}
+
 describe("parseMediaFromHtml", () => {
   it("parses image pins with sorted, deduped candidates", () => {
     const html = htmlWithPwsData(
@@ -68,6 +76,103 @@ describe("parseMediaFromHtml", () => {
     expect(media.kind).toBe("gif");
   });
 
+  it("parses Pinterest's current relay videoList payload and v1 CDN URLs", () => {
+    const pinId = "68746366275";
+    const html = htmlWithRelayData(pinId, {
+      gridTitle: "Pineapple Roasted Chicken",
+      images_236x: {
+        url: "https://i.pinimg.com/236x/e/b/c/poster.jpg",
+        width: 236,
+        height: 419,
+      },
+      images_orig: { url: "https://i.pinimg.com/originals/e/b/c/poster.jpg" },
+      videos: {
+        videoUrls: [
+          "https://v1.pinimg.com/videos/mc/hls/e/b/c/stream.m3u8",
+          "https://v1.pinimg.com/videos/mc/720p/e/b/c/video.mp4",
+        ],
+        videoList: {
+          __typename: "VideoList",
+          vHLSV4: {
+            url: "https://v1.pinimg.com/videos/mc/hls/e/b/c/stream.m3u8",
+            width: 576,
+            height: 1024,
+          },
+          v720P: {
+            url: "https://v1.pinimg.com/videos/mc/720p/e/b/c/video.mp4",
+            width: 576,
+            height: 1024,
+          },
+        },
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.kind).toBe("video");
+    expect(media.title).toBe("Pineapple Roasted Chicken");
+    expect(media.videos).toHaveLength(1);
+    expect(media.videos[0]).toMatchObject({
+      url: "https://v1.pinimg.com/videos/mc/720p/e/b/c/video.mp4",
+      qualityHint: "v720P",
+    });
+    expect(media.images.some((candidate) => candidate.url.includes("/236x/"))).toBe(true);
+  });
+
+  it("parses current relay GIF fields and prefers the animated original", () => {
+    const pinId = "441282463488355461";
+    const html = htmlWithRelayData(pinId, {
+      gridTitle: "Animated Sticker",
+      embed: {
+        type: "gif",
+        src: "https://i.pinimg.com/originals/b/a/e/animated.gif",
+      },
+      images_236x: {
+        url: "https://i.pinimg.com/236x/b/a/e/animated.jpg",
+        width: 236,
+        height: 171,
+      },
+      images_orig: {
+        url: "https://i.pinimg.com/originals/b/a/e/animated.gif",
+      },
+      videos: null,
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.kind).toBe("gif");
+    expect(media.images.some((candidate) => candidate.format === "gif")).toBe(true);
+    expect(media.title).toBe("Animated Sticker");
+  });
+
+  it("selects the requested Pin when a relay page contains other Pin records", () => {
+    const targetId = "989243874418277815";
+    const other = htmlWithRelayData("111", {
+      title: "Unrelated video",
+      videos: {
+        videoList: {
+          v720P: {
+            url: "https://v1.pinimg.com/videos/mc/720p/other.mp4",
+            width: 720,
+            height: 1280,
+          },
+        },
+      },
+    });
+    const target = htmlWithRelayData(targetId, {
+      title: "Requested image",
+      images_orig: {
+        url: "https://i.pinimg.com/originals/5/9/f/requested.jpg",
+        width: 736,
+        height: 857,
+      },
+    });
+    const html = other.replace("</body></html>", "") + target.replace("<!doctype html><html><body>", "");
+
+    const media = parseMediaFromHtml(html, targetId);
+    expect(media.kind).toBe("image");
+    expect(media.title).toBe("Requested image");
+    expect(media.images[0]?.url).toContain("requested.jpg");
+  });
+
   it("falls back to og meta tags when no embedded json exists", () => {
     const html = `<html><head>
       <meta property="og:title" content="OG Pin" />
@@ -78,6 +183,12 @@ describe("parseMediaFromHtml", () => {
     expect(media.kind).toBe("image");
     expect(media.title).toBe("OG Pin");
     expect(media.images[0]?.url).toContain("photo.jpg");
+  });
+
+  it("falls back to an embedded image_xlarge_url field", () => {
+    const html = `<html><body><script>{"image_xlarge_url":"https:\\/\\/i.pinimg.com\\/736x\\/z\\/y\\/x\\/photo.jpg"}</script></body></html>`;
+    const media = parseMediaFromHtml(html);
+    expect(media.images[0]?.url).toBe("https://i.pinimg.com/736x/z/y/x/photo.jpg");
   });
 
   it("returns empty candidate lists for pages without media", () => {

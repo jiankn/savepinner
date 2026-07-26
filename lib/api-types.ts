@@ -1,29 +1,18 @@
-/**
- * Shared API contract types — PRD §7.1. Dependency-free; safe for client
- * components to import.
- */
+/** Shared resolver contract. Dependency-free and safe for Client Components. */
 
 export type MediaKind = "image" | "gif" | "video";
 
-export interface ResolveVariant {
-  id: string;
-  label: string;
-  format: string;
+export interface ResolvedVariant {
+  quality: string;
+  url: string;
+  ext: string;
   width?: number;
   height?: number;
-  bytes?: number;
-  downloadToken: string;
 }
 
-export interface ResolveSuccess {
-  requestId: string;
+export interface ResolvedMedia {
   type: MediaKind;
-  title?: string;
-  previewUrl?: string;
-  variants: ResolveVariant[];
-}
-
-export interface ResolveErrorBody {
-  requestId: string;
-  error: { code: string; message: string };
+  title: string;
+  thumbnail: string;
+  variants: ResolvedVariant[];
 }

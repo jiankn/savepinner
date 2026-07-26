@@ -12,9 +12,7 @@ import { ApiError } from "@/lib/errors";
  * Known Pinterest country/regional domains. Exact-match only; extend this
  * list as Pinterest adds regional domains.
  */
-const PIN_HOSTS: ReadonlySet<string> = new Set([
-  "pinterest.com",
-  "www.pinterest.com",
+const COUNTRY_PIN_HOSTS = [
   "pinterest.ca",
   "pinterest.co.uk",
   "pinterest.com.au",
@@ -49,16 +47,61 @@ const PIN_HOSTS: ReadonlySet<string> = new Set([
   "pinterest.id",
   "pinterest.com.tr",
   "pinterest.com.br",
+] as const;
+
+const REGIONAL_PIN_SUBDOMAINS = [
+  "au",
+  "at",
+  "be",
+  "br",
+  "ca",
+  "ch",
+  "cl",
+  "co",
+  "cz",
+  "de",
+  "dk",
+  "es",
+  "fi",
+  "fr",
+  "gr",
+  "hu",
+  "id",
+  "ie",
+  "it",
+  "jp",
+  "kr",
+  "mx",
+  "nl",
+  "no",
+  "nz",
+  "pe",
+  "ph",
+  "pl",
+  "pt",
+  "ro",
+  "se",
+  "sk",
+  "tr",
+  "uk",
+] as const;
+
+const PIN_HOSTS: ReadonlySet<string> = new Set([
+  "pinterest.com",
+  "www.pinterest.com",
+  ...COUNTRY_PIN_HOSTS,
+  ...COUNTRY_PIN_HOSTS.map((host) => `www.${host}`),
+  ...REGIONAL_PIN_SUBDOMAINS.map((region) => `${region}.pinterest.com`),
 ]);
 
 const SHORT_HOST = "pin.it";
+const CANONICAL_PIN_HOST = "www.pinterest.com";
 
 /** Pinterest CDN hosts allowed as media download targets (PRD §7.2). */
 export const MEDIA_HOSTS: ReadonlySet<string> = new Set([
   "i.pinimg.com",
   "v.pinimg.com",
   "v1.pinimg.com",
-  "s-media-cache-ak0.pinimg.com",
 ]);
 
 export interface ValidatedPinUrl {
@@ -77,7 +120,8 @@ export interface ValidatedShortUrl {
 
 export type ValidatedInputUrl = ValidatedPinUrl | ValidatedShortUrl;
 
-const PIN_PATH_RE = /^\/pin\/(\d{1,20})(?:\/[A-Za-z0-9_-]*)?\/?$/;
+const PIN_PATH_RE =
+  /^\/pin\/(?:(\d{1,20})|[A-Za-z0-9][A-Za-z0-9_-]*--(\d{1,20}))(?:\/[A-Za-z0-9_-]*)?\/?$/;
 const SHORTCODE_RE = /^\/([A-Za-z0-9]{2,})\/?$/;
 
 export function validateInputUrl(raw: unknown): ValidatedInputUrl {
@@ -127,9 +171,9 @@ export function validateInputUrl(raw: unknown): ValidatedInputUrl {
 
   return {
     kind: "pin",
-    pinId: match[1],
-    url: `https://${host}/pin/${match[1]}/`,
-    host,
+    pinId: match[1] ?? match[2],
+    url: `https://${CANONICAL_PIN_HOST}/pin/${match[1] ?? match[2]}/`,
+    host: CANONICAL_PIN_HOST,
   };
 }
 

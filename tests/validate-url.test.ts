@@ -37,10 +37,33 @@ describe("validateInputUrl", () => {
   });
 
   it("accepts regional pinterest domains", () => {
-    for (const host of ["pinterest.co.uk", "pinterest.de", "pinterest.jp", "pinterest.com.mx"]) {
+    for (const host of [
+      "pinterest.co.uk",
+      "www.pinterest.co.uk",
+      "pinterest.de",
+      "de.pinterest.com",
+      "pinterest.jp",
+      "jp.pinterest.com",
+      "pinterest.com.mx",
+    ]) {
       const result = validateInputUrl(`https://${host}/pin/555/`);
       expect(result.kind).toBe("pin");
+      if (result.kind === "pin") {
+        expect(result.url).toBe("https://www.pinterest.com/pin/555/");
+      }
     }
+  });
+
+  it("accepts Pinterest's slugged Pin URLs and extracts the numeric Pin id", () => {
+    const result = validateInputUrl(
+      "https://www.pinterest.com/pin/roasted-pineapple-chicken-video--68746366275/",
+    );
+    expect(result).toEqual({
+      kind: "pin",
+      pinId: "68746366275",
+      url: "https://www.pinterest.com/pin/68746366275/",
+      host: "www.pinterest.com",
+    });
   });
 
   it("accepts pin.it short links", () => {
@@ -89,6 +112,7 @@ describe("isAllowedMediaHost", () => {
   it("allows known pinterest cdn hosts", () => {
     expect(isAllowedMediaHost("i.pinimg.com")).toBe(true);
     expect(isAllowedMediaHost("v.pinimg.com")).toBe(true);
+    expect(isAllowedMediaHost("v1.pinimg.com")).toBe(true);
   });
 
   it("rejects lookalikes and other hosts", () => {

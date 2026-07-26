@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+      <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Page not found</h1>
         <p className="mt-3 max-w-md text-sm text-gray-600">
           The page you are looking for does not exist. Head back home to download a Pin instead.

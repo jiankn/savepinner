@@ -19,6 +19,22 @@ const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+const SHORT_REDIRECT_HOST = "api.pinterest.com";
+const SHORT_REDIRECT_PATH_RE = /^\/url_shortener\/[A-Za-z0-9]+\/redirect\/?$/;
+
+export function isAllowedShortRedirectTarget(target: URL): boolean {
+  if (
+    target.protocol !== "https:" ||
+    (target.port !== "" && target.port !== "443") ||
+    target.username ||
+    target.password
+  ) {
+    return false;
+  }
+  const host = target.hostname.toLowerCase();
+  if (host === "pin.it" || isAllowedPinHost(host)) return true;
+  return host === SHORT_REDIRECT_HOST && SHORT_REDIRECT_PATH_RE.test(target.pathname);
+}
 
 export async function resolveShortUrl(shortUrl: string): Promise<ValidatedPinUrl> {
   let current = shortUrl;
@@ -51,17 +67,19 @@ export async function resolveShortUrl(shortUrl: string): Promise<ValidatedPinUrl
       throw new ApiError("REDIRECT_REJECTED", "redirect target does not parse");
     }
 
-    if (next.protocol !== "https:") {
-      throw new ApiError("REDIRECT_REJECTED", "redirect to non-https target");
-    }
     const nextHost = next.hostname.toLowerCase();
-    if (nextHost !== "pin.it" && !isAllowedPinHost(nextHost)) {
+    if (!isAllowedShortRedirectTarget(next)) {
       throw new ApiError("REDIRECT_REJECTED", "redirect to non-pinterest host");
     }
     if (visited.has(next.toString())) {
       throw new ApiError("REDIRECT_REJECTED", "redirect loop detected");
     }
     visited.add(next.toString());
+
+    if (nextHost === SHORT_REDIRECT_HOST) {
+      current = next.toString();
+      continue;
+    }
 
     // Accept as soon as the hop lands on a supported Pin URL.
     try {

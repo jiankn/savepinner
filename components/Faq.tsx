@@ -1,75 +1,52 @@
-/**
- * FAQ — PRD §8.2: based on real user questions, no keyword stuffing.
- * Rendered with native <details> so it works without JS and is readable by
- * search engines and assistive tech. The same Q&As are exposed as FAQPage
- * structured data on the home page.
- */
+import Link from "next/link";
+import Image from "next/image";
+import type { FaqItem } from "@/lib/page-content";
 
-export const FAQ_ITEMS = [
-  {
-    question: "Is SavePinner free?",
-    answer:
-      "Yes. SavePinner is free to use and requires no account, sign-up or software installation.",
-  },
-  {
-    question: "Do I need to log in to Pinterest?",
-    answer:
-      "No. SavePinner only works with public Pins and never asks for your Pinterest credentials. Private or sign-in-only content cannot be accessed.",
-  },
-  {
-    question: "Why did my link fail to resolve?",
-    answer:
-      "The most common reasons: the link is not a direct Pin URL, the Pin was deleted or is private, the short link redirects somewhere unsupported, or the service is temporarily busy. The error message tells you which case applies and what to do next.",
-  },
-  {
-    question: "Can I download videos and GIFs?",
-    answer:
-      "When a Pin contains a downloadable video or a real GIF, SavePinner shows the verified versions with format, resolution and file size. If only a static cover image is available, it is clearly shown as an image — never mislabeled as a GIF.",
-  },
-  {
-    question: "Do you store my links or downloads?",
-    answer:
-      "No. Submitted links are used only to complete that request, files are streamed through without being stored, and IPs are retained only briefly for rate limiting. See the Privacy Policy for details.",
-  },
-  {
-    question: "Is it legal to download Pinterest content?",
-    answer:
-      "Only download content you own or have permission to use. Saving other people's content may infringe their rights — when in doubt, ask the creator. SavePinner does not host any Pinterest content and is not affiliated with Pinterest.",
-  },
-] as const;
+function LinkedAnswer({ item }: { item: FaqItem }) {
+  if (!item.links?.length) return item.answer;
 
-export default function Faq() {
+  const nodes: React.ReactNode[] = [];
+  let cursor = 0;
+  item.links.forEach((link) => {
+    const index = item.answer.indexOf(link.text, cursor);
+    if (index === -1) return;
+    nodes.push(item.answer.slice(cursor, index));
+    nodes.push(
+      <Link key={`${link.href}-${index}`} href={link.href} className="font-medium text-brand hover:underline">
+        {link.text}
+      </Link>,
+    );
+    cursor = index + link.text.length;
+  });
+  nodes.push(item.answer.slice(cursor));
+  return nodes;
+}
+
+export default function Faq({ items }: { items: FaqItem[] }) {
   return (
-    <section aria-labelledby="faq" id="faq" className="mx-auto w-full max-w-3xl px-4 py-12">
-      <h2 id="faq" className="text-center text-2xl font-bold tracking-tight">
-        Frequently asked questions
-      </h2>
-      <div className="mt-8 space-y-3">
-        {FAQ_ITEMS.map((item) => (
-          <details
-            key={item.question}
-            className="group rounded-xl border border-gray-200 bg-white px-4 py-3 open:pb-4"
-          >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-gray-900 [&::-webkit-details-marker]:hidden">
-              {item.question}
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                className="shrink-0 text-gray-400 transition-transform group-open:rotate-180"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </summary>
-            <p className="mt-2 text-sm leading-relaxed text-gray-600">{item.answer}</p>
-          </details>
-        ))}
+    <section aria-labelledby="faq-heading" id="faq" className="bg-[#f8f8f8]">
+      <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
+        <h2 id="faq-heading" className="text-3xl font-bold tracking-[-0.03em] text-brand-ink text-balance sm:text-4xl lg:text-5xl">
+          Frequently Asked Questions
+        </h2>
+        <div className="mt-10 border-y border-gray-300">
+          {items.map((item) => (
+            <details key={item.question} className="group border-b border-gray-300 last:border-b-0">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-5 text-base font-semibold text-brand-ink transition-colors hover:text-brand [&::-webkit-details-marker]:hidden sm:text-lg">
+                {item.question}
+                <Image
+                  src="/icons/chevron.png"
+                  alt=""
+                  width="18"
+                  height="18"
+                  aria-hidden="true"
+                  className="shrink-0 text-gray-600 transition-transform duration-200 group-open:rotate-180"
+                />
+              </summary>
+              <p className="max-w-3xl pb-6 text-base leading-7 text-gray-700"><LinkedAnswer item={item} /></p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   );

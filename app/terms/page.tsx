@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ContentPage from "@/components/ContentPage";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: { absolute: "Terms of Service — SavePinner" },
   description:
     "The rules for using SavePinner: permitted use, content rights, prohibited conduct, disclaimers and limitation of liability.",
   alternates: { canonical: "/terms/" },
@@ -27,6 +27,7 @@ export default function TermsPage() {
       <section>
         <h2>2. Permitted use</h2>
         <ul>
+          <li>SavePinner is provided for personal, non-commercial use only.</li>
           <li>You may only download content you own or have permission or a legal right to use.</li>
           <li>You are responsible for how you use downloaded files, including copyright compliance.</li>
           <li>You must be able to form a binding contract in your jurisdiction to use the service.</li>

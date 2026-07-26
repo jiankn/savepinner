@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,12 +13,9 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://savepinner.com").r
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "SavePinner — Pinterest Image & Video Downloader",
-    template: "%s | SavePinner",
-  },
+  title: "SavePinner - Free Pinterest Image Downloader (HD, No Watermark)",
   description:
-    "Free Pinterest downloader: paste a Pin link to preview and save available image, GIF or video versions. No sign-up, no watermarks added, clear errors.",
+    "Download Pinterest images & thumbnails in HD quality for free. No login required. Supports JPG, PNG, GIF, WebP. Fast, secure, and no watermark.",
   robots: { index: true, follow: true },
 };
 
@@ -28,7 +26,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-white font-sans text-gray-900">{children}</body>
+      <body className="flex min-h-full flex-col bg-white font-sans text-gray-900">
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
+        {children}
+        <ServiceWorkerRegistration />
+      </body>
     </html>
   );
 }

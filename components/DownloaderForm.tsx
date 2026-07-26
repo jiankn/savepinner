@@ -1,42 +1,35 @@
 "use client";
 
-/**
- * Core tool — PRD §6.1/§6.3 and §8.3.4.
- * Single task bar: URL input + Paste + Download. Staged progress
- * 10 → 35 → 65 → 100 (never 100 before the result is ready), results expand
- * in place below the form, no page navigation, no auto-download.
- */
-
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ResolveSuccess } from "@/lib/api-types";
+import type { ResolvedMedia } from "@/lib/api-types";
 import ErrorState from "./ErrorState";
 import ResultCard from "./ResultCard";
 
 type Phase = "idle" | "loading" | "done" | "error";
 
-interface UiError {
-  code: string;
-  message: string;
-}
-
-const CLIENT_INVALID_MSG = "Please enter a valid Pinterest Pin link.";
+const PROGRESS_STEPS = ["Parsing link...", "Extracting media...", "Preparing download..."];
 
 function looksLikePinterestUrl(value: string): boolean {
-  return /^https:\/\/(pin\.it\/[\w-]+|([\w-]+\.)*pinterest\.[a-z.]+)/i.test(value);
+  return /^https:\/\/(?:pin\.it\/|(?:[\w-]+\.)*pinterest\.[a-z.]+\/pin\/)/i.test(value);
 }
 
-export default function DownloaderForm() {
+export default function DownloaderForm({
+  placeholder = "Paste your Pinterest link here...",
+}: {
+  placeholder?: string;
+}) {
   const [url, setUrl] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
-  const [progress, setProgress] = useState(0);
-  const [result, setResult] = useState<ResolveSuccess | null>(null);
-  const [error, setError] = useState<UiError | null>(null);
+  const [progressStep, setProgressStep] = useState(0);
+  const [result, setResult] = useState<ResolvedMedia | null>(null);
+  const [error, setError] = useState<{ code: string; message: string } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const timersRef = useRef<number[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const clearTimers = useCallback(() => {
-    timersRef.current.forEach((t) => window.clearTimeout(t));
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
     timersRef.current = [];
   }, []);
 
@@ -51,7 +44,7 @@ export default function DownloaderForm() {
       return;
     }
     if (!looksLikePinterestUrl(value)) {
-      setError({ code: "INVALID_URL", message: CLIENT_INVALID_MSG });
+      setError({ code: "INVALID_URL", message: "Please enter a valid Pinterest Pin link." });
       setPhase("error");
       return;
     }
@@ -60,61 +53,55 @@ export default function DownloaderForm() {
     setError(null);
     setResult(null);
     setPhase("loading");
-    setProgress(10);
-    // Staged feedback only — it never reaches 100 before the real result.
-    timersRef.current.push(window.setTimeout(() => setProgress(35), 500));
-    timersRef.current.push(window.setTimeout(() => setProgress(65), 1600));
+    setProgressStep(0);
+    timersRef.current.push(window.setTimeout(() => setProgressStep(1), 500));
+    timersRef.current.push(window.setTimeout(() => setProgressStep(2), 1_500));
 
     try {
-      const res = await fetch("/api/resolve/", {
+      const response = await fetch("/api/resolve/", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ url: value }),
       });
-      const data = (await res.json().catch(() => null)) as
-        | (ResolveSuccess & { error?: { code: string; message: string } })
+      const data = (await response.json().catch(() => null)) as
+        | (ResolvedMedia & { error?: { code: string; message: string } })
         | null;
       clearTimers();
-      if (!res.ok || !data || "error" in data) {
+      if (!response.ok || !data || data.error) {
         setError({
           code: data?.error?.code ?? "INTERNAL_ERROR",
           message: data?.error?.message ?? "The service is temporarily unavailable.",
         });
         setPhase("error");
-        setProgress(0);
         return;
       }
-      setProgress(100);
+      setProgressStep(2);
       setResult(data);
       setPhase("done");
     } catch {
       clearTimers();
-      setError({
-        code: "NETWORK",
-        message: "Network error — check your connection and try again.",
-      });
+      setError({ code: "NETWORK", message: "Network error — check your connection and try again." });
       setPhase("error");
-      setProgress(0);
     }
-  }, [url, clearTimers]);
+  }, [clearTimers, url]);
 
   const onPaste = useCallback(async () => {
     setNotice(null);
-    if (typeof navigator === "undefined" || !navigator.clipboard?.readText) {
-      setNotice("Clipboard access is not available in this browser — tap the field and paste manually.");
+    if (!navigator.clipboard?.readText) {
+      setNotice("Clipboard access is unavailable — paste the link manually.");
       return;
     }
     try {
-      const text = await navigator.clipboard.readText();
-      if (text.trim()) {
-        setUrl(text.trim());
-        setNotice("Pasted from clipboard.");
-        inputRef.current?.focus();
-      } else {
+      const text = (await navigator.clipboard.readText()).trim();
+      if (!text) {
         setNotice("Your clipboard is empty — copy a Pin link first.");
+        return;
       }
+      setUrl(text);
+      setNotice("Pasted from clipboard.");
+      inputRef.current?.focus();
     } catch {
-      setNotice("Clipboard permission was denied — paste manually (long-press the field or press Ctrl+V).");
+      setNotice("Clipboard permission was denied — paste the link manually.");
     }
   }, []);
 
@@ -124,7 +111,7 @@ export default function DownloaderForm() {
     setResult(null);
     setError(null);
     setNotice(null);
-    setProgress(0);
+    setProgressStep(0);
     setPhase("idle");
     inputRef.current?.focus();
   }, [clearTimers]);
@@ -134,15 +121,15 @@ export default function DownloaderForm() {
   return (
     <div className="w-full">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={(event) => {
+          event.preventDefault();
           void resolve();
         }}
-        className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4"
+        className="rounded-2xl bg-white p-2.5 shadow-[0_8px_24px_rgba(83,0,17,0.14)] sm:p-3"
       >
         <div className="flex flex-col gap-2 sm:flex-row">
           <label htmlFor="pin-url" className="sr-only">
-            Pinterest Pin URL
+            Pinterest link
           </label>
           <input
             ref={inputRef}
@@ -152,86 +139,60 @@ export default function DownloaderForm() {
             inputMode="url"
             autoComplete="off"
             spellCheck={false}
-            placeholder="Paste a Pinterest Pin link here…"
+            placeholder={placeholder}
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(event) => setUrl(event.target.value)}
             disabled={loading}
-            className="h-12 min-w-0 flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-brand disabled:opacity-60"
+            className="h-14 w-full min-w-0 rounded-xl border border-rose-100 bg-brand-blush/70 px-4 text-base text-brand-ink placeholder:text-gray-600 focus:border-brand focus:bg-white focus:outline-none disabled:opacity-60 sm:flex-1"
           />
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => void onPaste()}
               disabled={loading}
-              aria-label="Paste link from clipboard"
-              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60 sm:flex-none"
+              className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-gray-100 px-4 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-200 disabled:opacity-60 sm:flex-none"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="8" y="2" width="8" height="4" rx="1" />
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-              </svg>
+              <Image src="/icons/paste.png" alt="" width={19} height={19} aria-hidden="true" />
               Paste
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-6 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-70 sm:flex-none"
+              className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-6 text-sm font-semibold text-white shadow-[0_4px_8px_rgba(139,0,21,0.22)] transition-colors hover:bg-brand-dark disabled:opacity-70 sm:flex-none"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
-                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-              </svg>
-              {loading ? "Resolving…" : "Download"}
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white" aria-hidden="true">
+                <Image src="/icons/download.png" alt="" width={19} height={19} />
+              </span>
+              {loading ? "Working..." : "Download"}
             </button>
           </div>
         </div>
 
-        {notice && (
-          <p role="status" className="mt-2 text-xs text-gray-500">
-            {notice}
-          </p>
-        )}
-
-        {loading && (
-          <div className="mt-3" role="status">
-            <div
-              className="h-2 w-full overflow-hidden rounded-full bg-red-100"
-              role="progressbar"
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label="Resolving progress"
-            >
-              <div
-                className="h-full rounded-full bg-brand transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-gray-500" aria-live="polite">
-              Resolving the Pin link… {progress}%
-            </p>
-          </div>
-        )}
+        {notice && <p className="mt-2 text-left text-xs text-gray-600" role="status">{notice}</p>}
       </form>
 
-      <p className="mt-3 text-center text-xs leading-relaxed text-gray-500">
-        Only download content you own or have permission to use. SavePinner does not host Pinterest
-        content and is not an official Pinterest product.
+      <p className="mt-4 text-center text-xs font-medium text-red-950/75">
+        Supports: pinterest.com/pin/ · pin.it short links · All country domains
       </p>
 
-      {phase === "done" && result && (
-        <div className="mt-4">
-          <ResultCard result={result} onReset={reset} />
+      {loading && (
+        <div className="mx-auto mt-5 max-w-xl" role="status" aria-live="polite">
+          <div className="flex gap-1.5" aria-hidden="true">
+            {PROGRESS_STEPS.map((step, index) => (
+              <span
+                key={step}
+                className={`h-1.5 flex-1 rounded-full ${index <= progressStep ? "bg-brand" : "bg-red-200"}`}
+              />
+            ))}
+          </div>
+          <p className="mt-2 text-sm font-medium text-red-950">{PROGRESS_STEPS[progressStep]}</p>
         </div>
       )}
+
+      {phase === "done" && result && <div className="mt-6"><ResultCard result={result} onReset={reset} /></div>}
       {phase === "error" && error && (
-        <div className="mt-4">
-          <ErrorState
-            code={error.code}
-            message={error.message}
-            onRetry={() => void resolve()}
-            onReset={reset}
-          />
+        <div className="mt-6">
+          <ErrorState code={error.code} message={error.message} onRetry={() => void resolve()} onReset={reset} />
         </div>
       )}
     </div>

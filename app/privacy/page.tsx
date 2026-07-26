@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ContentPage from "@/components/ContentPage";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: { absolute: "Privacy Policy — SavePinner" },
   description:
     "What data SavePinner processes, why, and for how long: no accounts, no long-term storage of links or files, IPs retained briefly for rate limiting.",
   alternates: { canonical: "/privacy/" },

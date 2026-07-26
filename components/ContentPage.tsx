@@ -17,7 +17,7 @@ export default function ContentPage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <div className="mx-auto w-full max-w-3xl px-4 py-12">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
           {intro && <p className="mt-3 text-base text-gray-600">{intro}</p>}
