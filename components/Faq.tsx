@@ -22,12 +22,12 @@ function LinkedAnswer({ item }: { item: FaqItem }) {
   return nodes;
 }
 
-export default function Faq({ items }: { items: FaqItem[] }) {
+export default function Faq({ items, heading }: { items: FaqItem[]; heading: string }) {
   return (
     <section aria-labelledby="faq-heading" id="faq" className="bg-[#f8f8f8]">
       <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
         <h2 id="faq-heading" className="text-3xl font-bold tracking-[-0.03em] text-brand-ink text-balance sm:text-4xl lg:text-5xl">
-          Frequently Asked Questions
+          {heading}
         </h2>
         <div className="mt-10 border-y border-gray-300">
           {items.map((item) => (

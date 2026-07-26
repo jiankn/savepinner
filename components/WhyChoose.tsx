@@ -1,32 +1,23 @@
 import Image from "next/image";
+import type { UiMessages } from "@/lib/i18n";
 
-const REASONS = [
-  {
-    icon: "/illustrations/why-fast.png",
-    title: "Fast & Simple",
-    description: "Download any Pinterest image in under 3 seconds. No complicated steps.",
-  },
-  {
-    icon: "/illustrations/why-hd.png",
-    title: "HD Original Quality",
-    description: "We fetch the original resolution image, not the compressed thumbnail.",
-  },
-  {
-    icon: "/illustrations/why-no-registration.png",
-    title: "No Registration",
-    description: "No email, no account, no login. Just paste and download.",
-  },
-];
+const REASON_ICONS = [
+  "/illustrations/why-fast.png",
+  "/illustrations/why-hd.png",
+  "/illustrations/why-no-registration.png",
+] as const;
 
-export default function WhyChoose() {
+export default function WhyChoose({ t }: { t: UiMessages }) {
+  const reasons = t.whyChoose.items.map((item, index) => ({ ...item, icon: REASON_ICONS[index] }));
+
   return (
     <section aria-labelledby="why-choose-heading" className="bg-brand-blush/60">
       <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
         <h2 id="why-choose-heading" className="max-w-4xl text-3xl font-bold tracking-[-0.03em] text-brand-ink text-balance sm:text-4xl lg:text-5xl">
-          Why Choose Our Pinterest Image Downloader?
+          {t.whyChoose.heading}
         </h2>
         <div className="mt-12 grid border-y border-rose-200 md:grid-cols-3 md:divide-x md:divide-rose-200">
-          {REASONS.map((reason) => (
+          {reasons.map((reason) => (
             <article key={reason.title} className="border-b border-rose-200 py-9 last:border-b-0 md:border-b-0 md:px-8 md:first:pl-0 md:last:pr-0">
               <Image
                 src={reason.icon}

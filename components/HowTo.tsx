@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { UiMessages } from "@/lib/i18n";
 import type { ToolPageContent } from "@/lib/page-content";
 
 const HOW_TO_ILLUSTRATIONS = [
@@ -14,7 +15,7 @@ const HOW_TO_ICONS = [
   "/illustrations/how-download-icon.png",
 ] as const;
 
-export default function HowTo({ content }: { content: ToolPageContent }) {
+export default function HowTo({ content, t }: { content: ToolPageContent; t: UiMessages }) {
   return (
     <section className="bg-white" aria-labelledby="how-to-heading">
       <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
@@ -45,7 +46,7 @@ export default function HowTo({ content }: { content: ToolPageContent }) {
                   className="h-7 w-7 object-contain"
                   aria-hidden="true"
                 />
-                <span className="text-sm font-semibold text-brand">Step {index + 1}</span>
+                <span className="text-sm font-semibold text-brand">{t.howTo.step} {index + 1}</span>
               </div>
               <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-brand-ink">{step.title}</h3>
               <p className="mt-2 max-w-sm text-base leading-7 text-gray-700">{step.description}</p>
@@ -54,9 +55,9 @@ export default function HowTo({ content }: { content: ToolPageContent }) {
         </ol>
         {content.slug === "home" && (
           <p className="mt-12 text-sm text-gray-700">
-            Want to download Pinterest videos? Use our{" "}
-            <Link href="/pinterest-video-downloader/" className="font-semibold text-brand hover:underline">
-              Pinterest video downloader
+            {t.howTo.videoCrossLinkPrefix}
+            <Link href={content.videoPath} className="font-semibold text-brand hover:underline">
+              {t.howTo.videoCrossLinkText}
             </Link>.
           </p>
         )}

@@ -125,16 +125,6 @@ export default function MobileMenu({ items }: { items: readonly NavigationItem[]
                 </Link>
               );
             })}
-
-            <span
-              aria-disabled="true"
-              className="flex min-h-13 items-center justify-between rounded-xl px-4 py-3 text-base font-medium text-gray-500"
-            >
-              <span>Blog</span>
-              <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600">
-                Coming soon
-              </span>
-            </span>
           </nav>
         </section>
       </div>

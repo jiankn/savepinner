@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import ContentPage from "@/components/ContentPage";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function ContactPage() {
             shown), your device/browser, and roughly when it happened.
           </li>
           <li>
-            <strong>Copyright requests:</strong> see the <a href="/dmca/">DMCA page</a> for
+            <strong>Copyright requests:</strong> see the <Link href="/dmca/">DMCA page</Link> for
             the required details.
           </li>
           <li>

@@ -3,22 +3,24 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ResolveResponse } from "@/lib/api-types";
+import type { UiMessages } from "@/lib/i18n";
 import ErrorState from "./ErrorState";
 import ResultCard from "./ResultCard";
 
 type Phase = "idle" | "loading" | "done" | "error";
-
-const PROGRESS_STEPS = ["Parsing link...", "Extracting media...", "Preparing download..."];
 
 function looksLikePinterestUrl(value: string): boolean {
   return /^https:\/\/(?:pin\.it\/|(?:[\w-]+\.)*pinterest\.[a-z.]+\/pin\/)/i.test(value);
 }
 
 export default function DownloaderForm({
-  placeholder = "Paste your Pinterest link here...",
+  placeholder,
+  t,
 }: {
-  placeholder?: string;
+  placeholder: string;
+  t: UiMessages;
 }) {
+  const PROGRESS_STEPS = t.form.progress;
   const [url, setUrl] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [progressStep, setProgressStep] = useState(0);
@@ -39,12 +41,12 @@ export default function DownloaderForm({
     const value = url.trim();
     setNotice(null);
     if (!value) {
-      setError({ code: "EMPTY", message: "Please paste a Pinterest link." });
+      setError({ code: "EMPTY", message: t.form.emptyInput });
       setPhase("error");
       return;
     }
     if (!looksLikePinterestUrl(value)) {
-      setError({ code: "INVALID_URL", message: "Please enter a valid Pinterest Pin link." });
+      setError({ code: "INVALID_URL", message: t.form.invalidUrl });
       setPhase("error");
       return;
     }
@@ -70,7 +72,7 @@ export default function DownloaderForm({
       if (!response.ok || !data || data.error) {
         setError({
           code: data?.error?.code ?? "INTERNAL_ERROR",
-          message: data?.error?.message ?? "The service is temporarily unavailable.",
+          message: data?.error?.message ?? t.form.serviceUnavailable,
         });
         setPhase("error");
         return;
@@ -80,30 +82,30 @@ export default function DownloaderForm({
       setPhase("done");
     } catch {
       clearTimers();
-      setError({ code: "NETWORK", message: "Network error — check your connection and try again." });
+      setError({ code: "NETWORK", message: t.form.networkError });
       setPhase("error");
     }
-  }, [clearTimers, url]);
+  }, [clearTimers, t, url]);
 
   const onPaste = useCallback(async () => {
     setNotice(null);
     if (!navigator.clipboard?.readText) {
-      setNotice("Clipboard access is unavailable — paste the link manually.");
+      setNotice(t.form.clipboardUnavailable);
       return;
     }
     try {
       const text = (await navigator.clipboard.readText()).trim();
       if (!text) {
-        setNotice("Your clipboard is empty — copy a Pin link first.");
+        setNotice(t.form.clipboardEmpty);
         return;
       }
       setUrl(text);
-      setNotice("Pasted from clipboard.");
+      setNotice(t.form.pasted);
       inputRef.current?.focus();
     } catch {
-      setNotice("Clipboard permission was denied — paste the link manually.");
+      setNotice(t.form.clipboardDenied);
     }
-  }, []);
+  }, [t]);
 
   const reset = useCallback(() => {
     clearTimers();
@@ -129,7 +131,7 @@ export default function DownloaderForm({
       >
         <div className="flex flex-col gap-2 sm:flex-row">
           <label htmlFor="pin-url" className="sr-only">
-            Pinterest link
+            {t.form.inputLabel}
           </label>
           <input
             ref={inputRef}
@@ -153,7 +155,7 @@ export default function DownloaderForm({
               className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-gray-100 px-4 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-200 disabled:opacity-60 sm:flex-none"
             >
               <Image src="/icons/paste.png" alt="" width={19} height={19} aria-hidden="true" />
-              Paste
+              {t.form.paste}
             </button>
             <button
               type="submit"
@@ -163,7 +165,7 @@ export default function DownloaderForm({
               <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white" aria-hidden="true">
                 <Image src="/icons/download.png" alt="" width={19} height={19} />
               </span>
-              {loading ? "Working..." : "Download"}
+              {loading ? t.form.working : t.form.download}
             </button>
           </div>
         </div>
@@ -171,9 +173,7 @@ export default function DownloaderForm({
         {notice && <p className="mt-2 text-left text-xs text-gray-600" role="status">{notice}</p>}
       </form>
 
-      <p className="mt-4 text-center text-xs font-medium text-red-950/75">
-        Supports: pinterest.com/pin/ · pin.it short links · All country domains
-      </p>
+      <p className="mt-4 text-center text-xs font-medium text-red-950/75">{t.form.supports}</p>
 
       {loading && (
         <div className="mx-auto mt-5 max-w-xl" role="status" aria-live="polite">
@@ -190,11 +190,11 @@ export default function DownloaderForm({
       )}
 
       {phase === "done" && result && (
-        <div className="mt-6"><ResultCard result={result} download={result.download} onReset={reset} /></div>
+        <div className="mt-6"><ResultCard result={result} download={result.download} t={t} onReset={reset} /></div>
       )}
       {phase === "error" && error && (
         <div className="mt-6">
-          <ErrorState code={error.code} message={error.message} onRetry={() => void resolve()} onReset={reset} />
+          <ErrorState code={error.code} message={error.message} t={t} onRetry={() => void resolve()} onReset={reset} />
         </div>
       )}
     </div>

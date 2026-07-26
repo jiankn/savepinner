@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import ContentPage from "@/components/ContentPage";
 
 export const metadata: Metadata = {
@@ -90,7 +91,7 @@ export default function PrivacyPage() {
         <p>
           We may update this policy as the product evolves; material changes will be reflected on
           this page with a new revision date. Questions: see our{" "}
-          <a href="/contact/">contact page</a>.
+          <Link href="/contact/">contact page</Link>.
         </p>
         <p className="text-gray-500">Last updated: 2026-07-20</p>
       </section>

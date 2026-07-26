@@ -1,11 +1,14 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getMessages } from "@/lib/i18n";
 
 export default function NotFound() {
+  const t = getMessages("en");
+
   return (
     <>
-      <Header />
+      <Header locale="en" t={t} />
       <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-4 py-20 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Page not found</h1>
         <p className="mt-3 max-w-md text-sm text-gray-600">
@@ -18,7 +21,7 @@ export default function NotFound() {
           Back to SavePinner
         </Link>
       </main>
-      <Footer />
+      <Footer locale="en" t={t} />
     </>
   );
 }

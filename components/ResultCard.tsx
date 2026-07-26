@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { DownloadAvailability, ResolvedMedia, ResolvedVariant } from "@/lib/api-types";
 import { formatEta } from "@/lib/format";
+import type { UiMessages } from "@/lib/i18n";
 
 function safeFilename(title: string, variant: ResolvedVariant): string {
   const base = title
@@ -17,28 +18,31 @@ function safeFilename(title: string, variant: ResolvedVariant): string {
 function buttonLabel(
   type: ResolvedMedia["type"],
   variant: ResolvedVariant,
-  verb: "Download" | "Open",
+  verb: string,
+  t: UiMessages,
 ): string {
   if (type === "video") return `${verb} ${variant.quality}`;
-  if (variant.quality === "Original" && variant.width) return `${verb} Original (${variant.width}x)`;
-  if (variant.quality === "Original") return `${verb} Original`;
-  if (variant.quality.startsWith("Thumbnail")) return `${verb} Thumbnail (236x)`;
+  if (variant.quality === "Original" && variant.width) return `${verb} ${t.result.original} (${variant.width}x)`;
+  if (variant.quality === "Original") return `${verb} ${t.result.original}`;
+  if (variant.quality.startsWith("Thumbnail")) return `${verb} ${t.result.thumbnail}`;
   return `${verb} ${variant.quality}`;
 }
 
-function mediaLabel(type: ResolvedMedia["type"]): string {
-  if (type === "gif") return "GIF · Original Quality · Animated";
-  if (type === "video") return "Video · HD Quality";
-  return "Image · Original Quality";
+function mediaLabel(type: ResolvedMedia["type"], t: UiMessages): string {
+  if (type === "gif") return t.result.gif;
+  if (type === "video") return t.result.video;
+  return t.result.image;
 }
 
 export default function ResultCard({
   result,
   download,
+  t,
   onReset,
 }: {
   result: ResolvedMedia;
   download?: DownloadAvailability;
+  t: UiMessages;
   onReset: () => void;
 }) {
   const capped = download?.capped === true;
@@ -61,18 +65,22 @@ export default function ResultCard({
           />
         )}
         <div className="min-w-0 flex-1 text-left">
-          <p className="text-sm font-semibold text-brand">{mediaLabel(result.type)}</p>
+          <p className="text-sm font-semibold text-brand">{mediaLabel(result.type, t)}</p>
           <h2 className="mt-2 text-xl font-bold text-gray-900 text-balance">{result.title}</h2>
           {capped && download && (
             <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-left" role="status">
-              <p className="text-sm font-semibold text-amber-900">
-                Today&apos;s one-click downloads are used up
-              </p>
+              <p className="text-sm font-semibold text-amber-900">{t.result.cappedTitle}</p>
               <p className="mt-1 text-sm text-amber-800">
-                SavePinner is busier than our free servers can handle today. One-click downloads
-                reset in <strong>{formatEta(download.resetAt - now)}</strong>. You can still save
-                your file right now — open it below, then right-click (desktop) or long-press
-                (mobile) and choose &ldquo;Save&rdquo;.
+                {(() => {
+                  const [before, after = ""] = t.result.cappedBody.split("{eta}");
+                  return (
+                    <>
+                      {before}
+                      <strong>{formatEta(download.resetAt - now)}</strong>
+                      {after}
+                    </>
+                  );
+                })()}
               </p>
             </div>
           )}
@@ -94,13 +102,13 @@ export default function ResultCard({
                   }`}
                 >
                   <span aria-hidden="true">{capped ? "↗" : "↓"}</span>
-                  {buttonLabel(result.type, variant, capped ? "Open" : "Download")}
+                  {buttonLabel(result.type, variant, capped ? t.result.open : t.result.download, t)}
                 </a>
               );
             })}
           </div>
           <button type="button" onClick={onReset} className="mt-4 text-sm font-medium text-brand hover:underline">
-            Download another Pin
+            {t.result.another}
           </button>
         </div>
       </div>

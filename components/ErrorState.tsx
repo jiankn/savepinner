@@ -1,38 +1,27 @@
 "use client";
 
 import Image from "next/image";
+import type { UiMessages } from "@/lib/i18n";
 
 /**
  * Error state — PRD §6.4 (FR-008): specific message per error code plus an
  * actionable next step ("try again" / "check the link").
  */
 
-const HINTS: Record<string, string> = {
-  INVALID_URL: "Make sure the link looks like https://www.pinterest.com/pin/123456789/ or https://pin.it/abc123.",
-  UNSUPPORTED_URL: "Only single public Pins are supported — profiles, boards and search pages are not.",
-  REDIRECT_REJECTED: "The short link did not lead to a public Pinterest Pin.",
-  PIN_NOT_PUBLIC: "Sign-in-only, private or deleted Pins cannot be accessed.",
-  MEDIA_NOT_FOUND: "The Pin may be deleted, or it has no downloadable image or video.",
-  UNSUPPORTED_MEDIA: "This media format is not supported yet.",
-  RATE_LIMITED: "Please wait a few seconds before trying again.",
-  DAILY_CAP_REACHED: "One-click downloads reset at midnight UTC — direct links keep working meanwhile.",
-  UPSTREAM_BLOCKED: "Pinterest may be temporarily unreachable — retry in a moment.",
-  RESOLVE_TIMEOUT: "The request took too long — retry in a moment.",
-  NETWORK: "Check your internet connection.",
-};
-
 export default function ErrorState({
   code,
   message,
+  t,
   onRetry,
   onReset,
 }: {
   code: string;
   message: string;
+  t: UiMessages;
   onRetry: () => void;
   onReset: () => void;
 }) {
-  const hint = HINTS[code];
+  const hint = t.error.hints[code];
   return (
     <section
       role="alert"
@@ -57,14 +46,14 @@ export default function ErrorState({
               onClick={onRetry}
               className="inline-flex min-h-11 items-center rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
             >
-              Try again
+              {t.error.tryAgain}
             </button>
             <button
               type="button"
               onClick={onReset}
               className="inline-flex min-h-11 items-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
             >
-              Check another link
+              {t.error.checkAnother}
             </button>
           </div>
         </div>

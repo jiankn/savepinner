@@ -1,5 +1,6 @@
 import Header from "./Header";
 import Footer from "./Footer";
+import { getMessages } from "@/lib/i18n";
 
 /**
  * Shared skeleton for legal/help content pages. Keeps Header/Footer and
@@ -14,9 +15,12 @@ export default function ContentPage({
   intro?: string;
   children: React.ReactNode;
 }) {
+  // Legal and help pages are English-only for now.
+  const t = getMessages("en");
+
   return (
     <>
-      <Header />
+      <Header locale="en" t={t} />
       <main id="main-content" className="flex-1">
         <div className="mx-auto w-full max-w-3xl px-4 py-12">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
@@ -26,7 +30,7 @@ export default function ContentPage({
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer locale="en" t={t} />
     </>
   );
 }

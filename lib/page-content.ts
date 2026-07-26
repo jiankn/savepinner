@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n";
+
 export interface FaqItem {
   question: string;
   answer: string;
@@ -13,11 +15,19 @@ export interface RelatedTool {
   title: string;
   description: string;
   href: string;
+  /** Illustration key — stays stable across locales, unlike `href`. */
+  kind: PageKey;
 }
 
+export type PageKey = "home" | "video" | "gif" | "story";
+
 export interface ToolPageContent {
-  slug: "home" | "video" | "gif" | "story";
+  slug: PageKey;
   path: string;
+  /** Owning locale; drives <div lang> and hreflang generation. */
+  locale: Locale;
+  /** Locale-correct path of the video tool, used by the home cross-link. */
+  videoPath: string;
   seoTitle: string;
   metaDescription: string;
   keywords: string[];
@@ -34,30 +44,36 @@ const HOME_TOOL: RelatedTool = {
   title: "Pinterest Image Downloader",
   description: "Download Pinterest images and thumbnails in HD",
   href: "/",
+  kind: "home",
 };
 
 const VIDEO_TOOL: RelatedTool = {
   title: "Pinterest Video Downloader",
   description: "Download Pinterest videos in HD",
   href: "/pinterest-video-downloader/",
+  kind: "video",
 };
 
 const GIF_TOOL: RelatedTool = {
   title: "Pinterest GIF Downloader",
   description: "Save animated GIFs from Pinterest",
   href: "/pinterest-gif-downloader/",
+  kind: "gif",
 };
 
 const STORY_TOOL: RelatedTool = {
   title: "Pinterest Story Downloader",
   description: "Download Pinterest Story Pins",
   href: "/pinterest-story-downloader/",
+  kind: "story",
 };
 
 export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   home: {
     slug: "home",
     path: "/",
+    locale: "en",
+    videoPath: "/pinterest-video-downloader/",
     seoTitle: "SavePinner - Free Pinterest Image Downloader (HD, No Watermark)",
     metaDescription:
       "Download Pinterest images & thumbnails in HD quality for free. No login required. Supports JPG, PNG, GIF, WebP. Fast, secure, and no watermark. Try our free Pinterest image downloader now.",
@@ -132,6 +148,8 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   video: {
     slug: "video",
     path: "/pinterest-video-downloader/",
+    locale: "en",
+    videoPath: "/pinterest-video-downloader/",
     seoTitle: "Free Pinterest Video Downloader — Save HD Videos Online",
     metaDescription:
       "Download Pinterest videos in HD quality (up to 1080p). Free, no login, no watermark. Supports all Pinterest video formats. Fast & easy Pinterest video downloader.",
@@ -186,6 +204,8 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   gif: {
     slug: "gif",
     path: "/pinterest-gif-downloader/",
+    locale: "en",
+    videoPath: "/pinterest-video-downloader/",
     seoTitle: "Pinterest GIF Downloader — Save Animated GIFs in Original Quality",
     metaDescription:
       "Download animated GIFs from Pinterest in original quality. Free online Pinterest GIF downloader. No login, no watermark. Supports all animated content.",
@@ -240,6 +260,8 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   story: {
     slug: "story",
     path: "/pinterest-story-downloader/",
+    locale: "en",
+    videoPath: "/pinterest-video-downloader/",
     seoTitle: "Pinterest Story Downloader — Download Story Pins Online",
     metaDescription:
       "Download Pinterest Story Pins for free. Save stories in HD quality. No login required. Fast Pinterest story downloader tool.",
