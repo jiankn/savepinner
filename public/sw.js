@@ -49,17 +49,17 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/icons/") ||
     url.pathname === "/manifest.webmanifest"
   ) {
+    const fetched = fetch(request);
+    const refreshed = fetched.then((response) => {
+      if (!response.ok) return;
+
+      const copy = response.clone();
+      return caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+    });
+
+    event.waitUntil(refreshed.catch(() => undefined));
     event.respondWith(
-      caches.match(request).then((cached) => {
-        const refreshed = fetch(request).then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
-          }
-          return response;
-        });
-        return cached ?? refreshed;
-      }),
+      caches.match(request).then((cached) => cached ?? fetched),
     );
   }
 });
