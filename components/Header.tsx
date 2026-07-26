@@ -35,8 +35,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-rose-100/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6">
-        <Link href="/" aria-label="SavePinner home" className="rounded-lg">
-          <Logo size={30} />
+        <Link href="/" aria-label="SavePinner home" className="flex shrink-0 items-center rounded-lg">
+          <Logo />
         </Link>
 
         <nav aria-label="Main navigation" className="hidden items-center sm:flex">

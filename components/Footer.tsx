@@ -20,7 +20,7 @@ export default function Footer() {
       <div className="mx-auto w-full max-w-7xl rounded-2xl bg-white p-6 text-brand-ink sm:p-10 lg:p-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Logo size={44} />
+            <Logo />
             <p className="mt-5 max-w-xs text-sm leading-7 text-gray-700">
               A free tool for downloading Pinterest images, videos, GIFs and thumbnails in HD quality.
             </p>
