@@ -1,16 +1,18 @@
+import Image from "next/image";
+
 const REASONS = [
   {
-    icon: "⚡",
+    icon: "/illustrations/why-fast.png",
     title: "Fast & Simple",
     description: "Download any Pinterest image in under 3 seconds. No complicated steps.",
   },
   {
-    icon: "🖼",
+    icon: "/illustrations/why-hd.png",
     title: "HD Original Quality",
     description: "We fetch the original resolution image, not the compressed thumbnail.",
   },
   {
-    icon: "🔒",
+    icon: "/illustrations/why-no-registration.png",
     title: "No Registration",
     description: "No email, no account, no login. Just paste and download.",
   },
@@ -26,8 +28,15 @@ export default function WhyChoose() {
         <div className="mt-12 grid border-y border-rose-200 md:grid-cols-3 md:divide-x md:divide-rose-200">
           {REASONS.map((reason) => (
             <article key={reason.title} className="border-b border-rose-200 py-9 last:border-b-0 md:border-b-0 md:px-8 md:first:pl-0 md:last:pr-0">
-              <span className="text-3xl" aria-hidden="true">{reason.icon}</span>
-              <h3 className="mt-12 text-2xl font-semibold tracking-[-0.02em] text-brand-ink">{reason.title}</h3>
+              <Image
+                src={reason.icon}
+                alt=""
+                width={80}
+                height={80}
+                className="h-20 w-20 object-contain"
+                aria-hidden="true"
+              />
+              <h3 className="mt-8 text-2xl font-semibold tracking-[-0.02em] text-brand-ink">{reason.title}</h3>
               <p className="mt-3 max-w-sm text-base leading-7 text-gray-700">{reason.description}</p>
             </article>
           ))}

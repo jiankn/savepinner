@@ -1,5 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { RelatedTool } from "@/lib/page-content";
+
+const TOOL_ILLUSTRATIONS: Record<string, string> = {
+  "/": "/illustrations/related-image.webp",
+  "/pinterest-video-downloader/": "/illustrations/related-video.webp",
+  "/pinterest-gif-downloader/": "/illustrations/related-gif.webp",
+  "/pinterest-story-downloader/": "/illustrations/related-story.webp",
+};
 
 export default function RelatedTools({ tools }: { tools: RelatedTool[] }) {
   return (
@@ -9,25 +17,20 @@ export default function RelatedTools({ tools }: { tools: RelatedTool[] }) {
           More Free Pinterest Tools
         </h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {tools.map((tool, index) => (
+          {tools.map((tool) => (
             <Link
               key={tool.href}
               href={tool.href}
               className="group overflow-hidden rounded-2xl bg-[#f8f6f7] transition-transform duration-300 ease-out hover:-translate-y-1"
             >
-              <span
-                className={`flex h-44 items-center justify-center ${
-                  index % 3 === 0
-                    ? "bg-gradient-to-br from-rose-100 to-orange-100"
-                    : index % 3 === 1
-                      ? "bg-gradient-to-br from-brand-blush to-rose-200"
-                      : "bg-gradient-to-br from-orange-100 to-brand-blush"
-                }`}
-                aria-hidden="true"
-              >
-                <span className="flex h-24 w-36 items-center justify-center rounded-xl bg-white text-4xl shadow-sm">
-                  {tool.icon}
-                </span>
+              <span className="relative block h-44 overflow-hidden bg-[#fff8f2]" aria-hidden="true">
+                <Image
+                  src={TOOL_ILLUSTRATIONS[tool.href] ?? TOOL_ILLUSTRATIONS["/"]}
+                  alt=""
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
+                />
               </span>
               <span className="block p-5">
                 <span className="block text-lg font-semibold text-brand-ink transition-colors group-hover:text-brand">{tool.title}</span>

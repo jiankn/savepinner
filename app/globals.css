@@ -38,6 +38,53 @@ body {
   color: var(--color-brand-ink);
 }
 
+.mobile-menu-open {
+  overflow: hidden;
+}
+
+.mobile-nav-popover {
+  transition:
+    display 180ms allow-discrete,
+    overlay 180ms allow-discrete;
+}
+
+.mobile-nav-panel {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition:
+    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-nav-backdrop {
+  background-color: rgb(24 24 27 / 0%);
+  transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-nav-popover:popover-open .mobile-nav-panel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-nav-popover::backdrop {
+  background: transparent;
+}
+
+.mobile-nav-popover:popover-open .mobile-nav-backdrop {
+  background-color: rgb(24 24 27 / 32%);
+}
+
+@starting-style {
+  .mobile-nav-popover:popover-open .mobile-nav-panel {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
+  .mobile-nav-popover:popover-open .mobile-nav-backdrop {
+    background-color: rgb(24 24 27 / 0%);
+  }
+}
+
 :where(a, button, input, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;

@@ -5,13 +5,11 @@ export interface FaqItem {
 }
 
 export interface ToolStep {
-  icon: string;
   title: string;
   description: string;
 }
 
 export interface RelatedTool {
-  icon: string;
   title: string;
   description: string;
   href: string;
@@ -33,28 +31,24 @@ export interface ToolPageContent {
 }
 
 const HOME_TOOL: RelatedTool = {
-  icon: "🖼",
   title: "Pinterest Image Downloader",
   description: "Download Pinterest images and thumbnails in HD",
   href: "/",
 };
 
 const VIDEO_TOOL: RelatedTool = {
-  icon: "📹",
   title: "Pinterest Video Downloader",
   description: "Download Pinterest videos in HD",
   href: "/pinterest-video-downloader/",
 };
 
 const GIF_TOOL: RelatedTool = {
-  icon: "🎞",
   title: "Pinterest GIF Downloader",
   description: "Save animated GIFs from Pinterest",
   href: "/pinterest-gif-downloader/",
 };
 
 const STORY_TOOL: RelatedTool = {
-  icon: "📋",
   title: "Pinterest Story Downloader",
   description: "Download Pinterest Story Pins",
   href: "/pinterest-story-downloader/",
@@ -75,19 +69,16 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     howToTitle: "How to Download Pinterest Images — 3 Easy Steps",
     steps: [
       {
-        icon: "🔍",
         title: "Find an image on Pinterest",
         description:
           "Open Pinterest, find the image you want to save, and tap the Share button to copy its link.",
       },
       {
-        icon: "📋",
         title: "Paste the link into SavePinner",
         description:
           "Paste the copied link into the input box above and click the Download button.",
       },
       {
-        icon: "⬇",
         title: "Download the original-quality image",
         description:
           "Choose your preferred size and download the image in HD quality. No compression, no watermark.",
@@ -152,17 +143,14 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     howToTitle: "How to Download Pinterest Videos — 3 Easy Steps",
     steps: [
       {
-        icon: "🔍",
         title: "Find a Pinterest video",
         description: "Open the video Pin you want to save and copy its link from the Share menu.",
       },
       {
-        icon: "📋",
         title: "Paste the video link",
         description: "Paste the copied Pinterest video link above and click Download.",
       },
       {
-        icon: "⬇",
         title: "Choose a video quality",
         description: "Select 1080P, 720P, 480P or 360P when that quality is available, then save the MP4 file.",
       },
@@ -209,17 +197,14 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     howToTitle: "How to Download Pinterest GIFs — 3 Easy Steps",
     steps: [
       {
-        icon: "🔍",
         title: "Find an animated GIF",
         description: "Open the Pinterest GIF Pin you want to save and copy its link.",
       },
       {
-        icon: "📋",
         title: "Paste the GIF link",
         description: "Paste the copied link into SavePinner and click Download.",
       },
       {
-        icon: "⬇",
         title: "Save the animated file",
         description: "Download the original-quality animated GIF directly to your device.",
       },
@@ -266,17 +251,14 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     howToTitle: "How to Download Pinterest Story Pins — 3 Easy Steps",
     steps: [
       {
-        icon: "🔍",
         title: "Open a Pinterest Story Pin",
         description: "Find the public Story Pin you want to save and copy its link from Share.",
       },
       {
-        icon: "📋",
         title: "Paste the Story Pin link",
         description: "Paste the copied link above and click the Download button.",
       },
       {
-        icon: "⬇",
         title: "Download the story",
         description: "Choose an available HD video quality and save the Story Pin to your device.",
       },
