@@ -74,9 +74,11 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     path: "/",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
-    seoTitle: "SavePinner - Free Pinterest Image Downloader (HD, No Watermark)",
+    // Brand prefix dropped: it cost 13 chars that the target keyword needs up
+    // front, and Google appends the site name to home-page titles anyway.
+    seoTitle: "Free Pinterest Image Downloader — HD, No Watermark",
     metaDescription:
-      "Download Pinterest images & thumbnails in HD quality for free. No login required. Supports JPG, PNG, GIF, WebP. Fast, secure, and no watermark. Try our free Pinterest image downloader now.",
+      "Download Pinterest images and thumbnails in original HD quality. Free, no login, no watermark. Supports JPG, PNG, GIF and WebP.",
     keywords: ["pinterest image downloader", "pinterest thumbnail download", "pinterest photo downloader"],
     h1: "Free Pinterest Image Downloader",
     subtitle:
@@ -152,7 +154,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Free Pinterest Video Downloader — Save HD Videos Online",
     metaDescription:
-      "Download Pinterest videos in HD quality (up to 1080p). Free, no login, no watermark. Supports all Pinterest video formats. Fast & easy Pinterest video downloader.",
+      "Download Pinterest videos in HD quality up to 1080p. Free, no login, no watermark. Works on iPhone, Android and desktop browsers.",
     keywords: ["pinterest video downloader"],
     h1: "Pinterest Video Downloader — Save Videos in HD",
     subtitle:
@@ -206,7 +208,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     path: "/pinterest-gif-downloader/",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
-    seoTitle: "Pinterest GIF Downloader — Save Animated GIFs in Original Quality",
+    seoTitle: "Pinterest GIF Downloader — Save Animated GIFs in HD",
     metaDescription:
       "Download animated GIFs from Pinterest in original quality. Free online Pinterest GIF downloader. No login, no watermark. Supports all animated content.",
     keywords: ["pinterest gif downloader"],

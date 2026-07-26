@@ -137,10 +137,17 @@ best pinterest downloader 2026（对比型内容，可以把自己跟竞品放�
 以首页为例，关键词 "pinterest image downloader" 的落地点：
 
 Title 标签：
-SavePinner - Free Pinterest Image Downloader (HD, No Watermark)
+Free Pinterest Image Downloader — HD, No Watermark
 
 Meta Description：
-Download Pinterest images in original HD quality for free. No login, no watermark, no sign-up required. Supports JPG, PNG, GIF & WebP. Fast & easy Pinterest image downloader.
+Download Pinterest images and thumbnails in original HD quality. Free, no login, no watermark. Supports JPG, PNG, GIF and WebP.
+
+⚠️ 长度硬约束：Title ≤ 60 字符，Meta Description ≤ 155 字符。超过就会在 SERP 里被截断，
+写文案时先数字符再落地。本文档所有 TDK 都已按此预算校准，`tests/i18n.test.ts` 会对全部
+10 个页面（含 es/id/pt）强制这条规则，改文案后跑 `npm test` 即可验证。
+
+首页标题刻意不带 "SavePinner - " 前缀：品牌词还没有搜索量，那 13 个字符留给目标关键词更划算，
+而且谷歌本来就会给首页自动补站点名。
 
 H1 标签：
 Free Pinterest Image Downloader — Save HD Images Instantly
@@ -177,8 +184,8 @@ Q: Is this Pinterest image downloader free?
 【页面类型】工具页 + 落地页合体（哥飞 V2.0 精品工具页面模式）
 
 【TDK】
-Title：SavePinner - Free Pinterest Image Downloader (HD, No Watermark)
-Meta Description：Download Pinterest images & thumbnails in HD quality for free. No login required. Supports JPG, PNG, GIF, WebP. Fast, secure, and no watermark. Try our free Pinterest image downloader now.
+Title：Free Pinterest Image Downloader — HD, No Watermark（50 字符）
+Meta Description：Download Pinterest images and thumbnails in original HD quality. Free, no login, no watermark. Supports JPG, PNG, GIF and WebP.（127 字符）
 
 【页面结构（从上到下，精确到组件）】
 
@@ -318,7 +325,7 @@ FCP（首次内容绘制）：< 1.8 秒
 【目标关键词】pinterest video downloader（KD 21.7）
 【TDK】
 Title：Free Pinterest Video Downloader — Save HD Videos Online
-Meta Description：Download Pinterest videos in HD quality (up to 1080p). Free, no login, no watermark. Supports all Pinterest video formats. Fast & easy Pinterest video downloader.
+Meta Description：Download Pinterest videos in HD quality up to 1080p. Free, no login, no watermark. Works on iPhone, Android and desktop browsers.（129 字符）
 
 【页面结构与首页差异】
 
@@ -342,7 +349,7 @@ Related Tools 区域链接到首页和其他内页
 【URL】/pinterest-gif-downloader/
 【目标关键词】pinterest gif downloader（KD 51.0）
 【TDK】
-Title：Pinterest GIF Downloader — Save Animated GIFs in Original Quality
+Title：Pinterest GIF Downloader — Save Animated GIFs in HD（51 字符）
 Meta Description：Download animated GIFs from Pinterest in original quality. Free online Pinterest GIF downloader. No login, no watermark. Supports all animated content.
 
 【页面结构】复用首页模板，针对 GIF 调整 H1、FAQ、How to Use 文案。结果展示区标注 "GIF · Original Quality · Animated"。KD 较高（51），这个页面不指望短期排名，上线后靠内链矩阵和外链慢慢养。

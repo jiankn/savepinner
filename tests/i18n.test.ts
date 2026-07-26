@@ -58,6 +58,24 @@ describe("locale pages", () => {
     expect(titles.size).toBe(6);
   });
 
+  /**
+   * Google truncates around 60 characters of title and 155-160 of description.
+   * Six of the ten pages shipped over budget once, so this is checked for every
+   * page in every locale rather than spot-checked on the home page.
+   */
+  it("keeps every title and description inside the SERP snippet budget", () => {
+    const pages = [
+      ...Object.values(TOOL_PAGES),
+      ...PREFIXED_LOCALES.flatMap((locale) => Object.values(LOCALE_PAGES[locale])),
+    ];
+
+    expect(pages).toHaveLength(10);
+    for (const page of pages) {
+      expect(page.seoTitle.length, `title ${page.path}`).toBeLessThanOrEqual(60);
+      expect(page.metaDescription.length, `description ${page.path}`).toBeLessThanOrEqual(155);
+    }
+  });
+
   it("points the home cross-link at the same locale's video page", () => {
     for (const locale of PREFIXED_LOCALES) {
       expect(LOCALE_PAGES[locale].home.videoPath, locale).toBe(LOCALE_PATHS[locale].video);

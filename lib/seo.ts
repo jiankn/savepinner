@@ -4,6 +4,25 @@ import { HREFLANG, type Locale } from "@/lib/i18n";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES, type PageKey, type ToolPageContent } from "@/lib/page-content";
 
+/**
+ * Social card, shared by every page and both networks.
+ *
+ * This is declared explicitly rather than via the app/opengraph-image file
+ * convention: metadata from nested segments is shallow-merged, so a child
+ * page's `openGraph` object replaces the root's entirely — file-convention
+ * images survived on `/` but silently vanished on every other route.
+ *
+ * It is served from public/ (not a generated route) because `trailingSlash`
+ * 308-redirects extensionless paths, and some social crawlers will not follow
+ * a redirect to fetch a card. Regenerate it with scripts/og-image.tsx.
+ */
+export const OG_CARD = {
+  url: "/og-card.png",
+  width: 1200,
+  height: 630,
+  alt: "SavePinner — download Pinterest images, videos and GIFs in HD",
+} as const;
+
 const OG_LOCALES: Record<Locale, string> = {
   en: "en_US",
   es: "es_ES",
@@ -59,11 +78,15 @@ function buildMetadata(page: ToolPageContent): Metadata {
       title: page.seoTitle,
       description: page.metaDescription,
       url: page.path,
+      images: [OG_CARD],
     },
     twitter: {
-      card: "summary",
+      // The card is 1200x630, so it needs the large-image layout;
+      // "summary" would crop it to a small square.
+      card: "summary_large_image",
       title: page.seoTitle,
       description: page.metaDescription,
+      images: [OG_CARD],
     },
   };
 }

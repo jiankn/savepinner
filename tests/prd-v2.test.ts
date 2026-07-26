@@ -48,12 +48,13 @@ describe("PRD v2 download proxy allow list", () => {
 });
 
 describe("PRD v2 page matrix", () => {
+  // Diverges from PRD §5 on purpose: the strings it specified were 63 and 188
+  // characters, both past the point Google truncates them in the SERP. The
+  // brand prefix was dropped so the target keyword leads.
   it("uses the exact home TDK and eight required FAQs", () => {
-    expect(TOOL_PAGES.home.seoTitle).toBe(
-      "SavePinner - Free Pinterest Image Downloader (HD, No Watermark)",
-    );
+    expect(TOOL_PAGES.home.seoTitle).toBe("Free Pinterest Image Downloader — HD, No Watermark");
     expect(TOOL_PAGES.home.metaDescription).toBe(
-      "Download Pinterest images & thumbnails in HD quality for free. No login required. Supports JPG, PNG, GIF, WebP. Fast, secure, and no watermark. Try our free Pinterest image downloader now.",
+      "Download Pinterest images and thumbnails in original HD quality. Free, no login, no watermark. Supports JPG, PNG, GIF and WebP.",
     );
     expect(TOOL_PAGES.home.faq).toHaveLength(8);
   });

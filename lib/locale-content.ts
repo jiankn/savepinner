@@ -89,9 +89,9 @@ const ES_HOME: ToolPageContent = {
   locale: "es",
   path: LOCALE_PATHS.es.home,
   videoPath: LOCALE_PATHS.es.video,
-  seoTitle: "SavePinner - Descargar Imágenes de Pinterest Gratis (HD, sin marca de agua)",
+  seoTitle: "Descargar Imágenes de Pinterest HD Gratis sin Marca de Agua",
   metaDescription:
-    "Descarga imágenes y pines de Pinterest en calidad HD original, gratis y sin registro. Compatible con JPG, PNG, GIF y WebP. Sin marca de agua y sin instalar nada.",
+    "Descarga imágenes y pines de Pinterest en calidad HD original, gratis y sin registro. Compatible con JPG, PNG, GIF y WebP. Sin marca de agua.",
   keywords: ["descargar pines de pinterest", "descargar imagenes de pinterest", "descargar fotos de pinterest"],
   h1: "Descargar imágenes de Pinterest gratis",
   subtitle:
@@ -220,7 +220,7 @@ const ID_HOME: ToolPageContent = {
   locale: "id",
   path: LOCALE_PATHS.id.home,
   videoPath: LOCALE_PATHS.id.video,
-  seoTitle: "SavePinner - Download Gambar Pinterest Gratis (HD, Tanpa Watermark)",
+  seoTitle: "Download Gambar Pinterest Gratis HD Tanpa Watermark",
   metaDescription:
     "Download gambar Pinterest kualitas HD asli, gratis dan tanpa login. Mendukung JPG, PNG, GIF, dan WebP. Tanpa watermark, tanpa install aplikasi.",
   keywords: ["download gambar pinterest", "download foto pinterest", "cara download gambar pinterest"],
@@ -350,7 +350,7 @@ const PT_HOME: ToolPageContent = {
   locale: "pt",
   path: LOCALE_PATHS.pt.home,
   videoPath: LOCALE_PATHS.pt.video,
-  seoTitle: "SavePinner - Baixar Imagens do Pinterest Grátis (HD, sem marca d'água)",
+  seoTitle: "Baixar Imagens do Pinterest Grátis em HD sem Marca d'Água",
   metaDescription:
     "Baixe imagens do Pinterest em qualidade HD original, grátis e sem login. Compatível com JPG, PNG, GIF e WebP. Sem marca d'água e sem instalar nada.",
   keywords: ["baixar imagens do pinterest", "baixar fotos do pinterest", "download de imagens do pinterest"],
