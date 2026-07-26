@@ -32,7 +32,6 @@ export default function HowTo({ content, t }: { content: ToolPageContent; t: UiM
                   width={720}
                   height={1280}
                   sizes="(min-width: 768px) 22vw, 70vw"
-                  loading="eager"
                   className="h-72 w-auto object-contain"
                 />
               </div>
@@ -42,7 +41,6 @@ export default function HowTo({ content, t }: { content: ToolPageContent; t: UiM
                   alt=""
                   width={28}
                   height={28}
-                  loading="eager"
                   className="h-7 w-7 object-contain"
                   aria-hidden="true"
                 />
