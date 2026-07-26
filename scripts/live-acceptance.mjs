@@ -3,7 +3,16 @@ const baseUrl = (process.env.ACCEPTANCE_BASE_URL ?? "http://127.0.0.1:3000").rep
 const samples = [
   { label: "image-original", url: "https://www.pinterest.com/pin/424605071126047814/", type: "image" },
   { label: "image-renditions", url: "https://www.pinterest.com/pin/989243874418277815/", type: "image" },
-  { label: "image-regional", url: "https://pinterest.de/pin/145804106683758606/", type: "image" },
+  // Regional host coverage. This Pin is a single-page video Idea Pin, so it
+  // resolves as a video — it only looked like an image while Story Pin clips
+  // went unparsed.
+  { label: "regional-host", url: "https://pinterest.de/pin/145804106683758606/", type: "video" },
+  { label: "idea-pin-video", url: "https://www.pinterest.com/pin/580471839512797064/", type: "video" },
+  {
+    label: "idea-pin-slideshow",
+    url: "https://www.pinterest.com/pin/424605071126047814/",
+    type: "image",
+  },
   { label: "video-1", url: "https://www.pinterest.com/pin/68746366275/", type: "video" },
   { label: "video-2", url: "https://www.pinterest.com/pin/500673683570108768/", type: "video" },
   { label: "video-3", url: "https://www.pinterest.com/pin/773985885988416925/", type: "video" },
