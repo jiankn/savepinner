@@ -64,7 +64,7 @@ export default function MobileMenu({ items }: { items: readonly NavigationItem[]
         ref={triggerRef}
         type="button"
         popoverTarget={MENU_ID}
-        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-gray-800 transition-colors hover:bg-gray-50"
+        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-gray-800 transition-colors hover:bg-gray-50"
       >
         <span className="sr-only">Open navigation menu</span>
         <Image src="/icons/menu.png" alt="" width={24} height={24} aria-hidden="true" />
