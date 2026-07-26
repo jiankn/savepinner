@@ -1,18 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { DownloadAvailability, ResolvedMedia, ResolvedVariant } from "@/lib/api-types";
+import type {
+  DownloadAvailability,
+  ResolvedMedia,
+  ResolvedPage,
+  ResolvedVariant,
+} from "@/lib/api-types";
 import { formatEta } from "@/lib/format";
 import type { UiMessages } from "@/lib/i18n";
 
+function filenameBase(title: string): string {
+  return (
+    title
+      .normalize("NFKD")
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "savepinner"
+  );
+}
+
 function safeFilename(title: string, variant: ResolvedVariant): string {
-  const base = title
-    .normalize("NFKD")
-    .replace(/[^a-zA-Z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60) || "savepinner";
   const quality = variant.quality.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  return `${base}-${quality}.${variant.ext}`;
+  return `${filenameBase(title)}-${quality}.${variant.ext}`;
+}
+
+function pageFilename(title: string, page: ResolvedPage): string {
+  return `${filenameBase(title)}-page-${page.index}.${page.ext}`;
+}
+
+function downloadHref(url: string, name: string): string {
+  return `/api/dl/?${new URLSearchParams({ url, name }).toString()}`;
 }
 
 function buttonLabel(
@@ -86,14 +104,14 @@ export default function ResultCard({
           )}
           <div className="mt-5 flex flex-col gap-2.5">
             {result.variants.map((variant, index) => {
-              const query = new URLSearchParams({
-                url: variant.url,
-                name: safeFilename(result.title, variant),
-              });
               return (
                 <a
                   key={`${variant.quality}-${variant.url}`}
-                  href={capped ? variant.url : `/api/dl/?${query.toString()}`}
+                  href={
+                    capped
+                      ? variant.url
+                      : downloadHref(variant.url, safeFilename(result.title, variant))
+                  }
                   {...(capped ? { target: "_blank", rel: "nofollow noopener noreferrer" } : {})}
                   className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold ${
                     index === 0
@@ -112,6 +130,43 @@ export default function ResultCard({
           </button>
         </div>
       </div>
+
+      {result.pages && result.pages.length > 0 && (
+        <div className="mt-8 border-t border-gray-200 pt-6 text-left">
+          <h3 className="text-base font-bold text-gray-900">
+            {t.result.pagesTitle} ({result.pages.length})
+          </h3>
+          <p className="mt-1 text-sm text-gray-600">{t.result.pagesHint}</p>
+          <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
+            {result.pages.map((page) => {
+              const kindLabel = page.kind === "video" ? t.result.pageVideo : t.result.pageImage;
+              return (
+                <li key={`${page.index}-${page.url}`}>
+                  <a
+                    href={
+                      capped ? page.url : downloadHref(page.url, pageFilename(result.title, page))
+                    }
+                    {...(capped ? { target: "_blank", rel: "nofollow noopener noreferrer" } : {})}
+                    className="flex min-h-14 items-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-800 hover:bg-gray-50"
+                  >
+                    <span aria-hidden="true" className="text-brand">
+                      {capped ? "↗" : "↓"}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate">
+                        {t.result.pageLabel.replace("{n}", String(page.index))} · {kindLabel}
+                      </span>
+                      <span className="block text-xs font-medium text-gray-500">
+                        {[page.quality, page.ext.toUpperCase()].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

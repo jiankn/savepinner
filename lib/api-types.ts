@@ -10,11 +10,31 @@ export interface ResolvedVariant {
   height?: number;
 }
 
+/** One page of a multi-page Idea Pin, downloadable on its own. */
+export interface ResolvedPage {
+  /** 1-based position inside the Idea Pin. */
+  index: number;
+  kind: "image" | "video";
+  url: string;
+  ext: string;
+  quality?: string;
+  width?: number;
+  height?: number;
+  /** Small preview for the row; may be absent for image pages. */
+  thumbnail?: string;
+}
+
 export interface ResolvedMedia {
   type: MediaKind;
   title: string;
   thumbnail: string;
   variants: ResolvedVariant[];
+  /**
+   * Individual pages of an Idea Pin, present only when it has more than one.
+   * `type`/`variants` still describe the cover, which is what most people
+   * want; this exposes the slides the cover cannot represent.
+   */
+  pages?: ResolvedPage[];
 }
 
 export interface DownloadAvailability {

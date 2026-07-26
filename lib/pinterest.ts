@@ -1,11 +1,12 @@
 import { config } from "@/lib/config";
 import { ApiError } from "@/lib/errors";
-import type { ResolvedMedia, ResolvedVariant } from "@/lib/api-types";
+import type { ResolvedMedia, ResolvedPage, ResolvedVariant } from "@/lib/api-types";
 import { fetchPinHtml } from "@/lib/pinterest/fetch-pin";
 import {
   parseMediaFromHtml,
   pickPreviewCandidate,
   type MediaCandidate,
+  type StoryPinPage,
 } from "@/lib/pinterest/parse-media";
 import { resolveShortUrl } from "@/lib/pinterest/resolve-short-url";
 import { isAllowedMediaHost, validateInputUrl } from "@/lib/pinterest/validate-url";
@@ -69,6 +70,65 @@ function videoQuality(candidate: MediaCandidate): string {
   return "Video";
 }
 
+/**
+ * Pinterest caps Idea Pins at 20 pages; the bound keeps a malformed payload
+ * from turning one resolve into an unbounded fan-out of verification requests.
+ */
+const MAX_STORY_PAGES = 20;
+
+/**
+ * Verifies one downloadable file per Idea Pin page. Image and video pages are
+ * checked in parallel because each verifyCandidates() call is serialised
+ * internally, and a slideshow can easily carry a dozen pages.
+ */
+async function resolveStoryPages(pages: StoryPinPage[]): Promise<ResolvedPage[] | undefined> {
+  if (pages.length < 2) return undefined;
+
+  const wanted = pages.slice(0, MAX_STORY_PAGES).flatMap((page) => {
+    const candidate = page.candidates[0];
+    return candidate ? [{ page, candidate }] : [];
+  });
+  if (wanted.length === 0) return undefined;
+
+  const byFamily = (family: "image" | "video") => wanted.filter((item) => item.page.kind === family);
+  const [verifiedImages, verifiedVideos] = await Promise.all(
+    (["image", "video"] as const).map(async (family) => {
+      const group = byFamily(family);
+      if (group.length === 0) return [];
+      return verifyCandidates(
+        group.map((item) => item.candidate),
+        { family, maxBytes: family === "video" ? config.maxVideoBytes : config.maxImageBytes },
+      );
+    }),
+  );
+
+  const usable = new Set(
+    [...verifiedImages, ...verifiedVideos]
+      .filter((variant) => isDownloadableCdnUrl(variant.url))
+      .map((variant) => variant.url),
+  );
+
+  const resolved = wanted
+    .filter((item) => usable.has(item.candidate.url))
+    .map(({ page, candidate }) => ({
+      index: page.index,
+      kind: page.kind,
+      url: candidate.url,
+      ext: extensionFromUrl(candidate.url, candidate.format || (page.kind === "video" ? "mp4" : "jpg")),
+      quality:
+        page.kind === "video"
+          ? videoQuality(candidate)
+          : candidate.width
+            ? `${candidate.width}x`
+            : undefined,
+      width: candidate.width,
+      height: candidate.height,
+      thumbnail: page.thumbnail,
+    }));
+
+  return resolved.length > 0 ? resolved : undefined;
+}
+
 function dedupeVariants(variants: ResolvedVariant[]): ResolvedVariant[] {
   const seen = new Set<string>();
   return variants.filter((variant) => {
@@ -95,6 +155,8 @@ export async function resolvePin(url: string): Promise<ResolvedMedia> {
     throw new ApiError("UNSUPPORTED_MEDIA", "gif parsing disabled");
   }
 
+  const storyPages = await resolveStoryPages(media.storyPages);
+
   if (media.kind === "video") {
     const verified = (await verifyCandidates(media.videos.slice(0, 12), {
       family: "video",
@@ -117,6 +179,7 @@ export async function resolvePin(url: string): Promise<ResolvedMedia> {
           height: variant.height,
         })),
       ),
+      ...(storyPages ? { pages: storyPages } : {}),
     };
   }
 
@@ -153,5 +216,6 @@ export async function resolvePin(url: string): Promise<ResolvedMedia> {
     thumbnail:
       variants.find((variant) => variant.quality.includes("236x"))?.url ?? variants[0].url,
     variants,
+    ...(storyPages ? { pages: storyPages } : {}),
   };
 }

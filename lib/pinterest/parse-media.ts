@@ -20,12 +20,24 @@ export interface MediaCandidate {
   qualityHint?: string;
 }
 
+/** One page of an Idea Pin, with its renditions ordered largest first. */
+export interface StoryPinPage {
+  /** 1-based position inside the Idea Pin. */
+  index: number;
+  kind: "image" | "video";
+  candidates: MediaCandidate[];
+  /** Poster frame supplied by Pinterest for video pages. */
+  thumbnail?: string;
+}
+
 export interface ParsedMedia {
   kind: MediaKind;
   title?: string;
   description?: string;
   images: MediaCandidate[];
   videos: MediaCandidate[];
+  /** Empty for everything except Idea Pins. */
+  storyPages: StoryPinPage[];
 }
 
 interface PinImageEntry {
@@ -120,46 +132,81 @@ function videoListRank(key: string): number {
   return index === -1 ? VIDEO_LIST_PREFERENCE.length : index;
 }
 
-/**
- * Idea Pins (Story Pins) leave `pin.videos` null and carry the clip under
- * `storyPinData.pages[].blocks[].videoDataV2`. Without this a video Idea Pin
- * looks like a plain image and only its cover gets offered — PRD §6.2.
- *
- * Only single-page Story Pins are treated as videos. Multi-page ones are
- * slideshows of independent clips and images that a single-media response
- * cannot represent, so they keep the existing cover-image behaviour.
- */
-function storyPinVideoCandidates(pin: JsonRecord): MediaCandidate[] {
-  const story = firstRecord(pin.storyPinData, pin.story_pin_data);
-  if (!story || !Array.isArray(story.pages) || story.pages.length !== 1) return [];
+function blockVideoCandidates(block: JsonRecord): { candidates: MediaCandidate[]; thumbnail?: string } {
+  const videoData = firstRecord(
+    block.videoDataV2,
+    block.video_data_v2,
+    block.videoData,
+    block.video_data,
+  );
+  if (!videoData) return { candidates: [] };
 
-  const page = story.pages[0];
-  if (!isRecord(page) || !Array.isArray(page.blocks)) return [];
+  const containers = Object.keys(videoData)
+    .filter((key) => isRecord(videoData[key]) && /video_?list/i.test(key))
+    .sort((a, b) => videoListRank(a) - videoListRank(b));
 
-  for (const block of page.blocks) {
-    if (!isRecord(block)) continue;
-    const videoData = firstRecord(
-      block.videoDataV2,
-      block.video_data_v2,
-      block.videoData,
-      block.video_data,
-    );
-    if (!videoData) continue;
-
-    const containers = Object.keys(videoData)
-      .filter((key) => isRecord(videoData[key]) && /video_?list/i.test(key))
-      .sort((a, b) => videoListRank(a) - videoListRank(b));
-
-    for (const key of containers) {
-      const candidates: MediaCandidate[] = [];
-      for (const [quality, entry] of Object.entries(videoData[key] as JsonRecord)) {
-        const candidate = toVideoCandidate(entry as PinVideoEntry, quality);
-        if (candidate) candidates.push(candidate);
+  for (const key of containers) {
+    const candidates: MediaCandidate[] = [];
+    let thumbnail: string | undefined;
+    for (const [quality, entry] of Object.entries(videoData[key] as JsonRecord)) {
+      const candidate = toVideoCandidate(entry as PinVideoEntry, quality);
+      if (!candidate) continue;
+      candidates.push(candidate);
+      if (!thumbnail && isRecord(entry) && typeof entry.thumbnail === "string") {
+        thumbnail = entry.thumbnail.startsWith("https://") ? entry.thumbnail : undefined;
       }
-      if (candidates.length > 0) return candidates;
     }
+    if (candidates.length > 0) return { candidates: dedupeAndSort(candidates), thumbnail };
   }
-  return [];
+  return { candidates: [] };
+}
+
+function blockImageCandidates(block: JsonRecord): MediaCandidate[] {
+  const candidates: MediaCandidate[] = [];
+  for (const [key, value] of Object.entries(block)) {
+    const entry = imageFieldEntry(key, value);
+    if (!entry) continue;
+    const candidate = toImageCandidate(entry);
+    if (candidate) candidates.push(candidate);
+  }
+  return dedupeAndSort(candidates);
+}
+
+/**
+ * Idea Pins (Story Pins) leave `pin.videos` null and carry their media under
+ * `storyPinData.pages[].blocks[]` — video pages in `videoDataV2`, image pages
+ * in `images_*` fields. Without this a video Idea Pin looks like a plain image
+ * and only its cover gets offered — PRD §6.2.
+ */
+function storyPinPages(pin: JsonRecord): StoryPinPage[] {
+  const story = firstRecord(pin.storyPinData, pin.story_pin_data);
+  if (!story || !Array.isArray(story.pages)) return [];
+
+  const pages: StoryPinPage[] = [];
+  story.pages.forEach((page, position) => {
+    if (!isRecord(page) || !Array.isArray(page.blocks)) return;
+    for (const block of page.blocks) {
+      if (!isRecord(block)) continue;
+
+      const video = blockVideoCandidates(block);
+      if (video.candidates.length > 0) {
+        pages.push({
+          index: position + 1,
+          kind: "video",
+          candidates: video.candidates,
+          thumbnail: video.thumbnail,
+        });
+        return;
+      }
+
+      const images = blockImageCandidates(block);
+      if (images.length > 0) {
+        pages.push({ index: position + 1, kind: "image", candidates: images });
+        return;
+      }
+    }
+  });
+  return pages;
 }
 
 function imageFieldEntry(key: string, value: unknown): PinImageEntry | null {
@@ -289,6 +336,7 @@ function firstNonEmptyString(...values: unknown[]): string | undefined {
 export function parseMediaFromHtml(html: string, pinId?: string): ParsedMedia {
   const images: MediaCandidate[] = [];
   const videos: MediaCandidate[] = [];
+  let storyPages: StoryPinPage[] = [];
   let title: string | undefined;
   let description: string | undefined;
 
@@ -342,8 +390,12 @@ export function parseMediaFromHtml(html: string, pinId?: string): ParsedMedia {
         if (candidate) videos.push(candidate);
       }
     }
-    if (videos.length === 0) {
-      videos.push(...storyPinVideoCandidates(pin));
+    storyPages = storyPinPages(pin);
+    // A single-page Story Pin *is* its video. Multi-page ones are slideshows
+    // of independent slides, so the Pin keeps its cover and the slides are
+    // reported separately via `storyPages`.
+    if (videos.length === 0 && storyPages.length === 1 && storyPages[0].kind === "video") {
+      videos.push(...storyPages[0].candidates);
     }
 
     title = firstNonEmptyString(pin.title, pin.gridTitle, pin.grid_title, pin.seoTitle);
@@ -386,7 +438,7 @@ export function parseMediaFromHtml(html: string, pinId?: string): ParsedMedia {
     kind = "gif";
   }
 
-  return { kind, title, description, images: sortedImages, videos: sortedVideos };
+  return { kind, title, description, images: sortedImages, videos: sortedVideos, storyPages };
 }
 
 /** Picks a small image candidate for the on-page preview (not for download). */

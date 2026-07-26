@@ -75,6 +75,13 @@ export interface UiMessages {
      * no functions.
      */
     cappedBody: string;
+    /** Multi-page Idea Pins: heading for the per-slide download list. */
+    pagesTitle: string;
+    pagesHint: string;
+    /** Contains the literal placeholder `{n}`. */
+    pageLabel: string;
+    pageImage: string;
+    pageVideo: string;
   };
   error: { tryAgain: string; checkAnother: string; hints: Record<string, string> };
   footer: {
@@ -141,6 +148,11 @@ const EN: UiMessages = {
     cappedTitle: "Today's one-click downloads are used up",
     cappedBody:
       'SavePinner is busier than our free servers can handle today. One-click downloads reset in {eta}. You can still save your file right now — open it below, then right-click (desktop) or long-press (mobile) and choose "Save".',
+    pagesTitle: "Every page in this Idea Pin",
+    pagesHint: "This Pin is a slideshow. Save any page on its own:",
+    pageLabel: "Page {n}",
+    pageImage: "Image",
+    pageVideo: "Video",
   },
   error: {
     tryAgain: "Try again",
@@ -219,6 +231,11 @@ const ES: UiMessages = {
     cappedTitle: "Las descargas directas de hoy se han agotado",
     cappedBody:
       'Hoy SavePinner tiene más tráfico del que pueden gestionar nuestros servidores gratuitos. Las descargas con un clic se restablecen en {eta}. Aún puedes guardar tu archivo ahora mismo: ábrelo abajo y haz clic derecho (ordenador) o mantén pulsado (móvil) y elige "Guardar".',
+    pagesTitle: "Todas las páginas de este Idea Pin",
+    pagesHint: "Este pin es una presentación. Guarda cualquier página por separado:",
+    pageLabel: "Página {n}",
+    pageImage: "Imagen",
+    pageVideo: "Vídeo",
   },
   error: {
     tryAgain: "Reintentar",
@@ -299,6 +316,11 @@ const ID: UiMessages = {
     cappedTitle: "Kuota download sekali klik hari ini sudah habis",
     cappedBody:
       'Hari ini SavePinner lebih ramai dari kapasitas server gratis kami. Download sekali klik aktif lagi dalam {eta}. Kamu tetap bisa menyimpan file sekarang — buka lewat tombol di bawah, lalu klik kanan (desktop) atau tekan lama (HP) dan pilih "Simpan".',
+    pagesTitle: "Semua halaman di Idea Pin ini",
+    pagesHint: "Pin ini berbentuk slideshow. Simpan halaman mana pun secara terpisah:",
+    pageLabel: "Halaman {n}",
+    pageImage: "Gambar",
+    pageVideo: "Video",
   },
   error: {
     tryAgain: "Coba lagi",
@@ -377,6 +399,11 @@ const PT: UiMessages = {
     cappedTitle: "Os downloads diretos de hoje acabaram",
     cappedBody:
       'Hoje o SavePinner está com mais tráfego do que nossos servidores gratuitos aguentam. Os downloads em um clique voltam em {eta}. Você ainda pode salvar seu arquivo agora: abra pelo botão abaixo e clique com o botão direito (computador) ou pressione e segure (celular) e escolha "Salvar".',
+    pagesTitle: "Todas as páginas deste Idea Pin",
+    pagesHint: "Este pin é uma apresentação. Salve qualquer página separadamente:",
+    pageLabel: "Página {n}",
+    pageImage: "Imagem",
+    pageVideo: "Vídeo",
   },
   error: {
     tryAgain: "Tentar de novo",

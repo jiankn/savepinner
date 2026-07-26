@@ -238,25 +238,40 @@ describe("parseMediaFromHtml", () => {
     expect(media.videos.map((candidate) => candidate.url)).toEqual([`${stem}/720p/a/b/c/clip.mp4`]);
   });
 
-  it("leaves multi-page Idea Pin slideshows as image downloads", () => {
+  it("leaves multi-page Idea Pin slideshows as image downloads but lists every page", () => {
     const pinId = "424605071126047814";
-    const videoBlock = {
+    const clip = (name: string) => ({
       __typename: "StoryPinVideoBlock",
       videoDataV2: {
+        videoListMobile: {
+          vHLSV3MOBILE: { url: `https://v1.pinimg.com/videos/mc/hls/9/4/8/${name}.m3u8` },
+        },
         videoList720P: {
-          v720P: { url: "https://v1.pinimg.com/videos/mc/720p/9/4/8/clip.mp4", width: 1080, height: 1920 },
+          v720P: {
+            url: `https://v1.pinimg.com/videos/mc/720p/9/4/8/${name}.mp4`,
+            width: 1080,
+            height: 1920,
+            thumbnail: `https://i.pinimg.com/videos/thumbnails/originals/9/4/8/${name}.jpg`,
+          },
         },
       },
-    };
+    });
     const html = htmlWithRelayData(pinId, {
       title: "Skin Tone Ranges",
       images_orig: { url: "https://i.pinimg.com/originals/b6/d0/aa/cover.png", width: 1000, height: 1500 },
       videos: null,
       storyPinData: {
         pages: [
-          { blocks: [videoBlock] },
-          { blocks: [{ __typename: "StoryPinImageBlock" }] },
-          { blocks: [videoBlock] },
+          { blocks: [clip("first")] },
+          {
+            blocks: [
+              {
+                __typename: "StoryPinImageBlock",
+                images_750x: { url: "https://i.pinimg.com/736x/f5/7d/6a/slide.jpg", width: 736, height: 1308 },
+              },
+            ],
+          },
+          { blocks: [clip("third")] },
         ],
       },
     });
@@ -264,6 +279,50 @@ describe("parseMediaFromHtml", () => {
     const media = parseMediaFromHtml(html, pinId);
     expect(media.kind).toBe("image");
     expect(media.videos).toHaveLength(0);
+    expect(media.storyPages).toHaveLength(3);
+    expect(media.storyPages.map((page) => [page.index, page.kind])).toEqual([
+      [1, "video"],
+      [2, "image"],
+      [3, "video"],
+    ]);
+    expect(media.storyPages[0].candidates[0].url).toBe(
+      "https://v1.pinimg.com/videos/mc/720p/9/4/8/first.mp4",
+    );
+    expect(media.storyPages[0].thumbnail).toBe(
+      "https://i.pinimg.com/videos/thumbnails/originals/9/4/8/first.jpg",
+    );
+    expect(media.storyPages[1].candidates[0].url).toBe("https://i.pinimg.com/736x/f5/7d/6a/slide.jpg");
+  });
+
+  it("keeps page numbering aligned when a slide carries no downloadable media", () => {
+    const pinId = "424605071126047815";
+    const html = htmlWithRelayData(pinId, {
+      images_orig: { url: "https://i.pinimg.com/originals/b6/d0/aa/cover.png" },
+      videos: null,
+      storyPinData: {
+        pages: [
+          { blocks: [{ __typename: "StoryPinTextBlock", text: "intro" }] },
+          {
+            blocks: [
+              {
+                __typename: "StoryPinImageBlock",
+                images_750x: { url: "https://i.pinimg.com/736x/f5/7d/6a/slide.jpg", width: 736 },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.storyPages.map((page) => page.index)).toEqual([2]);
+  });
+
+  it("reports no story pages for ordinary Pins", () => {
+    const html = htmlWithPwsData(
+      pwsData({ title: "Cat", images: { orig: { url: "https://i.pinimg.com/originals/a/b/c/x.jpg" } } }),
+    );
+    expect(parseMediaFromHtml(html).storyPages).toEqual([]);
   });
 
   it("ignores Idea Pins whose only renditions are HLS streams", () => {
