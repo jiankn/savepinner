@@ -7,6 +7,10 @@ const TOOL_ILLUSTRATIONS: Record<RelatedTool["kind"], string> = {
   video: "/illustrations/related-video.webp",
   gif: "/illustrations/related-gif.webp",
   story: "/illustrations/related-story.webp",
+  // The device pages reuse existing art for now — there is no iPhone or
+  // Android illustration in public/illustrations yet.
+  iphone: "/illustrations/related-image.webp",
+  android: "/illustrations/related-video.webp",
 };
 
 export default function RelatedTools({ tools, heading }: { tools: RelatedTool[]; heading: string }) {

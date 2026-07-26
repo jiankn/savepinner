@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import sitemap from "@/app/sitemap";
 import { buildImageRenditions } from "@/lib/pinterest";
 import { TOOL_PAGES } from "@/lib/page-content";
 import { parseDownloadTarget } from "@/app/api/dl/route";
@@ -59,12 +60,50 @@ describe("PRD v2 page matrix", () => {
     expect(TOOL_PAGES.home.faq).toHaveLength(8);
   });
 
-  it("ships the three first-release keyword pages and defers the board page", () => {
+  // The board page stays deferred deliberately: board download is not built
+  // yet, and a landing page for a feature that does not exist is a doorway
+  // page. The device pages target real, shipped behaviour.
+  it("ships the keyword pages and defers the board page", () => {
     expect(Object.values(TOOL_PAGES).map((page) => page.path)).toEqual([
       "/",
       "/pinterest-video-downloader/",
       "/pinterest-gif-downloader/",
       "/pinterest-story-downloader/",
+      "/pinterest-downloader-iphone/",
+      "/pinterest-downloader-android/",
     ]);
+  });
+
+  it("lists every indexable page in the sitemap", () => {
+    const urls = new Set(sitemap().map((entry) => new URL(entry.url).pathname));
+    for (const page of Object.values(TOOL_PAGES)) {
+      expect(urls.has(page.path), `sitemap missing ${page.path}`).toBe(true);
+    }
+  });
+
+  /**
+   * A device page exists to answer a device-specific question. If its prose
+   * could sit on the home page unchanged it is a near-duplicate, which costs
+   * more than the page earns — so require real, non-shared substance.
+   */
+  describe("device pages", () => {
+    const devicePages = [TOOL_PAGES.iphone, TOOL_PAGES.android];
+
+    it.each(devicePages)("$slug carries substantial original prose", (page) => {
+      const words = (page.sections ?? [])
+        .flatMap((s) => [s.heading, ...s.body, ...(s.bullets ?? [])])
+        .join(" ")
+        .split(/\s+/).length;
+
+      expect(page.sections?.length ?? 0).toBeGreaterThanOrEqual(4);
+      expect(words).toBeGreaterThan(500);
+    });
+
+    it.each(devicePages)("$slug does not reuse the home page's FAQ", (page) => {
+      const homeQuestions = new Set(TOOL_PAGES.home.faq.map((item) => item.question));
+      for (const item of page.faq) {
+        expect(homeQuestions.has(item.question), item.question).toBe(false);
+      }
+    });
   });
 });

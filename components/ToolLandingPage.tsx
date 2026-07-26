@@ -1,5 +1,6 @@
 import DownloaderForm from "./DownloaderForm";
 import Faq from "./Faq";
+import Guide from "./Guide";
 import Footer from "./Footer";
 import Header from "./Header";
 import HowTo from "./HowTo";
@@ -46,6 +47,7 @@ export default function ToolLandingPage({ content }: { content: ToolPageContent 
         </section>
         <HowTo content={content} t={t} />
         {content.slug === "home" && <WhyChoose t={t} />}
+        {content.sections && <Guide sections={content.sections} />}
         <Faq items={content.faq} heading={t.faqHeading} />
         <RelatedTools tools={content.related} heading={t.relatedHeading} />
       </main>

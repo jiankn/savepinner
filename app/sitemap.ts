@@ -13,7 +13,7 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://savepinner.com").r
  * the page head).
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastMeaningfulUpdate = "2026-07-26";
+  const lastMeaningfulUpdate = "2026-07-27";
 
   const localizedClusters = [
     { key: "home" as const, englishPath: "/", priority: 1.0 },
@@ -45,6 +45,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const englishOnly = [
     { path: "/pinterest-gif-downloader/", priority: 0.8, changeFrequency: "weekly" as const },
     { path: "/pinterest-story-downloader/", priority: 0.8, changeFrequency: "weekly" as const },
+    { path: "/pinterest-downloader-iphone/", priority: 0.7, changeFrequency: "monthly" as const },
+    { path: "/pinterest-downloader-android/", priority: 0.7, changeFrequency: "monthly" as const },
     { path: "/privacy/", priority: 0.3, changeFrequency: "yearly" as const },
     { path: "/terms/", priority: 0.3, changeFrequency: "yearly" as const },
     { path: "/dmca/", priority: 0.3, changeFrequency: "yearly" as const },

@@ -69,7 +69,7 @@ describe("locale pages", () => {
       ...PREFIXED_LOCALES.flatMap((locale) => Object.values(LOCALE_PAGES[locale])),
     ];
 
-    expect(pages).toHaveLength(10);
+    expect(pages).toHaveLength(12);
     for (const page of pages) {
       expect(page.seoTitle.length, `title ${page.path}`).toBeLessThanOrEqual(60);
       expect(page.metaDescription.length, `description ${page.path}`).toBeLessThanOrEqual(155);
