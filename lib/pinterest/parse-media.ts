@@ -47,6 +47,14 @@ function isRecord(value: unknown): value is JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/** First value that is a plain object, for fields Pinterest names both ways. */
+function firstRecord(...values: unknown[]): JsonRecord | null {
+  for (const value of values) {
+    if (isRecord(value)) return value;
+  }
+  return null;
+}
+
 function extFromUrl(url: string): string {
   try {
     const path = new URL(url).pathname.toLowerCase();
@@ -99,6 +107,61 @@ function toVideoCandidate(entry: PinVideoEntry, qualityHint?: string): MediaCand
   };
 }
 
+/**
+ * A Story Pin block exposes the same clip through several `videoList*`
+ * containers (`videoList720P`, `videoListEXP3`…`videoListEXP7`, HLS lists).
+ * They are alternate encodes of one file, so the most specific progressive
+ * container wins instead of emitting five near-identical download buttons.
+ */
+const VIDEO_LIST_PREFERENCE = ["videolist720p", "videolist", "videolistmobile"];
+
+function videoListRank(key: string): number {
+  const index = VIDEO_LIST_PREFERENCE.indexOf(key.toLowerCase());
+  return index === -1 ? VIDEO_LIST_PREFERENCE.length : index;
+}
+
+/**
+ * Idea Pins (Story Pins) leave `pin.videos` null and carry the clip under
+ * `storyPinData.pages[].blocks[].videoDataV2`. Without this a video Idea Pin
+ * looks like a plain image and only its cover gets offered — PRD §6.2.
+ *
+ * Only single-page Story Pins are treated as videos. Multi-page ones are
+ * slideshows of independent clips and images that a single-media response
+ * cannot represent, so they keep the existing cover-image behaviour.
+ */
+function storyPinVideoCandidates(pin: JsonRecord): MediaCandidate[] {
+  const story = firstRecord(pin.storyPinData, pin.story_pin_data);
+  if (!story || !Array.isArray(story.pages) || story.pages.length !== 1) return [];
+
+  const page = story.pages[0];
+  if (!isRecord(page) || !Array.isArray(page.blocks)) return [];
+
+  for (const block of page.blocks) {
+    if (!isRecord(block)) continue;
+    const videoData = firstRecord(
+      block.videoDataV2,
+      block.video_data_v2,
+      block.videoData,
+      block.video_data,
+    );
+    if (!videoData) continue;
+
+    const containers = Object.keys(videoData)
+      .filter((key) => isRecord(videoData[key]) && /video_?list/i.test(key))
+      .sort((a, b) => videoListRank(a) - videoListRank(b));
+
+    for (const key of containers) {
+      const candidates: MediaCandidate[] = [];
+      for (const [quality, entry] of Object.entries(videoData[key] as JsonRecord)) {
+        const candidate = toVideoCandidate(entry as PinVideoEntry, quality);
+        if (candidate) candidates.push(candidate);
+      }
+      if (candidates.length > 0) return candidates;
+    }
+  }
+  return [];
+}
+
 function imageFieldEntry(key: string, value: unknown): PinImageEntry | null {
   if (!isRecord(value)) return null;
   if (
@@ -117,6 +180,7 @@ function pinEntityScore(entity: JsonRecord, pinId?: string): number {
     score += 900;
   }
   if (isRecord(entity.videos)) score += 40;
+  if (firstRecord(entity.storyPinData, entity.story_pin_data)) score += 40;
   if (isRecord(entity.embed) && entity.embed.type === "gif") score += 35;
   if (
     Object.entries(entity).some(([key, value]) => {
@@ -277,6 +341,9 @@ export function parseMediaFromHtml(html: string, pinId?: string): ParsedMedia {
         );
         if (candidate) videos.push(candidate);
       }
+    }
+    if (videos.length === 0) {
+      videos.push(...storyPinVideoCandidates(pin));
     }
 
     title = firstNonEmptyString(pin.title, pin.gridTitle, pin.grid_title, pin.seoTitle);

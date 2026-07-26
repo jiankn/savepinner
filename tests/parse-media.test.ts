@@ -143,6 +143,156 @@ describe("parseMediaFromHtml", () => {
     expect(media.title).toBe("Animated Sticker");
   });
 
+  it("parses Idea Pin clips stored under storyPinData instead of pin.videos", () => {
+    const pinId = "580471839512797064";
+    const stem = "https://v1.pinimg.com/videos/iht/720p/9c/30/fe/9c30fe6d6f7b76bde4f732f94a4dca8a";
+    const hls = "https://v1.pinimg.com/videos/iht/hls/9c/30/fe/9c30fe6d6f7b76bde4f732f94a4dca8a.m3u8";
+    const html = htmlWithRelayData(pinId, {
+      gridTitle: "Idea Pin clip",
+      images_236x: { url: "https://i.pinimg.com/236x/63/96/20/cover.jpg", width: 236, height: 419 },
+      images_orig: { url: "https://i.pinimg.com/originals/63/96/20/cover.jpg" },
+      videos: null,
+      storyPinData: {
+        pages: [
+          {
+            blocks: [
+              {
+                __typename: "StoryPinVideoBlock",
+                videoDataV2: {
+                  videoListMobile: { vHLSV3MOBILE: { url: hls, width: 720, height: 1280 } },
+                  videoListEXP3: null,
+                  videoList720P: { v720P: { url: `${stem}.mp4`, width: 720, height: 1280 } },
+                  videoList: { vHLSV3MOBILE: { url: hls, width: 720, height: 1280 } },
+                  v_hlsv4_video_list: { vHLSV4: { url: hls, width: 720, height: 1280 } },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.kind).toBe("video");
+    expect(media.videos).toHaveLength(1);
+    expect(media.videos[0]).toMatchObject({ url: `${stem}.mp4`, qualityHint: "v720P" });
+    expect(media.images.some((candidate) => candidate.url.includes("/236x/"))).toBe(true);
+  });
+
+  it("keeps pin.videos ahead of storyPinData when a Pin carries both", () => {
+    const pinId = "68746366275";
+    const html = htmlWithRelayData(pinId, {
+      videos: {
+        videoList: {
+          v720P: { url: "https://v1.pinimg.com/videos/mc/720p/main.mp4", width: 576, height: 1024 },
+        },
+      },
+      storyPinData: {
+        pages: [
+          {
+            blocks: [
+              {
+                videoDataV2: {
+                  videoList720P: {
+                    v720P: { url: "https://v1.pinimg.com/videos/iht/720p/story.mp4", width: 720, height: 1280 },
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.videos.map((candidate) => candidate.url)).toEqual([
+      "https://v1.pinimg.com/videos/mc/720p/main.mp4",
+    ]);
+  });
+
+  it("returns one variant per Idea Pin clip instead of every alternate encode", () => {
+    const pinId = "580471839512797065";
+    const stem = "https://v1.pinimg.com/videos/iht";
+    const html = htmlWithRelayData(pinId, {
+      images_orig: { url: "https://i.pinimg.com/originals/6/3/9/cover.jpg" },
+      videos: null,
+      storyPinData: {
+        pages: [
+          {
+            blocks: [
+              {
+                videoDataV2: {
+                  videoListEXP3: { vEXP3: { url: `${stem}/expMp4/a/b/c/clip_t1.mp4`, width: 1080, height: 1920 } },
+                  videoListEXP7: { vEXP7: { url: `${stem}/expMp4/a/b/c/clip.mp4`, width: 1080, height: 1920 } },
+                  videoList720P: { v720P: { url: `${stem}/720p/a/b/c/clip.mp4`, width: 1080, height: 1920 } },
+                  videoList: { vHLSV3MOBILE: { url: `${stem}/hls/a/b/c/clip.m3u8`, width: 1080, height: 1920 } },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.videos.map((candidate) => candidate.url)).toEqual([`${stem}/720p/a/b/c/clip.mp4`]);
+  });
+
+  it("leaves multi-page Idea Pin slideshows as image downloads", () => {
+    const pinId = "424605071126047814";
+    const videoBlock = {
+      __typename: "StoryPinVideoBlock",
+      videoDataV2: {
+        videoList720P: {
+          v720P: { url: "https://v1.pinimg.com/videos/mc/720p/9/4/8/clip.mp4", width: 1080, height: 1920 },
+        },
+      },
+    };
+    const html = htmlWithRelayData(pinId, {
+      title: "Skin Tone Ranges",
+      images_orig: { url: "https://i.pinimg.com/originals/b6/d0/aa/cover.png", width: 1000, height: 1500 },
+      videos: null,
+      storyPinData: {
+        pages: [
+          { blocks: [videoBlock] },
+          { blocks: [{ __typename: "StoryPinImageBlock" }] },
+          { blocks: [videoBlock] },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.kind).toBe("image");
+    expect(media.videos).toHaveLength(0);
+  });
+
+  it("ignores Idea Pins whose only renditions are HLS streams", () => {
+    const pinId = "580471839512797066";
+    const hls = "https://v1.pinimg.com/videos/iht/hls/a/b/c/stream.m3u8";
+    const html = htmlWithRelayData(pinId, {
+      images_orig: { url: "https://i.pinimg.com/originals/6/3/9/cover.jpg" },
+      videos: null,
+      storyPinData: {
+        pages: [
+          {
+            blocks: [
+              {
+                videoDataV2: {
+                  videoListMobile: { vHLSV3MOBILE: { url: hls, width: 720, height: 1280 } },
+                  videoList: { vHLSV3MOBILE: { url: hls, width: 720, height: 1280 } },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.kind).toBe("image");
+    expect(media.videos).toHaveLength(0);
+  });
+
   it("selects the requested Pin when a relay page contains other Pin records", () => {
     const targetId = "989243874418277815";
     const other = htmlWithRelayData("111", {
