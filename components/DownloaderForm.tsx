@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ResolvedMedia } from "@/lib/api-types";
+import type { ResolveResponse } from "@/lib/api-types";
 import ErrorState from "./ErrorState";
 import ResultCard from "./ResultCard";
 
@@ -22,7 +22,7 @@ export default function DownloaderForm({
   const [url, setUrl] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [progressStep, setProgressStep] = useState(0);
-  const [result, setResult] = useState<ResolvedMedia | null>(null);
+  const [result, setResult] = useState<ResolveResponse | null>(null);
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const timersRef = useRef<number[]>([]);
@@ -64,7 +64,7 @@ export default function DownloaderForm({
         body: JSON.stringify({ url: value }),
       });
       const data = (await response.json().catch(() => null)) as
-        | (ResolvedMedia & { error?: { code: string; message: string } })
+        | (ResolveResponse & { error?: { code: string; message: string } })
         | null;
       clearTimers();
       if (!response.ok || !data || data.error) {
@@ -189,7 +189,9 @@ export default function DownloaderForm({
         </div>
       )}
 
-      {phase === "done" && result && <div className="mt-6"><ResultCard result={result} onReset={reset} /></div>}
+      {phase === "done" && result && (
+        <div className="mt-6"><ResultCard result={result} download={result.download} onReset={reset} /></div>
+      )}
       {phase === "error" && error && (
         <div className="mt-6">
           <ErrorState code={error.code} message={error.message} onRetry={() => void resolve()} onReset={reset} />

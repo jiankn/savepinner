@@ -15,6 +15,7 @@ const HINTS: Record<string, string> = {
   MEDIA_NOT_FOUND: "The Pin may be deleted, or it has no downloadable image or video.",
   UNSUPPORTED_MEDIA: "This media format is not supported yet.",
   RATE_LIMITED: "Please wait a few seconds before trying again.",
+  DAILY_CAP_REACHED: "One-click downloads reset at midnight UTC — direct links keep working meanwhile.",
   UPSTREAM_BLOCKED: "Pinterest may be temporarily unreachable — retry in a moment.",
   RESOLVE_TIMEOUT: "The request took too long — retry in a moment.",
   NETWORK: "Check your internet connection.",

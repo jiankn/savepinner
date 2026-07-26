@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ApiError, ERROR_DEFS, toErrorResponse } from "@/lib/errors";
-import { formatBytes } from "@/lib/format";
+import { formatBytes, formatEta } from "@/lib/format";
 
 describe("error model (PRD FR-008)", () => {
   it("maps every code to the documented HTTP status", () => {
@@ -12,6 +12,7 @@ describe("error model (PRD FR-008)", () => {
       MEDIA_NOT_FOUND: 404,
       UNSUPPORTED_MEDIA: 422,
       RATE_LIMITED: 429,
+      DAILY_CAP_REACHED: 429,
       UPSTREAM_BLOCKED: 502,
       RESOLVE_TIMEOUT: 504,
       INTERNAL_ERROR: 500,
@@ -43,5 +44,16 @@ describe("formatBytes", () => {
     expect(formatBytes(512)).toBe("512 B");
     expect(formatBytes(284193)).toBe("278 KB");
     expect(formatBytes(25 * 1024 * 1024)).toBe("25.0 MB");
+  });
+});
+
+describe("formatEta", () => {
+  it("formats countdowns coarsely without seconds", () => {
+    expect(formatEta(0)).toBe("under a minute");
+    expect(formatEta(59_000)).toBe("1m");
+    expect(formatEta(24 * 60_000)).toBe("24m");
+    expect(formatEta(3 * 3_600_000)).toBe("3h");
+    expect(formatEta(3 * 3_600_000 + 24 * 60_000)).toBe("3h 24m");
+    expect(formatEta(-5_000)).toBe("under a minute");
   });
 });

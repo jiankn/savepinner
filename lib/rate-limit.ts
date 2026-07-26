@@ -64,7 +64,13 @@ export function acquireConcurrency(key: string, max: number): (() => void) | nul
   };
 }
 
-/** Daily bandwidth budget (in-memory, resets at UTC midnight). */
+/**
+ * Daily bandwidth budget (in-memory, resets at UTC midnight).
+ *
+ * The counter is per-instance, so under multi-instance load the real daily
+ * total can exceed the nominal cap by a small factor — size the cap
+ * conservatively rather than treating it as exact accounting.
+ */
 interface DayBucket {
   day: string;
   bytes: number;
@@ -72,26 +78,56 @@ interface DayBucket {
 
 const bandwidth: DayBucket = { day: currentUtcDay(), bytes: 0 };
 
+/**
+ * Remaining budget below this floor is reported as capped, so /api/resolve
+ * can tell the UI to degrade to direct CDN links before /api/dl starts
+ * rejecting individual files with 429s.
+ */
+const BANDWIDTH_LOW_WATER_BYTES = 8 * 1024 * 1024;
+
+export interface BandwidthState {
+  capped: boolean;
+  /** Epoch ms when the daily budget resets (next UTC midnight). */
+  resetAt: number;
+}
+
 function currentUtcDay(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function tryReserveBandwidth(bytes: number, capBytes: number): boolean {
-  if (bandwidth.day !== currentUtcDay()) {
-    bandwidth.day = currentUtcDay();
+function rolloverIfNeeded(): void {
+  const day = currentUtcDay();
+  if (bandwidth.day !== day) {
+    bandwidth.day = day;
     bandwidth.bytes = 0;
   }
+}
+
+export function bandwidthState(capBytes: number): BandwidthState {
+  rolloverIfNeeded();
+  const now = new Date();
+  return {
+    capped: capBytes - bandwidth.bytes < BANDWIDTH_LOW_WATER_BYTES,
+    resetAt: Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
+  };
+}
+
+export function tryReserveBandwidth(bytes: number, capBytes: number): boolean {
+  rolloverIfNeeded();
   if (bandwidth.bytes + bytes > capBytes) return false;
   bandwidth.bytes += bytes;
   return true;
 }
 
 export function addBandwidth(bytes: number): void {
-  if (bandwidth.day !== currentUtcDay()) {
-    bandwidth.day = currentUtcDay();
-    bandwidth.bytes = 0;
-  }
+  rolloverIfNeeded();
   bandwidth.bytes += bytes;
+}
+
+/** Test-only helper: the day bucket is module-global singleton state. */
+export function resetBandwidthForTests(): void {
+  bandwidth.day = currentUtcDay();
+  bandwidth.bytes = 0;
 }
 
 /** Best-effort client IP extraction for rate limiting (never logged). */

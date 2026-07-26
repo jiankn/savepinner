@@ -33,7 +33,6 @@ export const config = {
   /** Media caps — PRD §11.3: images 25 MB, videos 250 MB. */
   maxImageBytes: num(process.env.MAX_IMAGE_BYTES, 25 * 1024 * 1024),
   maxVideoBytes: num(process.env.MAX_VIDEO_BYTES, 250 * 1024 * 1024),
-  maxPreviewBytes: num(process.env.MAX_PREVIEW_BYTES, 5 * 1024 * 1024),
 
   /** Short-link redirect hops — PRD §11.3: at most 3, re-validated each hop. */
   maxRedirects: 3,
@@ -44,7 +43,12 @@ export const config = {
   rateDownloadPerMin: num(process.env.RATE_DOWNLOAD_PER_MIN, 30),
   downloadGlobalConcurrency: num(process.env.DOWNLOAD_GLOBAL_CONCURRENCY, 64),
   downloadTimeoutMs: num(process.env.DOWNLOAD_TIMEOUT_MS, 120_000),
-  dailyBandwidthCapBytes: num(process.env.DAILY_BANDWIDTH_CAP_BYTES, 10 * 1024 ** 3),
+  /**
+   * Daily fuse for the /api/dl proxy. 2 GB/day keeps a worst month (~62 GB)
+   * safely under the Vercel Hobby 100 GB transfer hard cap, even with some
+   * multi-instance overshoot; the UI degrades to direct CDN links when hit.
+   */
+  dailyBandwidthCapBytes: num(process.env.DAILY_BANDWIDTH_CAP_BYTES, 2 * 1024 ** 3),
 
   /** Feature switches — PRD §10.3: parsers must be independently killable. */
   videoEnabled: !bool(process.env.DISABLE_VIDEO, false),

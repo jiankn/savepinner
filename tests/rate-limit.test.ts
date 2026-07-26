@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   acquireConcurrency,
+  addBandwidth,
+  bandwidthState,
   checkRateLimit,
   getClientIp,
+  resetBandwidthForTests,
   tryReserveBandwidth,
 } from "@/lib/rate-limit";
 
@@ -51,10 +54,31 @@ describe("acquireConcurrency", () => {
 
 describe("tryReserveBandwidth", () => {
   it("rejects reservations beyond the cap", () => {
+    resetBandwidthForTests();
     const cap = 1000;
     expect(tryReserveBandwidth(600, cap)).toBe(true);
     expect(tryReserveBandwidth(600, cap)).toBe(false);
     expect(tryReserveBandwidth(300, cap)).toBe(true);
+  });
+});
+
+describe("bandwidthState", () => {
+  it("flips to capped as the remaining budget falls below the low-water floor", () => {
+    resetBandwidthForTests();
+    const cap = 100 * 1024 * 1024;
+    expect(bandwidthState(cap).capped).toBe(false);
+    addBandwidth(cap - 1024);
+    expect(bandwidthState(cap).capped).toBe(true);
+    resetBandwidthForTests();
+  });
+
+  it("reports the next UTC midnight as the reset time", () => {
+    resetBandwidthForTests();
+    const { resetAt } = bandwidthState(1024);
+    const now = Date.now();
+    expect(resetAt).toBeGreaterThan(now);
+    expect(resetAt - now).toBeLessThanOrEqual(24 * 60 * 60 * 1000);
+    expect(resetAt % (24 * 60 * 60 * 1000)).toBe(0);
   });
 });
 

@@ -12,6 +12,7 @@ export type ErrorCode =
   | "MEDIA_NOT_FOUND"
   | "UNSUPPORTED_MEDIA"
   | "RATE_LIMITED"
+  | "DAILY_CAP_REACHED"
   | "UPSTREAM_BLOCKED"
   | "RESOLVE_TIMEOUT"
   | "INTERNAL_ERROR"
@@ -32,6 +33,11 @@ export const ERROR_DEFS: Record<ErrorCode, ErrorDef> = {
   MEDIA_NOT_FOUND: { status: 404, message: "No downloadable media file was found for this Pin." },
   UNSUPPORTED_MEDIA: { status: 422, message: "This media type is not supported yet." },
   RATE_LIMITED: { status: 429, message: "Too many requests — please try again in a moment." },
+  DAILY_CAP_REACHED: {
+    status: 429,
+    message:
+      "Today's one-click downloads are used up — they reset at midnight UTC. You can still open the file directly from Pinterest's CDN and save it manually.",
+  },
   UPSTREAM_BLOCKED: { status: 502, message: "The source content is temporarily unreachable. Please try again later." },
   RESOLVE_TIMEOUT: { status: 504, message: "The request timed out. Please try again." },
   INTERNAL_ERROR: { status: 500, message: "The service is temporarily unavailable." },

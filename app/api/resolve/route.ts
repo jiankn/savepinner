@@ -4,8 +4,9 @@ import { z } from "zod";
 import { config } from "@/lib/config";
 import { ApiError, toErrorResponse } from "@/lib/errors";
 import { durationBucket, logger } from "@/lib/logger";
-import { acquireConcurrency, checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { acquireConcurrency, bandwidthState, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { resolvePin } from "@/lib/pinterest";
+import type { ResolveResponse } from "@/lib/api-types";
 
 export const runtime = "nodejs";
 
@@ -56,7 +57,13 @@ export async function POST(req: Request) {
       durationMs,
       durationBucket: durationBucket(durationMs),
     });
-    return NextResponse.json(result);
+    // Attach the daily download budget state so the UI can switch to direct
+    // CDN links up front instead of letting users hit 429s on the buttons.
+    const response: ResolveResponse = {
+      ...result,
+      download: bandwidthState(config.dailyBandwidthCapBytes),
+    };
+    return NextResponse.json(response);
   } catch (err) {
     return fail(err);
   } finally {

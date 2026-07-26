@@ -16,3 +16,16 @@ export interface ResolvedMedia {
   thumbnail: string;
   variants: ResolvedVariant[];
 }
+
+export interface DownloadAvailability {
+  /** True when the shared daily download budget is (nearly) exhausted. */
+  capped: boolean;
+  /** Epoch ms when the daily budget resets (next UTC midnight). */
+  resetAt: number;
+}
+
+/** Wire shape of POST /api/resolve/ success responses. */
+export interface ResolveResponse extends ResolvedMedia {
+  /** Optional so older clients and tests without the field keep working. */
+  download?: DownloadAvailability;
+}

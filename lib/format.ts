@@ -16,3 +16,13 @@ export function formatBytes(bytes: number | undefined): string {
   }
   return `${value >= 100 ? Math.round(value) : value.toFixed(1)} ${unit}`;
 }
+
+/** Coarse "resets in 3h 24m" countdown text; never shows seconds. */
+export function formatEta(msFromNow: number): string {
+  const totalMinutes = Math.ceil(Math.max(0, msFromNow) / 60_000);
+  if (totalMinutes < 1) return "under a minute";
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours === 0) return `${minutes}m`;
+  return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+}
