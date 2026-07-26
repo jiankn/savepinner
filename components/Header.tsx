@@ -15,7 +15,7 @@ function NavigationLinks() {
         <Link
           key={item.href}
           href={item.href}
-          className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-brand-blush hover:text-brand"
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-brand-blush hover:text-brand"
         >
           {item.label}
         </Link>
@@ -23,7 +23,7 @@ function NavigationLinks() {
       <span
         aria-disabled="true"
         title="Blog launches in month two"
-        className="px-3 py-2 text-sm text-gray-400"
+        className="px-3 py-1.5 text-sm text-gray-400"
       >
         Blog
       </span>
@@ -34,9 +34,9 @@ function NavigationLinks() {
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-rose-100/80 bg-white/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-18 w-full max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6">
         <Link href="/" aria-label="SavePinner home" className="rounded-lg">
-          <Logo />
+          <Logo size={30} />
         </Link>
 
         <nav aria-label="Main navigation" className="hidden items-center sm:flex">

@@ -64,7 +64,7 @@ export default function MobileMenu({ items }: { items: readonly NavigationItem[]
         ref={triggerRef}
         type="button"
         popoverTarget={MENU_ID}
-        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-gray-800 transition-colors hover:bg-gray-50"
+        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-gray-800 transition-colors hover:bg-gray-50"
       >
         <span className="sr-only">Open navigation menu</span>
         <Image src="/icons/menu.png" alt="" width={24} height={24} aria-hidden="true" />
@@ -87,7 +87,7 @@ export default function MobileMenu({ items }: { items: readonly NavigationItem[]
 
         <section
           aria-labelledby="mobile-menu-heading"
-          className="mobile-nav-panel absolute top-[5.25rem] right-3 max-h-[calc(100dvh-6rem)] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto rounded-2xl bg-white p-3 shadow-[0_8px_24px_rgb(24_24_27/0.16)]"
+          className="mobile-nav-panel absolute top-[4.25rem] right-3 max-h-[calc(100dvh-5rem)] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto rounded-2xl bg-white p-3 shadow-[0_8px_24px_rgb(24_24_27/0.16)]"
         >
           <div className="flex min-h-12 items-center justify-between px-2">
             <h2 id="mobile-menu-heading" className="text-lg font-bold tracking-[-0.02em] text-brand-ink">
