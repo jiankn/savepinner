@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import AdSenseScript from "@/components/AdSenseScript";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import { getAdSenseClient } from "@/lib/adsense";
 import { OG_CARD } from "@/lib/seo";
 import "./globals.css";
 
@@ -20,6 +22,7 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://savepinner.com").r
 const title = "SavePinner — Free Pinterest Downloader";
 const description =
   "Free Pinterest downloader for images, videos, GIFs and Story Pins. No login, no watermark, original HD quality.";
+const adsenseClient = getAdSenseClient();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -30,6 +33,9 @@ export const metadata: Metadata = {
   // legal pages — which only set a title — still ship a valid social card.
   openGraph: { type: "website", siteName: "SavePinner", title, description, images: [OG_CARD] },
   twitter: { card: "summary_large_image", title, description, images: [OG_CARD] },
+  ...(adsenseClient
+    ? { other: { "google-adsense-account": adsenseClient } }
+    : {}),
 };
 
 export default function RootLayout({
@@ -44,6 +50,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        <AdSenseScript />
         <ServiceWorkerRegistration />
       </body>
     </html>

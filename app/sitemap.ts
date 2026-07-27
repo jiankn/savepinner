@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { HREFLANG } from "@/lib/i18n";
 import { LOCALE_PATHS } from "@/lib/locale-content";
+import { TRUST_PATHS, type TrustPageKey } from "@/lib/trust-content";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://savepinner.com").replace(/\/+$/, "");
 
@@ -42,12 +43,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   });
 
+  const trustClusters: Array<{
+    key: TrustPageKey;
+    priority: number;
+  }> = [
+    { key: "about", priority: 0.4 },
+    { key: "privacy", priority: 0.3 },
+  ];
+
+  const trustEntries = trustClusters.flatMap((cluster) => {
+    const languages: Record<string, string> = {
+      [HREFLANG.en]: `${siteUrl}${TRUST_PATHS.en[cluster.key]}`,
+      [HREFLANG.es]: `${siteUrl}${TRUST_PATHS.es[cluster.key]}`,
+      [HREFLANG.id]: `${siteUrl}${TRUST_PATHS.id[cluster.key]}`,
+      [HREFLANG.pt]: `${siteUrl}${TRUST_PATHS.pt[cluster.key]}`,
+      "x-default": `${siteUrl}${TRUST_PATHS.en[cluster.key]}`,
+    };
+
+    return Object.values(TRUST_PATHS).map((paths) => ({
+      url: `${siteUrl}${paths[cluster.key]}`,
+      lastModified: lastMeaningfulUpdate,
+      changeFrequency: "yearly" as const,
+      priority: cluster.priority,
+      alternates: { languages },
+    }));
+  });
+
   const englishOnly = [
     { path: "/pinterest-gif-downloader/", priority: 0.8, changeFrequency: "weekly" as const },
     { path: "/pinterest-story-downloader/", priority: 0.8, changeFrequency: "weekly" as const },
     { path: "/pinterest-downloader-iphone/", priority: 0.7, changeFrequency: "monthly" as const },
     { path: "/pinterest-downloader-android/", priority: 0.7, changeFrequency: "monthly" as const },
-    { path: "/privacy/", priority: 0.3, changeFrequency: "yearly" as const },
     { path: "/terms/", priority: 0.3, changeFrequency: "yearly" as const },
     { path: "/dmca/", priority: 0.3, changeFrequency: "yearly" as const },
     { path: "/contact/", priority: 0.4, changeFrequency: "yearly" as const },
@@ -58,5 +84,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: page.priority,
   }));
 
-  return [...localizedEntries, ...englishOnly];
+  return [...localizedEntries, ...trustEntries, ...englishOnly];
 }

@@ -89,6 +89,7 @@ export interface UiMessages {
     tools: string;
     legal: string;
     languages: string;
+    about: string;
     privacy: string;
     terms: string;
     dmca: string;
@@ -176,6 +177,7 @@ const EN: UiMessages = {
     tools: "Tools",
     legal: "Legal",
     languages: "Languages",
+    about: "About",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
     dmca: "DMCA",
@@ -259,6 +261,7 @@ const ES: UiMessages = {
     tools: "Herramientas",
     legal: "Legal",
     languages: "Idiomas",
+    about: "Acerca de",
     privacy: "Política de privacidad",
     terms: "Términos del servicio",
     dmca: "DMCA",
@@ -344,6 +347,7 @@ const ID: UiMessages = {
     tools: "Tool",
     legal: "Legal",
     languages: "Bahasa",
+    about: "Tentang",
     privacy: "Kebijakan Privasi",
     terms: "Ketentuan Layanan",
     dmca: "DMCA",
@@ -427,6 +431,7 @@ const PT: UiMessages = {
     tools: "Ferramentas",
     legal: "Jurídico",
     languages: "Idiomas",
+    about: "Sobre",
     privacy: "Política de Privacidade",
     terms: "Termos de Uso",
     dmca: "DMCA",

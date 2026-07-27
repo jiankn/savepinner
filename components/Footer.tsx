@@ -1,8 +1,12 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import type { Locale, UiMessages } from "@/lib/i18n";
-import { languageLinks, legalLinks, toolLinks } from "@/lib/navigation";
-import type { LocalePageKey } from "@/lib/locale-content";
+import {
+  languageLinks,
+  legalLinks,
+  toolLinks,
+  type LanguagePageKey,
+} from "@/lib/navigation";
 
 export default function Footer({
   locale,
@@ -11,10 +15,10 @@ export default function Footer({
 }: {
   locale: Locale;
   t: UiMessages;
-  pageKey?: LocalePageKey | "other";
+  pageKey?: LanguagePageKey;
 }) {
   const tools = toolLinks(locale, t);
-  const legal = legalLinks(t);
+  const legal = legalLinks(locale, t);
   const languages = languageLinks(locale, pageKey);
 
   return (

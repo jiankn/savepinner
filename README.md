@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SavePinner
 
-## Getting Started
+SavePinner is a Next.js web utility for resolving public Pinterest Pin URLs.
 
-First, run the development server:
+## Local development
+
+Copy `.env.example` to `.env.local`, set a development `TOKEN_SECRET`, then run:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Quality checks:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm test
+npm run typecheck
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Production configuration
 
-## Learn More
+Set `NEXT_PUBLIC_SITE_URL` and a strong `TOKEN_SECRET` in Vercel. Operational
+limits in `.env.example` are optional and have safe defaults in `lib/config.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+### AdSense
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+AdSense serving is disabled by default. Do not use placeholder publisher
+identifiers. The account identifiers can be configured for ownership
+verification and `ads.txt` while `ENABLE_ADSENSE=false` prevents ad requests.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Before enabling it:
 
-## Deploy on Vercel
+1. Clear all Google Publisher Policy blockers on the product pages.
+2. Move the production deployment to Vercel Pro (or another commercial plan);
+   Vercel Hobby does not allow sites that include AdSense.
+3. Add `savepinner.com` to AdSense and complete Google's site review.
+4. In AdSense **Privacy & messaging**, publish a European regulations message
+   using Google's certified CMP, or configure another Google-certified TCF CMP.
+5. Copy the exact account values into Vercel:
+   - `NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT=ca-pub-0000000000000000`
+   - `ADSENSE_PUBLISHER_ID=pub-0000000000000000`
+6. Redeploy with `ENABLE_ADSENSE=false`, then verify:
+   - the page source contains `google-adsense-account`;
+   - `https://savepinner.com/ads.txt` returns HTTP 200 and the exact seller line;
+7. Only after the policy and CMP checks pass, set `ENABLE_ADSENSE=true`,
+   redeploy, and verify:
+   - consent choices appear for EEA, UK and Swiss traffic;
+   - ads do not overlap navigation, download controls or result buttons.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+When the identifiers are absent or invalid, no verification meta tag is
+rendered and `/ads.txt` returns a real HTTP 404. The ad script is rendered only
+when both a valid client id and `ENABLE_ADSENSE=true` are present.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel's Acceptable Use Policy separately prohibits scraping, proxying and
+media hosting for hot-linking. A paid plan does not itself waive that rule.
+Obtain written approval from Vercel or move the resolving/download proxy to a
+provider whose terms expressly permit this workload before treating the
+hosting layer as production-ready.
+
+## Public trust pages
+
+Privacy and About pages are published in English, Spanish, Indonesian and
+Brazilian Portuguese. The footer, canonical URLs, hreflang annotations and
+sitemap keep each language cluster connected.

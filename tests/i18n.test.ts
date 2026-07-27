@@ -4,6 +4,8 @@ import { LOCALE_PAGES, LOCALE_PATHS, LOCALE_VIDEO_SLUGS } from "@/lib/locale-con
 import { languageLinks, navItems } from "@/lib/navigation";
 import { TOOL_PAGES } from "@/lib/page-content";
 import { getLocalePageSeo, getPageSeo } from "@/lib/seo";
+import { getTrustPageSeo } from "@/lib/seo";
+import { TRUST_PAGES, TRUST_PATHS } from "@/lib/trust-content";
 
 describe("locale registry", () => {
   it("prefixes every locale except English", () => {
@@ -114,6 +116,24 @@ describe("hreflang", () => {
     expect(getLocalePageSeo(LOCALE_PAGES.es.video).alternates?.canonical).toBe(LOCALE_PATHS.es.video);
     expect(getLocalePageSeo(LOCALE_PAGES.pt.home).alternates?.canonical).toBe("/pt/");
   });
+
+  it("cross-links localized Privacy and About pages", () => {
+    for (const key of ["privacy", "about"] as const) {
+      const expected = {
+        en: TRUST_PATHS.en[key],
+        es: TRUST_PATHS.es[key],
+        id: TRUST_PATHS.id[key],
+        "pt-BR": TRUST_PATHS.pt[key],
+        "x-default": TRUST_PATHS.en[key],
+      };
+
+      for (const locale of LOCALES) {
+        const page = TRUST_PAGES[locale][key];
+        expect(page.path, `${locale}/${key}`).toBe(TRUST_PATHS[locale][key]);
+        expect(getTrustPageSeo(page).alternates?.languages).toEqual(expected);
+      }
+    }
+  });
 });
 
 describe("navigation", () => {
@@ -130,5 +150,16 @@ describe("navigation", () => {
     expect(links.find((l) => l.locale === "id")?.href).toBe(LOCALE_PATHS.id.video);
     expect(links.find((l) => l.locale === "en")?.href).toBe(TOOL_PAGES.video.path);
     expect(links.find((l) => l.locale === "es")?.current).toBe(true);
+  });
+
+  it("switches trust pages to their localized slugs", () => {
+    const links = languageLinks("pt", "privacy");
+    expect(links.find((l) => l.locale === "es")?.href).toBe(
+      TRUST_PATHS.es.privacy,
+    );
+    expect(links.find((l) => l.locale === "id")?.href).toBe(
+      TRUST_PATHS.id.privacy,
+    );
+    expect(links.find((l) => l.locale === "pt")?.current).toBe(true);
   });
 });

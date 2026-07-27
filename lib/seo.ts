@@ -3,6 +3,11 @@ import { config } from "@/lib/config";
 import { HREFLANG, type Locale } from "@/lib/i18n";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES, type PageKey, type ToolPageContent } from "@/lib/page-content";
+import {
+  TRUST_PATHS,
+  type TrustPageContent,
+  type TrustPageKey,
+} from "@/lib/trust-content";
 
 /**
  * Social card, shared by every page and both networks.
@@ -60,6 +65,42 @@ export function getPageSeo(slug: PageKey, locale: Locale = "en"): Metadata {
 
 export function getLocalePageSeo(page: ToolPageContent): Metadata {
   return buildMetadata(page);
+}
+
+function trustAlternateLanguages(key: TrustPageKey): Record<string, string> {
+  return {
+    [HREFLANG.en]: TRUST_PATHS.en[key],
+    [HREFLANG.es]: TRUST_PATHS.es[key],
+    [HREFLANG.id]: TRUST_PATHS.id[key],
+    [HREFLANG.pt]: TRUST_PATHS.pt[key],
+    "x-default": TRUST_PATHS.en[key],
+  };
+}
+
+export function getTrustPageSeo(page: TrustPageContent): Metadata {
+  return {
+    title: { absolute: page.seoTitle },
+    description: page.metaDescription,
+    alternates: {
+      canonical: page.path,
+      languages: trustAlternateLanguages(page.key),
+    },
+    openGraph: {
+      type: "website",
+      locale: OG_LOCALES[page.locale],
+      siteName: "SavePinner",
+      title: page.seoTitle,
+      description: page.metaDescription,
+      url: page.path,
+      images: [OG_CARD],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: page.seoTitle,
+      description: page.metaDescription,
+      images: [OG_CARD],
+    },
+  };
 }
 
 function buildMetadata(page: ToolPageContent): Metadata {

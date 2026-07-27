@@ -1,27 +1,36 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import { getMessages } from "@/lib/i18n";
+import { getMessages, HREFLANG, type Locale } from "@/lib/i18n";
+import type { TrustPageKey } from "@/lib/trust-content";
 
 /**
  * Shared skeleton for legal/help content pages. Keeps Header/Footer and
  * typography consistent; every page supplies its own metadata and H1.
  */
 export default function ContentPage({
+  locale = "en",
+  pageKey = "other",
   title,
   intro,
   children,
 }: {
+  locale?: Locale;
+  pageKey?: TrustPageKey | "other";
   title: string;
   intro?: string;
   children: React.ReactNode;
 }) {
-  // Legal and help pages are English-only for now.
-  const t = getMessages("en");
+  const t = getMessages(locale);
+  const isTranslated = locale !== "en";
 
   return (
     <>
-      <Header locale="en" t={t} />
-      <main id="main-content" className="flex-1">
+      <Header locale={locale} t={t} />
+      <main
+        id="main-content"
+        className="flex-1"
+        lang={isTranslated ? HREFLANG[locale] : undefined}
+      >
         <div className="mx-auto w-full max-w-3xl px-4 py-12">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
           {intro && <p className="mt-3 text-base text-gray-600">{intro}</p>}
@@ -30,7 +39,7 @@ export default function ContentPage({
           </div>
         </div>
       </main>
-      <Footer locale="en" t={t} />
+      <Footer locale={locale} t={t} pageKey={pageKey} />
     </>
   );
 }

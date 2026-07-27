@@ -6,6 +6,7 @@
 import { LOCALE_LABELS, type Locale, type UiMessages } from "@/lib/i18n";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES } from "@/lib/page-content";
+import { TRUST_PATHS, type TrustPageKey } from "@/lib/trust-content";
 
 export interface NavItem {
   href: string;
@@ -49,10 +50,14 @@ export function toolLinks(locale: Locale, t: UiMessages): NavItem[] {
   ];
 }
 
-/** Legal pages are English-only; they are linked from every locale footer. */
-export function legalLinks(t: UiMessages): NavItem[] {
+/**
+ * Privacy and About are localized trust pages. Terms, DMCA and Contact remain
+ * English until their full legal copy is translated and reviewed.
+ */
+export function legalLinks(locale: Locale, t: UiMessages): NavItem[] {
   return [
-    { href: "/privacy/", label: t.footer.privacy },
+    { href: TRUST_PATHS[locale].about, label: t.footer.about },
+    { href: TRUST_PATHS[locale].privacy, label: t.footer.privacy },
     { href: "/terms/", label: t.footer.terms },
     { href: "/dmca/", label: t.footer.dmca },
     { href: "/contact/", label: t.footer.contact },
@@ -70,7 +75,18 @@ export interface LanguageLink {
  * Switcher targets stay on the same page type, so a visitor reading the
  * Spanish video page lands on the Indonesian video page, not its home.
  */
-export function languageLinks(locale: Locale, pageKey: LocalePageKey | "other"): LanguageLink[] {
+export type LanguagePageKey = LocalePageKey | TrustPageKey | "other";
+
+export function languageLinks(locale: Locale, pageKey: LanguagePageKey): LanguageLink[] {
+  if (pageKey === "privacy" || pageKey === "about") {
+    return (Object.keys(TRUST_PATHS) as Locale[]).map((targetLocale) => ({
+      locale: targetLocale,
+      href: TRUST_PATHS[targetLocale][pageKey],
+      label: LOCALE_LABELS[targetLocale],
+      current: targetLocale === locale,
+    }));
+  }
+
   const key: LocalePageKey = pageKey === "other" ? "home" : pageKey;
   return [
     { locale: "en" as const, href: TOOL_PAGES[key].path },
