@@ -1,10 +1,9 @@
 import type { GuideSection } from "@/lib/page-content";
 
 /**
- * Long-form prose for the device pages, sitting between the How-to steps and
- * the FAQ. Headings are h2 so the page keeps one h1 and a flat, scannable
- * outline — these sections are the substance a device page needs in order not
- * to read as a rewrite of the home page.
+ * Query-specific long-form prose, sitting between the How-to steps and the
+ * FAQ. The visible section heading is h2 and each topic is h3, so every page
+ * keeps one h1 and a flat, scannable outline.
  */
 export default function Guide({ sections }: { sections: GuideSection[] }) {
   return (

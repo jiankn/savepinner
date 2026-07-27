@@ -22,11 +22,9 @@ export interface RelatedTool {
 /**
  * Prose block rendered between the How-to steps and the FAQ.
  *
- * Only the device pages use this. They target the same tool as the home page
- * from a different angle, so without genuinely device-specific material they
- * would be near-duplicates of it — which is worse for the site than not
- * publishing them at all. Everything here has to be something a visitor on
- * that device actually needs to know.
+ * Used when a landing page needs genuinely query-specific guidance beyond the
+ * shared downloader UI. The prose must answer the page's own search intent;
+ * generic paragraphs repeated across tools would create near-duplicates.
  */
 export interface GuideSection {
   heading: string;
@@ -39,6 +37,8 @@ export type PageKey = "home" | "video" | "gif" | "story" | "iphone" | "android";
 export interface ToolPageContent {
   slug: PageKey;
   path: string;
+  /** ISO date of the page's last substantive, indexable change. */
+  lastModified: string;
   /** Owning locale; drives <div lang> and hreflang generation. */
   locale: Locale;
   /** Locale-correct path of the video tool, used by the home cross-link. */
@@ -51,7 +51,7 @@ export interface ToolPageContent {
   placeholder: string;
   howToTitle: string;
   steps: [ToolStep, ToolStep, ToolStep];
-  /** Device pages only — see GuideSection. */
+  /** Query-specific long-form guidance — see GuideSection. */
   sections?: GuideSection[];
   faq: FaqItem[];
   related: RelatedTool[];
@@ -103,6 +103,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   home: {
     slug: "home",
     path: "/",
+    lastModified: "2026-07-28",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     // Brand prefix dropped: it cost 13 chars that the target keyword needs up
@@ -181,6 +182,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   video: {
     slug: "video",
     path: "/pinterest-video-downloader/",
+    lastModified: "2026-07-28",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Free Pinterest Video Downloader — Save HD Videos Online",
@@ -204,6 +206,47 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       {
         title: "Choose a video quality",
         description: "Select 1080P, 720P, 480P or 360P when that quality is available, then save the MP4 file.",
+      },
+    ],
+    sections: [
+      {
+        heading: "What the quality choices actually mean",
+        body: [
+          "SavePinner lists the video files that Pinterest makes available for that public Pin. A result may include several MP4 renditions, or only one. The number shown beside a choice describes that file's available resolution; it is not an artificial upscale created by this site.",
+          "Choose the largest rendition when you want the best source available for offline viewing or editing. Choose a smaller rendition when mobile data, storage space or sharing speed matters more. The exact choices vary because creators upload different source files and Pinterest does not generate the same set of renditions for every Pin.",
+          "Pinterest can also play segmented HLS or DASH streams inside its page. Those streams are many small pieces rather than one progressive file, so SavePinner only lists complete MP4, MOV or WebM renditions it can verify. A Pin can therefore play on Pinterest while exposing no single downloadable video file. Some source renditions may also be silent; the tool does not invent or merge an audio track that is not part of the returned file.",
+        ],
+        bullets: [
+          "1080P appears only when Pinterest exposes a 1080P rendition for that Pin.",
+          "A lower-resolution upload cannot be converted into real HD by selecting a larger label.",
+          "Results are delivered as the media format Pinterest exposes, normally MP4 for video Pins.",
+        ],
+      },
+      {
+        heading: "Why a video Pin may return an image",
+        body: [
+          "A Pinterest page can show a moving preview while also exposing a separate cover image, and some links shared as “videos” point to an article Pin whose primary downloadable asset is an image. SavePinner labels the media it can verify instead of renaming a cover image as a video.",
+          "Open the Pin itself and confirm that it plays on Pinterest before trying again. If the Pin has been removed, belongs to a private or secret board, or is blocked behind a sign-in screen, its media cannot be resolved from a public link. A public Pin link is required; a board, profile, search-results or home-feed URL is not a single downloadable Pin.",
+        ],
+      },
+      {
+        heading: "Short links, country domains and failed results",
+        body: [
+          "Both full pinterest.com/pin/ URLs and pin.it share links are accepted. Country-domain Pin links are accepted too. A short link has to redirect to a live public Pin, so an expired share link or a redirect that stops at a Pinterest sign-in page can fail even though its format looks correct.",
+          "If no video appears, copy the link again from the Pin's Share menu rather than from the browser address bar inside a feed. Then check that the same link opens in a private browser window without your Pinterest account. That simple test separates a private-access problem from a malformed link.",
+        ],
+        bullets: [
+          "Use a single Pin URL, not a board or profile URL.",
+          "Confirm the Pin plays and is public before retrying.",
+          "If only an image is listed, the public page did not expose a downloadable video rendition.",
+        ],
+      },
+      {
+        heading: "Saving a video responsibly",
+        body: [
+          "Downloading a file does not transfer copyright or permission to republish it. Save videos you created, material you have permission to use, or content whose license allows your intended use. Keep the creator's attribution when sharing is permitted, and do not use the tool to bypass access controls.",
+          "SavePinner is an independent utility and is not affiliated with Pinterest. It does not remove a creator-applied watermark or modify the media file; it returns an available source file without adding a SavePinner watermark. If a rights holder asks you to remove a copy, stop using and distributing it.",
+        ],
       },
     ],
     faq: [
@@ -237,6 +280,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   gif: {
     slug: "gif",
     path: "/pinterest-gif-downloader/",
+    lastModified: "2026-07-28",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Pinterest GIF Downloader — Save Animated GIFs in HD",
@@ -260,6 +304,46 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       {
         title: "Save the animated file",
         description: "Download the original-quality animated GIF directly to your device.",
+      },
+    ],
+    sections: [
+      {
+        heading: "A GIF Pin is not always a .gif file",
+        body: [
+          "Pinterest uses several media formats for animation. A Pin described as a GIF may expose a true animated GIF, a looping MP4 video, or only a static preview image. These formats can look nearly identical while they play in the feed, but they behave differently after saving.",
+          "SavePinner reports the media type it can verify from the public Pin. It does not turn a still preview into an animation or rename an MP4 as a GIF. If an MP4 rendition is the only animated source available, use the video result; converting it to a .gif file would usually make it larger and reduce color quality.",
+        ],
+        bullets: [
+          "GIF: animation stored in a .gif file, usually without audio.",
+          "Looping MP4: video animation with better compression, saved as .mp4.",
+          "Static preview: a JPG, PNG or WebP cover that does not contain animation.",
+        ],
+      },
+      {
+        heading: "How to check that the download is animated",
+        body: [
+          "Look at the format label and filename before saving. A result ending in .gif should animate in a compatible browser, messaging app or image viewer. A result ending in .mp4 is a video and should be opened in a video player. If the result ends in .jpg, .png or .webp, it is a still image even if the Pinterest feed showed movement elsewhere on the page.",
+          "Some photo apps display only the first frame of an animated GIF in their grid. Open the file itself or test it in a browser before assuming the animation was lost. On iPhone, saved GIFs can appear in the Animated album in Photos; on Android, support depends on the gallery app, while modern browsers reliably play the file.",
+        ],
+      },
+      {
+        heading: "Why only a thumbnail may be available",
+        body: [
+          "Pinterest may remove the original animation, the creator may replace or delete the Pin, or the public page may expose only its cover image. Secret-board and private-account media cannot be accessed from a public link. In those cases, a downloader cannot reconstruct missing frames from one thumbnail.",
+          "Copy the URL again from the Pin's Share menu and make sure it opens in a private browser window. If the animation still plays there, retry the Pin URL rather than a board or feed URL. If it does not play there, the public source no longer provides an animated asset and the static result is the honest output.",
+        ],
+        bullets: [
+          "Use a public Pin link or a pin.it link that resolves to one.",
+          "Do not paste a board, profile or search-results URL.",
+          "Treat a static result as a preview, not as a damaged GIF.",
+        ],
+      },
+      {
+        heading: "Using downloaded animations",
+        body: [
+          "A downloadable file is not automatically free to repost or use commercially. Save animations you created, files you have permission to use, or work covered by a license that fits your purpose. Keep attribution where the creator or license requires it.",
+          "SavePinner is not affiliated with Pinterest and does not remove creator-applied branding. It returns the media source that the public Pin exposes without adding a SavePinner watermark. The creator or rights holder still controls how the work may be reused.",
+        ],
       },
     ],
     faq: [
@@ -293,15 +377,16 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   story: {
     slug: "story",
     path: "/pinterest-story-downloader/",
+    lastModified: "2026-07-28",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Pinterest Story Downloader — Download Story Pins Online",
     metaDescription:
-      "Download Pinterest Story Pins for free. Save stories in HD quality. No login required. Fast Pinterest story downloader tool.",
+      "Download media from public Pinterest Story and Idea Pins. Save available images or videos online for free, with no login required.",
     keywords: ["pinterest story downloader"],
     h1: "Pinterest Story Downloader — Download Story Pins",
     subtitle:
-      "Download Pinterest Story Pins in HD quality for free. No login or sign-up required.",
+      "Save the available images or videos from public Pinterest Story and Idea Pins. No login or sign-up required.",
     placeholder: "Paste Pinterest Story Pin link here...",
     howToTitle: "How to Download Pinterest Story Pins — 3 Easy Steps",
     steps: [
@@ -315,7 +400,47 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       },
       {
         title: "Download the story",
-        description: "Choose an available HD video quality and save the Story Pin to your device.",
+        description: "Choose an available image or video result and save that file to your device.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Story Pins and Idea Pins: what the name means now",
+        body: [
+          "Pinterest has used the names Story Pins and Idea Pins for a multi-page Pin format. Older articles and searches still use both terms, while a current shared link normally looks like an ordinary /pin/ URL. SavePinner therefore works from the public Pin link rather than relying on a label in the URL.",
+          "A multi-page Pin can contain still images, video clips or a mixture of both. The result depends on the media Pinterest exposes for the page represented by the public link. The tool does not assume every Story or Idea Pin is a video, and it does not combine separate pages into a new movie.",
+        ],
+      },
+      {
+        heading: "What you may receive from a Story or Idea Pin",
+        body: [
+          "When the public Pin exposes a video rendition, SavePinner shows the available MP4 quality choices. When it exposes an image, it shows image sizes instead. A cover image can also exist alongside video, so read the format and quality label before choosing a file.",
+          "Multi-page posts are not always delivered as one package. Pinterest may expose only the selected page or the primary media item through the public Pin response. SavePinner lists what it can verify and does not claim that a single result contains every page, sticker, caption or interactive element from the Pinterest presentation.",
+        ],
+        bullets: [
+          "Image page: download an available JPG, PNG or WebP rendition.",
+          "Video page: download an available MP4 rendition.",
+          "Mixed or multi-page post: results may represent only the publicly exposed primary item.",
+        ],
+      },
+      {
+        heading: "If the expected page or video is missing",
+        body: [
+          "First copy the URL from the Pin's Share menu and check that it opens in a private browser window. Secret-board, private-account, deleted and sign-in-gated Pins do not expose their media to a public request. A board, profile or feed URL also does not identify one Story or Idea Pin.",
+          "If the Pin opens but only a cover image is returned, the public response did not provide a downloadable video for that item. If several pages are visible on Pinterest but only one result is returned, try sharing the specific page when Pinterest offers that option. SavePinner will not fabricate missing pages or bypass account access.",
+        ],
+        bullets: [
+          "Use the individual public Pin URL, not its board.",
+          "Expect the output type to match the exposed media, not the old “Story” label.",
+          "Retrying cannot recover media that Pinterest no longer exposes publicly.",
+        ],
+      },
+      {
+        heading: "Permissions still apply to every page",
+        body: [
+          "Story and Idea Pins often combine a creator's photography, video, text and music. Downloading the visible media does not grant permission to repost the complete work or use its parts commercially. Save only your own material, content you have permission to use, or work licensed for your intended purpose.",
+          "SavePinner is independent from Pinterest. It does not remove creator-applied branding or ownership information, and it does not add a SavePinner watermark to the returned file. When sharing is allowed, preserve attribution and the context the rights holder requires.",
+        ],
       },
     ],
     faq: [
@@ -325,7 +450,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       },
       {
         question: "Are Pinterest Story Pins downloaded as video?",
-        answer: "Story Pins with downloadable video are returned as video files with the available quality options.",
+        answer: "Not always. A Story or Idea Pin may expose an image, a video, or mixed pages. SavePinner labels and returns the media Pinterest makes available for the public Pin.",
       },
       {
         question: "Can I download Pinterest Story Pins on iPhone?",
@@ -349,6 +474,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   iphone: {
     slug: "iphone",
     path: "/pinterest-downloader-iphone/",
+    lastModified: "2026-07-28",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Pinterest Downloader for iPhone — Save Pins in HD",
@@ -411,8 +537,8 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       {
         heading: "You do not need an app for this",
         body: [
-          "Searches for a Pinterest downloader on iPhone often lead to App Store listings or configuration profiles. You do not need either. Apple does not allow apps whose main purpose is downloading media from other services, so listings that claim to do it tend to be short-lived, ad-heavy, or quietly doing something else.",
-          "A browser page has no access to your photos, contacts or location, cannot run in the background, and disappears the moment you close the tab. For a task you might do a few times a month, that is a far better trade than installing something.",
+          "Searches for a Pinterest downloader on iPhone often lead to app listings or configuration profiles, but neither is required for this workflow. The browser can resolve a public Pin link and hand the selected file to iOS without an extra account or a permanently installed downloader.",
+          "You stay in control of the browser permissions you approve and of the individual file you save. There is no profile to install and no background service to leave running. For an occasional download, keeping the task in a browser tab is the simpler option.",
         ],
       },
       {
@@ -472,6 +598,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   android: {
     slug: "android",
     path: "/pinterest-downloader-android/",
+    lastModified: "2026-07-27",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Pinterest Downloader for Android — No App Needed",

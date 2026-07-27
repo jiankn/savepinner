@@ -133,17 +133,52 @@ function buildMetadata(page: ToolPageContent): Metadata {
 }
 
 export function getPageJsonLd(page: ToolPageContent) {
+  const organizationId = `${config.siteUrl}/#organization`;
+  const websiteId = `${config.siteUrl}/#website`;
+  const siteEntities =
+    page.slug === "home" && page.locale === "en"
+      ? [
+          {
+            "@type": "Organization",
+            "@id": organizationId,
+            name: "SavePinner",
+            url: config.siteUrl,
+            logo: {
+              "@type": "ImageObject",
+              url: `${config.siteUrl}/icon.png`,
+            },
+          },
+          {
+            "@type": "WebSite",
+            "@id": websiteId,
+            name: "SavePinner",
+            url: config.siteUrl,
+            inLanguage: "en",
+            publisher: { "@id": organizationId },
+          },
+        ]
+      : [];
+
   return {
     "@context": "https://schema.org",
     "@graph": [
+      ...siteEntities,
       {
         "@type": "WebApplication",
+        "@id": `${config.siteUrl}${page.path}#webapplication`,
         name: "SavePinner",
         description: page.metaDescription,
         url: `${config.siteUrl}${page.path}`,
         applicationCategory: "Multimedia",
         operatingSystem: "All",
         inLanguage: HREFLANG[page.locale],
+        isAccessibleForFree: true,
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        ...(page.locale === "en" ? { provider: { "@id": organizationId } } : {}),
       },
       {
         "@type": "FAQPage",

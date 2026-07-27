@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
+import { PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
 import { buildImageRenditions } from "@/lib/pinterest";
 import { TOOL_PAGES } from "@/lib/page-content";
+import { getPageJsonLd } from "@/lib/seo";
 import { parseDownloadTarget } from "@/app/api/dl/route";
 
 describe("PRD v2 image renditions", () => {
@@ -75,10 +77,20 @@ describe("PRD v2 page matrix", () => {
   });
 
   it("lists every indexable page in the sitemap", () => {
-    const urls = new Set(sitemap().map((entry) => new URL(entry.url).pathname));
+    const entries = sitemap();
+    const urls = new Set(entries.map((entry) => new URL(entry.url).pathname));
     for (const page of Object.values(TOOL_PAGES)) {
       expect(urls.has(page.path), `sitemap missing ${page.path}`).toBe(true);
+      expect(entries.find((entry) => new URL(entry.url).pathname === page.path)?.lastModified)
+        .toBe(page.lastModified);
     }
+    expect(urls.has(PINTEREST_DOWNLOADER_HUB.path)).toBe(true);
+  });
+
+  it("keeps the generic category keyword on a separate hub", () => {
+    expect(PINTEREST_DOWNLOADER_HUB.path).toBe("/pinterest-downloader/");
+    expect(PINTEREST_DOWNLOADER_HUB.seoTitle.startsWith("Pinterest Downloader")).toBe(true);
+    expect(TOOL_PAGES.home.seoTitle).toBe("Free Pinterest Image Downloader — HD, No Watermark");
   });
 
   /**
@@ -105,5 +117,61 @@ describe("PRD v2 page matrix", () => {
         expect(homeQuestions.has(item.question), item.question).toBe(false);
       }
     });
+  });
+
+  describe("media-intent pages", () => {
+    const mediaPages = [TOOL_PAGES.video, TOOL_PAGES.gif, TOOL_PAGES.story];
+
+    it.each(mediaPages)("$slug carries substantial intent-specific guidance", (page) => {
+      const words = (page.sections ?? [])
+        .flatMap((section) => [
+          section.heading,
+          ...section.body,
+          ...(section.bullets ?? []),
+        ])
+        .join(" ")
+        .split(/\s+/).length;
+
+      expect(page.sections?.length ?? 0).toBeGreaterThanOrEqual(4);
+      expect(words).toBeGreaterThan(300);
+    });
+
+    it("does not pretend every Story Pin or GIF is one fixed format", () => {
+      const videoText = JSON.stringify(TOOL_PAGES.video);
+      const storyText = JSON.stringify(TOOL_PAGES.story);
+      const gifText = JSON.stringify(TOOL_PAGES.gif);
+
+      expect(videoText).toContain("HLS");
+      expect(videoText).toContain("audio track");
+      expect(storyText).toContain("image");
+      expect(storyText).toContain("video");
+      expect(gifText).toContain("looping MP4");
+      expect(gifText).toContain("static");
+    });
+  });
+});
+
+describe("homepage structured data", () => {
+  it("identifies the site, operator and real free web application", () => {
+    const graph = getPageJsonLd(TOOL_PAGES.home)["@graph"];
+    const types = graph.map((entity) => entity["@type"]);
+
+    expect(types).toEqual([
+      "Organization",
+      "WebSite",
+      "WebApplication",
+      "FAQPage",
+    ]);
+    expect(JSON.stringify(graph)).toContain("https://savepinner.com/icon.png");
+    expect(JSON.stringify(graph)).not.toContain("aggregateRating");
+    expect(JSON.stringify(graph)).not.toContain("\"review\"");
+  });
+
+  it("does not repeat site-level entities on every tool page", () => {
+    const types = getPageJsonLd(TOOL_PAGES.video)["@graph"].map(
+      (entity) => entity["@type"],
+    );
+
+    expect(types).toEqual(["WebApplication", "FAQPage"]);
   });
 });

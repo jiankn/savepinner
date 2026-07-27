@@ -10,6 +10,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Canonical URLs use a trailing slash (PRD §8.1), e.g. /how-to-use/.
   trailingSlash: true,
+  // Multiple locale-aware root layouts need one routing-level 404 document.
+  experimental: {
+    globalNotFound: true,
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

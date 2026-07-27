@@ -88,6 +88,7 @@ const ES_HOME: ToolPageContent = {
   slug: "home",
   locale: "es",
   path: LOCALE_PATHS.es.home,
+  lastModified: "2026-07-27",
   videoPath: LOCALE_PATHS.es.video,
   seoTitle: "Descargar Imágenes de Pinterest HD Gratis sin Marca de Agua",
   metaDescription:
@@ -154,6 +155,7 @@ const ES_VIDEO: ToolPageContent = {
   slug: "video",
   locale: "es",
   path: LOCALE_PATHS.es.video,
+  lastModified: "2026-07-27",
   videoPath: LOCALE_PATHS.es.video,
   seoTitle: "Descargar Vídeos de Pinterest Gratis — Calidad HD Online",
   metaDescription:
@@ -219,6 +221,7 @@ const ID_HOME: ToolPageContent = {
   slug: "home",
   locale: "id",
   path: LOCALE_PATHS.id.home,
+  lastModified: "2026-07-27",
   videoPath: LOCALE_PATHS.id.video,
   seoTitle: "Download Gambar Pinterest Gratis HD Tanpa Watermark",
   metaDescription:
@@ -285,6 +288,7 @@ const ID_VIDEO: ToolPageContent = {
   slug: "video",
   locale: "id",
   path: LOCALE_PATHS.id.video,
+  lastModified: "2026-07-27",
   videoPath: LOCALE_PATHS.id.video,
   seoTitle: "Pinterest Video Download — Simpan Video Pinterest HD Gratis",
   metaDescription:
@@ -349,6 +353,7 @@ const PT_HOME: ToolPageContent = {
   slug: "home",
   locale: "pt",
   path: LOCALE_PATHS.pt.home,
+  lastModified: "2026-07-27",
   videoPath: LOCALE_PATHS.pt.video,
   seoTitle: "Baixar Imagens do Pinterest Grátis em HD sem Marca d'Água",
   metaDescription:
@@ -415,6 +420,7 @@ const PT_VIDEO: ToolPageContent = {
   slug: "video",
   locale: "pt",
   path: LOCALE_PATHS.pt.video,
+  lastModified: "2026-07-27",
   videoPath: LOCALE_PATHS.pt.video,
   seoTitle: "Baixar Vídeo do Pinterest Grátis — Qualidade HD Online",
   metaDescription:

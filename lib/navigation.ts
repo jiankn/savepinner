@@ -4,6 +4,7 @@
  */
 
 import { LOCALE_LABELS, type Locale, type UiMessages } from "@/lib/i18n";
+import { PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES } from "@/lib/page-content";
 import { TRUST_PATHS, type TrustPageKey } from "@/lib/trust-content";
@@ -22,6 +23,7 @@ export function navItems(locale: Locale, t: UiMessages): NavItem[] {
   if (locale === "en") {
     return [
       { href: TOOL_PAGES.home.path, label: t.nav.home },
+      { href: PINTEREST_DOWNLOADER_HUB.path, label: "All Downloaders" },
       { href: TOOL_PAGES.video.path, label: t.nav.video },
       { href: TOOL_PAGES.gif.path, label: t.nav.gif },
     ];
@@ -39,6 +41,7 @@ export function homePath(locale: Locale): string {
 export function toolLinks(locale: Locale, t: UiMessages): NavItem[] {
   if (locale === "en") {
     return [
+      { href: PINTEREST_DOWNLOADER_HUB.path, label: "Pinterest Downloader" },
       { href: TOOL_PAGES.video.path, label: t.nav.video },
       { href: TOOL_PAGES.gif.path, label: t.nav.gif },
       { href: TOOL_PAGES.story.path, label: t.nav.story },

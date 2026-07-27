@@ -39,6 +39,8 @@ export interface TrustPageContent {
   sections: TrustSection[];
   lastUpdatedLabel: string;
   lastUpdated: string;
+  /** Machine-readable ISO date used by the sitemap. */
+  lastModified: string;
 }
 
 const GOOGLE_PARTNER_SITES = "https://policies.google.com/technologies/partner-sites";
@@ -137,6 +139,7 @@ const EN_PRIVACY: TrustPageContent = {
   ],
   lastUpdatedLabel: "Last updated",
   lastUpdated: "July 27, 2026",
+  lastModified: "2026-07-27",
 };
 
 const ES_PRIVACY: TrustPageContent = {
@@ -232,6 +235,7 @@ const ES_PRIVACY: TrustPageContent = {
   ],
   lastUpdatedLabel: "Última actualización",
   lastUpdated: "27 de julio de 2026",
+  lastModified: "2026-07-27",
 };
 
 const ID_PRIVACY: TrustPageContent = {
@@ -327,6 +331,7 @@ const ID_PRIVACY: TrustPageContent = {
   ],
   lastUpdatedLabel: "Terakhir diperbarui",
   lastUpdated: "27 Juli 2026",
+  lastModified: "2026-07-27",
 };
 
 const PT_PRIVACY: TrustPageContent = {
@@ -422,6 +427,7 @@ const PT_PRIVACY: TrustPageContent = {
   ],
   lastUpdatedLabel: "Última atualização",
   lastUpdated: "27 de julho de 2026",
+  lastModified: "2026-07-27",
 };
 
 const EN_ABOUT: TrustPageContent = {
@@ -492,6 +498,7 @@ const EN_ABOUT: TrustPageContent = {
   ],
   lastUpdatedLabel: "Last updated",
   lastUpdated: "July 27, 2026",
+  lastModified: "2026-07-27",
 };
 
 const ES_ABOUT: TrustPageContent = {
@@ -562,6 +569,7 @@ const ES_ABOUT: TrustPageContent = {
   ],
   lastUpdatedLabel: "Última actualización",
   lastUpdated: "27 de julio de 2026",
+  lastModified: "2026-07-27",
 };
 
 const ID_ABOUT: TrustPageContent = {
@@ -632,6 +640,7 @@ const ID_ABOUT: TrustPageContent = {
   ],
   lastUpdatedLabel: "Terakhir diperbarui",
   lastUpdated: "27 Juli 2026",
+  lastModified: "2026-07-27",
 };
 
 const PT_ABOUT: TrustPageContent = {
@@ -702,6 +711,7 @@ const PT_ABOUT: TrustPageContent = {
   ],
   lastUpdatedLabel: "Última atualização",
   lastUpdated: "27 de julho de 2026",
+  lastModified: "2026-07-27",
 };
 
 export const TRUST_PAGES: Record<
