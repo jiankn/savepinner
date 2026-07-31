@@ -1,0 +1,52 @@
+{
+  "name": "pinterest-url-normalizer",
+  "version": "0.1.0",
+  "description": "Parse, classify, and normalize Pinterest URLs without network requests.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "prepack": "npm test"
+  },
+  "keywords": [
+    "pinterest",
+    "pinterest-url",
+    "url-parser",
+    "url-normalizer",
+    "pin.it"
+  ],
+  "homepage": "https://savepinner.com/pinterest-downloader/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiankn/savepinner.git",
+    "directory": "packages/pinterest-url-normalizer"
+  },
+  "bugs": {
+    "url": "https://github.com/jiankn/savepinner/issues"
+  },
+  "author": "SavePinner contributors",
+  "license": "MIT",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
