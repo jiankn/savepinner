@@ -1,4 +1,4 @@
-const CACHE_NAME = "savepinner-shell-v1";
+const CACHE_NAME = "savepinner-shell-v2";
 const APP_SHELL = [
   "/",
   "/manifest.webmanifest",
@@ -30,15 +30,17 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin || url.pathname.startsWith("/api/")) return;
 
   if (request.mode === "navigate") {
+    const fetched = fetch(request);
+    const refreshed = fetched.then((response) => {
+      if (!response.ok) return;
+
+      const copy = response.clone();
+      return caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+    });
+
+    event.waitUntil(refreshed.catch(() => undefined));
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
-          }
-          return response;
-        })
+      fetched
         .catch(async () => (await caches.match(request)) ?? caches.match("/")),
     );
     return;

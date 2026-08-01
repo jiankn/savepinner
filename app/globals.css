@@ -42,46 +42,32 @@ body {
   overflow: hidden;
 }
 
-.mobile-nav-popover {
-  transition:
-    display 180ms allow-discrete,
-    overlay 180ms allow-discrete;
-}
-
 .mobile-nav-panel {
-  opacity: 0;
-  transform: translateY(-0.5rem);
-  transition:
-    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: mobile-nav-panel-enter 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .mobile-nav-backdrop {
-  background-color: rgb(24 24 27 / 0%);
-  transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.mobile-nav-popover:popover-open .mobile-nav-panel {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.mobile-nav-popover::backdrop {
-  background: transparent;
-}
-
-.mobile-nav-popover:popover-open .mobile-nav-backdrop {
   background-color: rgb(24 24 27 / 32%);
+  animation: mobile-nav-backdrop-enter 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@starting-style {
-  .mobile-nav-popover:popover-open .mobile-nav-panel {
+@keyframes mobile-nav-panel-enter {
+  from {
     opacity: 0;
     transform: translateY(-0.5rem);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .mobile-nav-popover:popover-open .mobile-nav-backdrop {
+@keyframes mobile-nav-backdrop-enter {
+  from {
     background-color: rgb(24 24 27 / 0%);
+  }
+  to {
+    background-color: rgb(24 24 27 / 32%);
   }
 }
 
