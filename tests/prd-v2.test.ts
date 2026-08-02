@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
-import { PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
+import {
+  getPinterestDownloaderHubJsonLd,
+  HUB_URL_FORMATS,
+  PINTEREST_DOWNLOADER_HUB,
+} from "@/lib/hub-content";
 import { buildImageRenditions } from "@/lib/pinterest";
 import { TOOL_PAGES } from "@/lib/page-content";
 import { getPageJsonLd } from "@/lib/seo";
@@ -91,6 +95,21 @@ describe("PRD v2 page matrix", () => {
     expect(PINTEREST_DOWNLOADER_HUB.path).toBe("/pinterest-downloader/");
     expect(PINTEREST_DOWNLOADER_HUB.seoTitle.startsWith("Pinterest Downloader")).toBe(true);
     expect(TOOL_PAGES.home.seoTitle).toBe("Free Pinterest Image Downloader — HD, No Watermark");
+  });
+
+  it("makes the generic hub a real tool and maintained reference", () => {
+    expect(PINTEREST_DOWNLOADER_HUB.lastModified).toBe("2026-08-02");
+    expect(PINTEREST_DOWNLOADER_HUB.seoTitle.length).toBeLessThanOrEqual(60);
+    expect(PINTEREST_DOWNLOADER_HUB.metaDescription.length).toBeLessThanOrEqual(155);
+    expect(HUB_URL_FORMATS.map((format) => format.status)).toContain("Supported");
+    expect(HUB_URL_FORMATS.map((format) => format.status)).toContain("Not supported");
+
+    const graph = getPinterestDownloaderHubJsonLd()["@graph"];
+    expect(graph.map((entity) => entity["@type"])).toEqual([
+      "CollectionPage",
+      "WebApplication",
+    ]);
+    expect(JSON.stringify(graph)).not.toContain("aggregateRating");
   });
 
   /**

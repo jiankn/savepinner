@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DownloaderForm from "@/components/DownloaderForm";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import TrustBadges from "@/components/TrustBadges";
 import { getMessages } from "@/lib/i18n";
 import {
+  getPinterestDownloaderHubJsonLd,
+  HUB_DEVELOPER_RESOURCES,
   HUB_TOOLS,
+  HUB_URL_FORMATS,
   PINTEREST_DOWNLOADER_HUB,
 } from "@/lib/hub-content";
 import { OG_CARD } from "@/lib/seo";
@@ -38,22 +43,7 @@ export const metadata: Metadata = {
 const t = getMessages("en");
 
 export default function PinterestDownloaderHubPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: PINTEREST_DOWNLOADER_HUB.h1,
-    description: PINTEREST_DOWNLOADER_HUB.metaDescription,
-    url: `https://savepinner.com${PINTEREST_DOWNLOADER_HUB.path}`,
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: HUB_TOOLS.map((tool, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: tool.title,
-        url: `https://savepinner.com${tool.href}`,
-      })),
-    },
-  };
+  const jsonLd = getPinterestDownloaderHubJsonLd();
 
   return (
     <>
@@ -68,16 +58,28 @@ export default function PinterestDownloaderHubPage() {
         <section className="aurora-hero">
           <div className="mx-auto w-full max-w-4xl px-4 pb-20 pt-16 text-center sm:px-6 sm:pb-24 sm:pt-24">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand">
-              All SavePinner tools
+              One tool for public Pins
             </p>
             <h1 className="mt-4 text-4xl font-bold tracking-[-0.035em] text-brand-ink text-balance sm:text-5xl lg:text-6xl">
               {PINTEREST_DOWNLOADER_HUB.h1}
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-red-950/80 text-pretty sm:text-xl sm:leading-8">
-              Choose the downloader that matches the public Pin you have. Each
-              tool uses the same simple workflow, but the available file and
-              quality depend on the media Pinterest publishes for that Pin.
+              Paste one public Pinterest Pin link. SavePinner detects the media
+              type and shows the image, video, GIF or Story files Pinterest
+              makes available for that Pin.
             </p>
+            <div className="mx-auto mt-9 max-w-3xl sm:mt-12">
+              <DownloaderForm
+                placeholder="Paste any public Pinterest Pin link..."
+                t={t}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white">
+          <div className="mx-auto w-full max-w-6xl border-b border-rose-100 px-4 py-8 sm:px-6 sm:py-10">
+            <TrustBadges t={t} />
           </div>
         </section>
 
@@ -175,7 +177,93 @@ export default function PinterestDownloaderHubPage() {
           </div>
         </section>
 
-        <section aria-labelledby="limits-heading" className="bg-white">
+        <section aria-labelledby="url-reference-heading" className="bg-white">
+          <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand">
+                Maintained reference
+              </p>
+              <h2
+                id="url-reference-heading"
+                className="mt-3 text-3xl font-bold tracking-[-0.03em] text-brand-ink sm:text-4xl"
+              >
+                Pinterest URL formats and compatibility
+              </h2>
+              <p className="mt-4 text-base leading-7 text-gray-700">
+                These rules describe what the downloader accepts before it
+                requests any media. Reference updated{" "}
+                <time dateTime={PINTEREST_DOWNLOADER_HUB.lastModified}>
+                  August 2, 2026
+                </time>
+                .
+              </p>
+            </div>
+
+            <div className="mt-8 overflow-x-auto rounded-2xl border border-rose-100 bg-white">
+              <table className="w-full min-w-[52rem] border-collapse text-left text-sm">
+                <thead className="bg-rose-50 text-gray-900">
+                  <tr>
+                    <th className="px-5 py-4 font-semibold">URL type</th>
+                    <th className="px-5 py-4 font-semibold">Example</th>
+                    <th className="px-5 py-4 font-semibold">Status</th>
+                    <th className="px-5 py-4 font-semibold">What SavePinner does</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-rose-100 text-gray-700">
+                  {HUB_URL_FORMATS.map((format) => (
+                    <tr key={format.type}>
+                      <td className="px-5 py-4 font-medium text-gray-900">
+                        {format.type}
+                      </td>
+                      <td className="px-5 py-4 font-mono text-xs">
+                        {format.example}
+                      </td>
+                      <td className="px-5 py-4">{format.status}</td>
+                      <td className="px-5 py-4">{format.behavior}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-12 rounded-2xl border border-rose-100 bg-[#fffafa] p-6 sm:p-8">
+              <h3 className="text-2xl font-semibold tracking-[-0.02em] text-brand-ink">
+                Open-source Pinterest URL parsers
+              </h3>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-700">
+                Developers can use the same exact-host URL rules without a
+                downloader, browser automation or remote code. The projects are
+                independently installable and published under the MIT License.
+              </p>
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {HUB_DEVELOPER_RESOURCES.map((resource) => (
+                  <a
+                    key={resource.href}
+                    href={resource.href}
+                    rel="noopener noreferrer"
+                    className="rounded-xl border border-rose-100 bg-white p-5 transition-colors hover:border-brand"
+                  >
+                    <span className="font-semibold text-brand">
+                      {resource.title}
+                    </span>
+                    <span className="mt-2 block text-sm leading-6 text-gray-700">
+                      {resource.description}
+                    </span>
+                  </a>
+                ))}
+              </div>
+              <p className="mt-6 text-sm leading-6 text-gray-700">
+                Found a format that is missing or described incorrectly?{" "}
+                <Link href="/contact/" className="font-semibold text-brand underline underline-offset-4">
+                  Send a correction
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="limits-heading" className="bg-brand-blush/60">
           <div className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6 sm:py-28">
             <h2
               id="limits-heading"
