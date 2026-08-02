@@ -1,21 +1,25 @@
 import Image from "next/image";
 
 /**
- * SavePinner logo — the selected D "Aurora Ribbon S" identity.
- * The painted mark is intentionally distinct from Pinterest's letterform logo.
+ * SavePinner logo — the selected B motion-link identity.
  */
-export default function Logo({ size = 46 }: { size?: number }) {
-  const width = Math.round(size * (670 / 160));
-
+export default function Logo({ size = 40 }: { size?: number }) {
   return (
-    <span className="inline-flex items-center">
+    <span className="inline-flex items-center gap-2.5" role="img" aria-label="SavePinner">
       <Image
-        src="/brand/savepinner-logo.png"
-        alt="SavePinner"
-        width={width}
+        src="/brand/savepinner-mark.svg"
+        alt=""
+        width={size}
         height={size}
-        className="h-auto object-contain"
+        className="shrink-0"
       />
+      <span
+        aria-hidden="true"
+        className="font-bold tracking-[-0.045em] text-brand-ink"
+        style={{ fontSize: Math.round(size * 0.68), lineHeight: 1 }}
+      >
+        Save<span className="text-brand">Pinner</span>
+      </span>
     </span>
   );
 }
