@@ -4,6 +4,7 @@ import { HREFLANG, PREFIXED_LOCALES } from "@/lib/i18n";
 import { LOCALE_PAGES, LOCALE_PATHS } from "@/lib/locale-content";
 import { TOOL_PAGES } from "@/lib/page-content";
 import {
+  TRUST_LOCALES,
   TRUST_PAGES,
   TRUST_PATHS,
   type TrustPageKey,
@@ -55,13 +56,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const trustEntries = trustClusters.flatMap((cluster) => {
-    const languages: Record<string, string> = {
-      [HREFLANG.en]: `${siteUrl}${TRUST_PATHS.en[cluster.key]}`,
-      [HREFLANG.es]: `${siteUrl}${TRUST_PATHS.es[cluster.key]}`,
-      [HREFLANG.id]: `${siteUrl}${TRUST_PATHS.id[cluster.key]}`,
-      [HREFLANG.pt]: `${siteUrl}${TRUST_PATHS.pt[cluster.key]}`,
-      "x-default": `${siteUrl}${TRUST_PATHS.en[cluster.key]}`,
-    };
+    const languages: Record<string, string> = {};
+    for (const locale of TRUST_LOCALES) {
+      languages[HREFLANG[locale]] = `${siteUrl}${TRUST_PATHS[locale][cluster.key]}`;
+    }
+    languages["x-default"] = `${siteUrl}${TRUST_PATHS.en[cluster.key]}`;
 
     return Object.values(TRUST_PAGES).map((pages) => ({
       url: `${siteUrl}${pages[cluster.key].path}`,

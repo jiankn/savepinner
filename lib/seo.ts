@@ -4,6 +4,7 @@ import { HREFLANG, PREFIXED_LOCALES, type Locale } from "@/lib/i18n";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES, type PageKey, type ToolPageContent } from "@/lib/page-content";
 import {
+  TRUST_LOCALES,
   TRUST_PATHS,
   type TrustPageContent,
   type TrustPageKey,
@@ -76,13 +77,12 @@ export function getLocalePageSeo(page: ToolPageContent): Metadata {
 }
 
 function trustAlternateLanguages(key: TrustPageKey): Record<string, string> {
-  return {
-    [HREFLANG.en]: TRUST_PATHS.en[key],
-    [HREFLANG.es]: TRUST_PATHS.es[key],
-    [HREFLANG.id]: TRUST_PATHS.id[key],
-    [HREFLANG.pt]: TRUST_PATHS.pt[key],
-    "x-default": TRUST_PATHS.en[key],
-  };
+  const languages: Record<string, string> = {};
+  for (const locale of TRUST_LOCALES) {
+    languages[HREFLANG[locale]] = TRUST_PATHS[locale][key];
+  }
+  languages["x-default"] = TRUST_PATHS.en[key];
+  return languages;
 }
 
 export function getTrustPageSeo(page: TrustPageContent): Metadata {

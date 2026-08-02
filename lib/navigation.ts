@@ -7,7 +7,7 @@ import { LOCALES, LOCALE_LABELS, type Locale, type UiMessages } from "@/lib/i18n
 import { PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES } from "@/lib/page-content";
-import { TRUST_PATHS, isTrustLocale, type TrustLocale, type TrustPageKey } from "@/lib/trust-content";
+import { TRUST_PATHS, type TrustLocale, type TrustPageKey } from "@/lib/trust-content";
 
 export interface NavItem {
   href: string;
@@ -58,10 +58,9 @@ export function toolLinks(locale: Locale, t: UiMessages): NavItem[] {
  * English until their full legal copy is translated and reviewed.
  */
 export function legalLinks(locale: Locale, t: UiMessages): NavItem[] {
-  const trustPaths = isTrustLocale(locale) ? TRUST_PATHS[locale] : TRUST_PATHS.en;
   return [
-    { href: trustPaths.about, label: t.footer.about },
-    { href: trustPaths.privacy, label: t.footer.privacy },
+    { href: TRUST_PATHS[locale].about, label: t.footer.about },
+    { href: TRUST_PATHS[locale].privacy, label: t.footer.privacy },
     { href: "/terms/", label: t.footer.terms },
     { href: "/dmca/", label: t.footer.dmca },
     { href: "/contact/", label: t.footer.contact },

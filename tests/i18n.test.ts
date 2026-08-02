@@ -125,17 +125,20 @@ describe("hreflang", () => {
 
   it("cross-links localized Privacy and About pages", () => {
     for (const key of ["privacy", "about"] as const) {
-      const expected = {
-        en: TRUST_PATHS.en[key],
-        es: TRUST_PATHS.es[key],
-        id: TRUST_PATHS.id[key],
-        "pt-BR": TRUST_PATHS.pt[key],
-        "x-default": TRUST_PATHS.en[key],
-      };
+      const expected: Record<string, string> = {};
+      for (const locale of TRUST_LOCALES) {
+        expected[HREFLANG[locale]] = TRUST_PATHS[locale][key];
+      }
+      expected["x-default"] = TRUST_PATHS.en[key];
 
       for (const locale of TRUST_LOCALES) {
         const page = TRUST_PAGES[locale][key];
         expect(page.path, `${locale}/${key}`).toBe(TRUST_PATHS[locale][key]);
+        expect(page.sections.length, `${locale}/${key}`).toBeGreaterThanOrEqual(6);
+        expect(page.seoTitle.length, `${locale}/${key}/title`).toBeGreaterThan(0);
+        expect(page.metaDescription.length, `${locale}/${key}/description`).toBeGreaterThan(0);
+        expect(page.seoTitle.length, `${locale}/${key}/title`).toBeLessThanOrEqual(60);
+        expect(page.metaDescription.length, `${locale}/${key}/description`).toBeLessThanOrEqual(155);
         expect(getTrustPageSeo(page).alternates?.languages).toEqual(expected);
       }
     }
@@ -159,13 +162,16 @@ describe("navigation", () => {
   });
 
   it("switches trust pages to their localized slugs", () => {
-    const links = languageLinks("pt", "privacy");
+    const links = languageLinks("fr", "privacy");
     expect(links.find((l) => l.locale === "es")?.href).toBe(
       TRUST_PATHS.es.privacy,
     );
     expect(links.find((l) => l.locale === "id")?.href).toBe(
       TRUST_PATHS.id.privacy,
     );
-    expect(links.find((l) => l.locale === "pt")?.current).toBe(true);
+    expect(links.find((l) => l.locale === "fr")?.current).toBe(true);
+    expect(links.find((l) => l.locale === "ja")?.href).toBe(
+      TRUST_PATHS.ja.privacy,
+    );
   });
 });

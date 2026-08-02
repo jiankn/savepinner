@@ -62,6 +62,7 @@ hosting layer as production-ready.
 
 ## Public trust pages
 
-Privacy and About pages are published in English, Spanish, Indonesian and
-Brazilian Portuguese. The footer, canonical URLs, hreflang annotations and
-sitemap keep each language cluster connected.
+Privacy and About pages are published in every supported language. The footer,
+canonical URLs, hreflang annotations and sitemap keep each language cluster
+connected. Terms, DMCA and Contact remain English until their legal copy is
+translated and reviewed.
