@@ -1,25 +1,20 @@
 import Image from "next/image";
 
 /**
- * SavePinner logo — the selected B motion-link identity.
+ * SavePinner logo — raster artwork preserves the selected B concept's depth.
  */
 export default function Logo({ size = 40 }: { size?: number }) {
+  const width = Math.round(size * (1811 / 411));
+
   return (
-    <span className="inline-flex items-center gap-2.5" role="img" aria-label="SavePinner">
+    <span className="inline-flex items-center">
       <Image
-        src="/brand/savepinner-mark.svg"
-        alt=""
-        width={size}
+        src="/brand/savepinner-logo.png"
+        alt="SavePinner"
+        width={width}
         height={size}
-        className="shrink-0"
+        className="h-auto object-contain"
       />
-      <span
-        aria-hidden="true"
-        className="font-bold tracking-[-0.045em] text-brand-ink"
-        style={{ fontSize: Math.round(size * 0.68), lineHeight: 1 }}
-      >
-        Save<span className="text-brand">Pinner</span>
-      </span>
     </span>
   );
 }
