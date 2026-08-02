@@ -17,6 +17,13 @@ const SKIP_LABELS: Record<Exclude<Locale, "en">, string> = {
   es: "Saltar al contenido",
   id: "Langsung ke konten",
   pt: "Ir para o conteúdo",
+  fr: "Aller au contenu",
+  de: "Zum Inhalt springen",
+  it: "Vai al contenuto",
+  nl: "Ga naar de inhoud",
+  ja: "メインコンテンツへ移動",
+  tr: "İçeriğe geç",
+  pl: "Przejdź do treści",
 };
 
 export function generateStaticParams() {

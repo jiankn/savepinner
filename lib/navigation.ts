@@ -3,11 +3,11 @@
  * Kept separate from lib/i18n.ts so the dictionaries stay dependency-free.
  */
 
-import { LOCALE_LABELS, type Locale, type UiMessages } from "@/lib/i18n";
+import { LOCALES, LOCALE_LABELS, type Locale, type UiMessages } from "@/lib/i18n";
 import { PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES } from "@/lib/page-content";
-import { TRUST_PATHS, type TrustPageKey } from "@/lib/trust-content";
+import { TRUST_PATHS, isTrustLocale, type TrustLocale, type TrustPageKey } from "@/lib/trust-content";
 
 export interface NavItem {
   href: string;
@@ -58,9 +58,10 @@ export function toolLinks(locale: Locale, t: UiMessages): NavItem[] {
  * English until their full legal copy is translated and reviewed.
  */
 export function legalLinks(locale: Locale, t: UiMessages): NavItem[] {
+  const trustPaths = isTrustLocale(locale) ? TRUST_PATHS[locale] : TRUST_PATHS.en;
   return [
-    { href: TRUST_PATHS[locale].about, label: t.footer.about },
-    { href: TRUST_PATHS[locale].privacy, label: t.footer.privacy },
+    { href: trustPaths.about, label: t.footer.about },
+    { href: trustPaths.privacy, label: t.footer.privacy },
     { href: "/terms/", label: t.footer.terms },
     { href: "/dmca/", label: t.footer.dmca },
     { href: "/contact/", label: t.footer.contact },
@@ -82,7 +83,7 @@ export type LanguagePageKey = LocalePageKey | TrustPageKey | "other";
 
 export function languageLinks(locale: Locale, pageKey: LanguagePageKey): LanguageLink[] {
   if (pageKey === "privacy" || pageKey === "about") {
-    return (Object.keys(TRUST_PATHS) as Locale[]).map((targetLocale) => ({
+    return (Object.keys(TRUST_PATHS) as TrustLocale[]).map((targetLocale) => ({
       locale: targetLocale,
       href: TRUST_PATHS[targetLocale][pageKey],
       label: LOCALE_LABELS[targetLocale],
@@ -91,14 +92,10 @@ export function languageLinks(locale: Locale, pageKey: LanguagePageKey): Languag
   }
 
   const key: LocalePageKey = pageKey === "other" ? "home" : pageKey;
-  return [
-    { locale: "en" as const, href: TOOL_PAGES[key].path },
-    { locale: "es" as const, href: LOCALE_PATHS.es[key] },
-    { locale: "id" as const, href: LOCALE_PATHS.id[key] },
-    { locale: "pt" as const, href: LOCALE_PATHS.pt[key] },
-  ].map((entry) => ({
-    ...entry,
-    label: LOCALE_LABELS[entry.locale],
-    current: entry.locale === locale,
+  return LOCALES.map((targetLocale) => ({
+    locale: targetLocale,
+    href: targetLocale === "en" ? TOOL_PAGES[key].path : LOCALE_PATHS[targetLocale][key],
+    label: LOCALE_LABELS[targetLocale],
+    current: targetLocale === locale,
   }));
 }

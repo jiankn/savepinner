@@ -1,13 +1,19 @@
 import type { Locale } from "@/lib/i18n";
 
 export type TrustPageKey = "privacy" | "about";
+export const TRUST_LOCALES = ["en", "es", "id", "pt"] as const;
+export type TrustLocale = (typeof TRUST_LOCALES)[number];
 
-export const TRUST_PATHS: Record<Locale, Record<TrustPageKey, string>> = {
+export const TRUST_PATHS: Record<TrustLocale, Record<TrustPageKey, string>> = {
   en: { privacy: "/privacy/", about: "/about/" },
   es: { privacy: "/es/privacidad/", about: "/es/acerca-de/" },
   id: { privacy: "/id/privasi/", about: "/id/tentang/" },
   pt: { privacy: "/pt/privacidade/", about: "/pt/sobre/" },
 };
+
+export function isTrustLocale(locale: Locale | string): locale is TrustLocale {
+  return (TRUST_LOCALES as readonly string[]).includes(locale);
+}
 
 export interface TrustLink {
   text: string;
@@ -715,7 +721,7 @@ const PT_ABOUT: TrustPageContent = {
 };
 
 export const TRUST_PAGES: Record<
-  Locale,
+  TrustLocale,
   Record<TrustPageKey, TrustPageContent>
 > = {
   en: { privacy: EN_PRIVACY, about: EN_ABOUT },

@@ -5,10 +5,12 @@
  * move; every other locale is served under /{locale}/. Language targeting is
  * carried by hreflang annotations plus localized copy — see lib/seo.ts.
  *
- * Keep this file dependency-free: it is imported by Client Components.
+ * Keep dictionaries serializable: they cross into Client Components.
  */
 
-export const LOCALES = ["en", "es", "id", "pt"] as const;
+import { ADDITIONAL_MESSAGES } from "@/lib/i18n-additional";
+
+export const LOCALES = ["en", "es", "id", "pt", "fr", "de", "it", "nl", "ja", "tr", "pl"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "en";
@@ -22,6 +24,13 @@ export const HREFLANG: Record<Locale, string> = {
   es: "es",
   id: "id",
   pt: "pt-BR",
+  fr: "fr",
+  de: "de",
+  it: "it",
+  nl: "nl",
+  ja: "ja",
+  tr: "tr",
+  pl: "pl",
 };
 
 /** Endonyms — a language switcher must name each language in that language. */
@@ -30,6 +39,13 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   es: "Español",
   id: "Bahasa Indonesia",
   pt: "Português",
+  fr: "Français",
+  de: "Deutsch",
+  it: "Italiano",
+  nl: "Nederlands",
+  ja: "日本語",
+  tr: "Türkçe",
+  pl: "Polski",
 };
 
 export function isLocale(value: string): value is Locale {
@@ -441,7 +457,13 @@ const PT: UiMessages = {
   },
 };
 
-export const MESSAGES: Record<Locale, UiMessages> = { en: EN, es: ES, id: ID, pt: PT };
+export const MESSAGES: Record<Locale, UiMessages> = {
+  en: EN,
+  es: ES,
+  id: ID,
+  pt: PT,
+  ...ADDITIONAL_MESSAGES,
+};
 
 export function getMessages(locale: Locale): UiMessages {
   return MESSAGES[locale];

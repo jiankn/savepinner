@@ -5,11 +5,11 @@ import { languageLinks, navItems } from "@/lib/navigation";
 import { TOOL_PAGES } from "@/lib/page-content";
 import { getLocalePageSeo, getPageSeo } from "@/lib/seo";
 import { getTrustPageSeo } from "@/lib/seo";
-import { TRUST_PAGES, TRUST_PATHS } from "@/lib/trust-content";
+import { TRUST_LOCALES, TRUST_PAGES, TRUST_PATHS } from "@/lib/trust-content";
 
 describe("locale registry", () => {
   it("prefixes every locale except English", () => {
-    expect(PREFIXED_LOCALES).toEqual(["es", "id", "pt"]);
+    expect(PREFIXED_LOCALES).toEqual(["es", "id", "pt", "fr", "de", "it", "nl", "ja", "tr", "pl"]);
   });
 
   it("ships a full dictionary for every locale", () => {
@@ -35,6 +35,13 @@ describe("locale pages", () => {
     expect(LOCALE_PATHS.es.video).toBe("/es/descargar-videos-de-pinterest/");
     expect(LOCALE_PATHS.id.video).toBe("/id/pinterest-video-download/");
     expect(LOCALE_PATHS.pt.video).toBe("/pt/baixar-video-do-pinterest/");
+    expect(LOCALE_PATHS.fr.video).toBe("/fr/telecharger-video-pinterest/");
+    expect(LOCALE_PATHS.de.video).toBe("/de/pinterest-video-herunterladen/");
+    expect(LOCALE_PATHS.it.video).toBe("/it/scaricare-video-pinterest/");
+    expect(LOCALE_PATHS.nl.video).toBe("/nl/pinterest-video-downloaden/");
+    expect(LOCALE_PATHS.ja.video).toBe("/ja/pinterest-video-download/");
+    expect(LOCALE_PATHS.tr.video).toBe("/tr/pinterest-video-indir/");
+    expect(LOCALE_PATHS.pl.video).toBe("/pl/pobierz-film-z-pinterest/");
   });
 
   it("keeps route slugs in sync with the published paths", () => {
@@ -56,8 +63,7 @@ describe("locale pages", () => {
         titles.add(page.seoTitle);
       }
     }
-    // Six pages, six distinct titles — no copy/paste duplicates.
-    expect(titles.size).toBe(6);
+    expect(titles.size).toBe(PREFIXED_LOCALES.length * 2);
   });
 
   /**
@@ -71,7 +77,7 @@ describe("locale pages", () => {
       ...PREFIXED_LOCALES.flatMap((locale) => Object.values(LOCALE_PAGES[locale])),
     ];
 
-    expect(pages).toHaveLength(12);
+    expect(pages).toHaveLength(Object.keys(TOOL_PAGES).length + PREFIXED_LOCALES.length * 2);
     for (const page of pages) {
       expect(page.seoTitle.length, `title ${page.path}`).toBeLessThanOrEqual(60);
       expect(page.metaDescription.length, `description ${page.path}`).toBeLessThanOrEqual(155);
@@ -86,14 +92,12 @@ describe("locale pages", () => {
 });
 
 describe("hreflang", () => {
-  it("cross-links all four locales plus x-default on translated page types", () => {
-    const expected = {
-      en: "/",
-      es: "/es/",
-      id: "/id/",
-      "pt-BR": "/pt/",
-      "x-default": "/",
-    };
+  it("cross-links every published locale plus x-default", () => {
+    const expected: Record<string, string> = { en: "/" };
+    for (const locale of PREFIXED_LOCALES) {
+      expected[HREFLANG[locale]] = LOCALE_PATHS[locale].home;
+    }
+    expected["x-default"] = "/";
     expect(getPageSeo("home").alternates?.languages).toEqual(expected);
     expect(getLocalePageSeo(LOCALE_PAGES.es.home).alternates?.languages).toEqual(expected);
     expect(getLocalePageSeo(LOCALE_PAGES.id.home).alternates?.languages).toEqual(expected);
@@ -104,6 +108,8 @@ describe("hreflang", () => {
     expect(languages[HREFLANG.en]).toBe(TOOL_PAGES.video.path);
     expect(languages[HREFLANG.es]).toBe(LOCALE_PATHS.es.video);
     expect(languages[HREFLANG.pt]).toBe(LOCALE_PATHS.pt.video);
+    expect(languages[HREFLANG.fr]).toBe(LOCALE_PATHS.fr.video);
+    expect(languages[HREFLANG.ja]).toBe(LOCALE_PATHS.ja.video);
   });
 
   it("does not advertise translations that do not exist", () => {
@@ -127,7 +133,7 @@ describe("hreflang", () => {
         "x-default": TRUST_PATHS.en[key],
       };
 
-      for (const locale of LOCALES) {
+      for (const locale of TRUST_LOCALES) {
         const page = TRUST_PAGES[locale][key];
         expect(page.path, `${locale}/${key}`).toBe(TRUST_PATHS[locale][key]);
         expect(getTrustPageSeo(page).alternates?.languages).toEqual(expected);

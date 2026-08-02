@@ -6,6 +6,7 @@ import { getLocalePageSeo, getTrustPageSeo } from "@/lib/seo";
 import {
   TRUST_PAGES,
   TRUST_PATHS,
+  isTrustLocale,
   type TrustPageKey,
 } from "@/lib/trust-content";
 
@@ -23,12 +24,14 @@ export function generateStaticParams({
 }) {
   if (!(locale in LOCALE_VIDEO_SLUGS)) return [];
   const typedLocale = locale as PrefixedLocale;
-  return [
-    { slug: LOCALE_VIDEO_SLUGS[typedLocale] },
-    ...(["about", "privacy"] as const).map((key) => ({
+  const toolRoute = [{ slug: LOCALE_VIDEO_SLUGS[typedLocale] }];
+  if (!isTrustLocale(typedLocale)) return toolRoute;
+
+  return toolRoute.concat(
+    (["about", "privacy"] as const).map((key) => ({
       slug: slugFromPath(TRUST_PATHS[typedLocale][key]),
     })),
-  ];
+  );
 }
 
 function slugFromPath(path: string) {
@@ -42,6 +45,8 @@ function routeFor(locale: string, slug: string) {
   if (LOCALE_VIDEO_SLUGS[typed] === slug) {
     return { kind: "tool" as const, content: LOCALE_PAGES[typed].video };
   }
+
+  if (!isTrustLocale(typed)) return undefined;
 
   const trustKey = (["about", "privacy"] as const).find(
     (key) => slugFromPath(TRUST_PATHS[typed][key]) === slug,

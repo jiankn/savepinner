@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
-import type { Locale, UiMessages } from "@/lib/i18n";
+import { HREFLANG, type Locale, type UiMessages } from "@/lib/i18n";
 import {
   languageLinks,
   legalLinks,
@@ -61,7 +61,7 @@ export default function Footer({
                   <Link
                     key={language.locale}
                     href={language.href}
-                    hrefLang={language.locale === "pt" ? "pt-BR" : language.locale}
+                    hrefLang={HREFLANG[language.locale]}
                     className="text-sm text-gray-700 transition-colors hover:text-brand"
                   >
                     {language.label}

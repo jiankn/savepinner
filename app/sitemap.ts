@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
-import { HREFLANG } from "@/lib/i18n";
+import { HREFLANG, PREFIXED_LOCALES } from "@/lib/i18n";
 import { LOCALE_PAGES, LOCALE_PATHS } from "@/lib/locale-content";
 import { TOOL_PAGES } from "@/lib/page-content";
 import {
@@ -15,7 +15,7 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://savepinner.com").r
  * PRD §9.1: sitemap contains only indexable, self-canonical, 200-status pages.
  * Result states, API routes and token URLs are never listed.
  *
- * Home and video exist in four languages, so those entries also carry the
+ * Home and video exist in every published language, so those entries carry the
  * hreflang cluster (Google reads alternates from the sitemap as well as from
  * the page head).
  */
@@ -28,15 +28,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const localizedEntries = localizedClusters.flatMap((cluster) => {
     const languages: Record<string, string> = {
       [HREFLANG.en]: `${siteUrl}${cluster.englishPath}`,
-      [HREFLANG.es]: `${siteUrl}${LOCALE_PATHS.es[cluster.key]}`,
-      [HREFLANG.id]: `${siteUrl}${LOCALE_PATHS.id[cluster.key]}`,
-      [HREFLANG.pt]: `${siteUrl}${LOCALE_PATHS.pt[cluster.key]}`,
     };
+    for (const locale of PREFIXED_LOCALES) {
+      languages[HREFLANG[locale]] = `${siteUrl}${LOCALE_PATHS[locale][cluster.key]}`;
+    }
+    languages["x-default"] = `${siteUrl}${cluster.englishPath}`;
     const pages = [
       TOOL_PAGES[cluster.key],
-      LOCALE_PAGES.es[cluster.key],
-      LOCALE_PAGES.id[cluster.key],
-      LOCALE_PAGES.pt[cluster.key],
+      ...PREFIXED_LOCALES.map((locale) => LOCALE_PAGES[locale][cluster.key]),
     ];
     return pages.map((page) => ({
       url: `${siteUrl}${page.path}`,

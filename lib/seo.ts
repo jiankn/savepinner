@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { config } from "@/lib/config";
-import { HREFLANG, type Locale } from "@/lib/i18n";
+import { HREFLANG, PREFIXED_LOCALES, type Locale } from "@/lib/i18n";
 import { LOCALE_PATHS, type LocalePageKey } from "@/lib/locale-content";
 import { TOOL_PAGES, type PageKey, type ToolPageContent } from "@/lib/page-content";
 import {
@@ -33,6 +33,13 @@ const OG_LOCALES: Record<Locale, string> = {
   es: "es_ES",
   id: "id_ID",
   pt: "pt_BR",
+  fr: "fr_FR",
+  de: "de_DE",
+  it: "it_IT",
+  nl: "nl_NL",
+  ja: "ja_JP",
+  tr: "tr_TR",
+  pl: "pl_PL",
 };
 
 /**
@@ -46,15 +53,16 @@ function alternateLanguages(page: ToolPageContent): Record<string, string> {
   }
   const key: LocalePageKey = page.slug;
   const englishPath = TOOL_PAGES[key].path;
-  return {
+  const languages: Record<string, string> = {
     [HREFLANG.en]: englishPath,
-    [HREFLANG.es]: LOCALE_PATHS.es[key],
-    [HREFLANG.id]: LOCALE_PATHS.id[key],
-    [HREFLANG.pt]: LOCALE_PATHS.pt[key],
-    // x-default points at the English version: it is the fallback for
-    // visitors whose language we do not publish.
-    "x-default": englishPath,
   };
+  for (const locale of PREFIXED_LOCALES) {
+    languages[HREFLANG[locale]] = LOCALE_PATHS[locale][key];
+  }
+  // x-default points at the English version: it is the fallback for
+  // visitors whose language we do not publish.
+  languages["x-default"] = englishPath;
+  return languages;
 }
 
 export function getPageSeo(slug: PageKey, locale: Locale = "en"): Metadata {

@@ -1,5 +1,5 @@
 /**
- * Localized tool pages (es / id / pt).
+ * Localized tool pages.
  *
  * Keyword targets were measured with the KD tool in each local market; the
  * score in each comment is that market's difficulty, not the US one:
@@ -17,6 +17,11 @@
  */
 
 import type { Locale } from "@/lib/i18n";
+import {
+  ADDITIONAL_LOCALE_PAGES,
+  ADDITIONAL_LOCALE_PATHS,
+  ADDITIONAL_VIDEO_SLUGS,
+} from "@/lib/locale-content-additional";
 import type { RelatedTool, ToolPageContent } from "@/lib/page-content";
 
 export type PrefixedLocale = Exclude<Locale, "en">;
@@ -27,6 +32,7 @@ export const LOCALE_PATHS: Record<PrefixedLocale, Record<LocalePageKey, string>>
   es: { home: "/es/", video: "/es/descargar-videos-de-pinterest/" },
   id: { home: "/id/", video: "/id/pinterest-video-download/" },
   pt: { home: "/pt/", video: "/pt/baixar-video-do-pinterest/" },
+  ...ADDITIONAL_LOCALE_PATHS,
 };
 
 /** Second path segment of each locale's video page, for [locale]/[slug]. */
@@ -34,9 +40,12 @@ export const LOCALE_VIDEO_SLUGS: Record<PrefixedLocale, string> = {
   es: "descargar-videos-de-pinterest",
   id: "pinterest-video-download",
   pt: "baixar-video-do-pinterest",
+  ...ADDITIONAL_VIDEO_SLUGS,
 };
 
-function tools(locale: PrefixedLocale, self: LocalePageKey): RelatedTool[] {
+type ExistingLocale = "es" | "id" | "pt";
+
+function tools(locale: ExistingLocale, self: LocalePageKey): RelatedTool[] {
   const home: RelatedTool = {
     kind: "home",
     href: LOCALE_PATHS[locale].home,
@@ -485,4 +494,5 @@ export const LOCALE_PAGES: Record<PrefixedLocale, Record<LocalePageKey, ToolPage
   es: { home: ES_HOME, video: ES_VIDEO },
   id: { home: ID_HOME, video: ID_VIDEO },
   pt: { home: PT_HOME, video: PT_VIDEO },
+  ...ADDITIONAL_LOCALE_PAGES,
 };
