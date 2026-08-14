@@ -66,6 +66,25 @@ describe("PRD v2 page matrix", () => {
     expect(TOOL_PAGES.home.faq).toHaveLength(8);
   });
 
+  it("gives the image homepage substantial product-specific guidance", () => {
+    const text = JSON.stringify(TOOL_PAGES.home.sections);
+
+    expect(TOOL_PAGES.home.sections?.length).toBeGreaterThanOrEqual(4);
+    expect(text).toContain("Original image");
+    expect(text).toContain("Thumbnail (236x)");
+    expect(text).toContain("pin.it");
+    expect(text).toContain("private browser window");
+  });
+
+  it("links device guidance from the image and video tools", () => {
+    const links = [...TOOL_PAGES.home.faq, ...TOOL_PAGES.video.faq]
+      .flatMap((item) => item.links ?? [])
+      .map((link) => link.href);
+
+    expect(links).toContain("/pinterest-downloader-iphone/");
+    expect(links).toContain("/pinterest-downloader-android/");
+  });
+
   // The board page stays deferred deliberately: board download is not built
   // yet, and a landing page for a feature that does not exist is a doorway
   // page. The device pages target real, shipped behaviour.

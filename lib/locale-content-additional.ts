@@ -208,7 +208,7 @@ const IT_HOME: ToolPageContent = {
 };
 
 const IT_VIDEO: ToolPageContent = {
-  slug: "video", locale: "it", path: ADDITIONAL_LOCALE_PATHS.it.video, lastModified: "2026-08-02", videoPath: ADDITIONAL_LOCALE_PATHS.it.video,
+  slug: "video", locale: "it", path: ADDITIONAL_LOCALE_PATHS.it.video, lastModified: "2026-08-15", videoPath: ADDITIONAL_LOCALE_PATHS.it.video,
   seoTitle: "Scaricare Video Pinterest Gratis in Qualità HD",
   metaDescription: "Scarica video Pinterest in qualità HD gratis, senza registrazione, filigrana o programmi. Compatibile con iPhone, Android e computer.",
   keywords: ["scaricare video pinterest", "scaricare video da pinterest", "download video pinterest"],
@@ -220,6 +220,46 @@ const IT_VIDEO: ToolPageContent = {
     { title: "Copia il link del video", description: "Apri il video su Pinterest, tocca Condividi e seleziona Copia link." },
     { title: "Incolla il link qui", description: "Incolla il link nel campo qui sopra e premi Scarica per elaborarlo." },
     { title: "Salva il video MP4", description: "Scegli la qualità proposta e salva il file sul telefono o sul computer." },
+  ],
+  sections: [
+    {
+      heading: "Scaricare un video Pinterest senza filigrana",
+      body: [
+        "SavePinner restituisce il file video pubblicato per il Pin senza aggiungere loghi o filigrane proprie. Se il creatore ha inserito testo, un marchio o una firma direttamente nel video originale, questi elementi restano nel file: il servizio non modifica l'opera e non rimuove attribuzioni già presenti.",
+        "Prima di scaricare, controlla l'anteprima e la qualità indicata. In questo modo sai quale file Pinterest rende disponibile e non confondi l'assenza di una filigrana aggiunta da SavePinner con la rimozione di un marchio del creatore.",
+      ],
+    },
+    {
+      heading: "Qualità e formato del video",
+      body: [
+        "La pagina mostra i file video completi che Pinterest espone per quel Pin, normalmente in formato MP4. Un risultato può offrire più risoluzioni oppure una sola. La qualità dipende dal file caricato dal creatore e dalle versioni pubblicate da Pinterest; SavePinner non ingrandisce artificialmente un video e non trasforma una sorgente a bassa risoluzione in vero HD o 4K.",
+        "Pinterest può riprodurre anche flussi HLS o DASH composti da molti segmenti. Se non esiste un file progressivo completo e verificabile, il Pin può essere visibile su Pinterest ma non mostrare un pulsante per un singolo video scaricabile.",
+      ],
+      bullets: [
+        "Scegli la risoluzione più alta disponibile quando vuoi conservare più dettaglio.",
+        "Una qualità compare solo se Pinterest pubblica quel file per il Pin.",
+        "Il formato e l'eventuale traccia audio restano quelli del file sorgente.",
+      ],
+    },
+    {
+      heading: "Copiare il link corretto da iPhone o Android",
+      body: [
+        "Nell'app Pinterest apri il singolo video, tocca Condividi e scegli Copia link. Puoi incollare direttamente un link breve pin.it: SavePinner lo segue solo verso un Pin pubblico Pinterest. Anche i link completi pinterest.com/pin/ e i domini Pinterest nazionali sono supportati.",
+        "Un link a una bacheca, a un profilo, ai risultati di ricerca o al feed non identifica un solo video. Apri prima il Pin desiderato e copia il suo link dalla schermata di condivisione. La procedura è la stessa su iPhone e Android e non richiede un'app aggiuntiva.",
+      ],
+    },
+    {
+      heading: "Perché un video può non essere disponibile",
+      body: [
+        "I Pin eliminati, privati, salvati in bacheche segrete o accessibili solo dopo il login non espongono un file pubblico. In altri casi Pinterest mostra un'anteprima animata ma rende disponibile soltanto l'immagine di copertina, oppure riproduce uno stream segmentato senza un file video completo.",
+        "Se il risultato atteso non appare, copia di nuovo il link dal menu Condividi e prova ad aprirlo in una finestra privata senza account Pinterest. Se lì il Pin non si apre o richiede l'accesso, il problema è la disponibilità pubblica del contenuto e ripetere il download non può aggirarla.",
+      ],
+      bullets: [
+        "Usa il link di un singolo Pin pubblico.",
+        "Controlla che il video venga riprodotto anche senza login.",
+        "Un'immagine di copertina non viene presentata come un video inventato.",
+      ],
+    },
   ],
   faq: [
     { question: "Come scaricare un video Pinterest sul telefono?", answer: "Copia il link dall’app Pinterest, incollalo qui e tocca Scarica. La procedura funziona su Android e iPhone." },

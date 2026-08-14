@@ -288,6 +288,23 @@ export default function PinterestDownloaderHubPage() {
                 download choices.
               </p>
               <p>
+                Downloading on a phone works in the browser too. Follow the{" "}
+                <Link
+                  href="/pinterest-downloader-iphone/"
+                  className="font-semibold text-brand underline underline-offset-4"
+                >
+                  Pinterest downloader for iPhone
+                </Link>{" "}
+                guide for Safari, Files and Photos, or use the{" "}
+                <Link
+                  href="/pinterest-downloader-android/"
+                  className="font-semibold text-brand underline underline-offset-4"
+                >
+                  Pinterest downloader for Android
+                </Link>{" "}
+                guide for Chrome, Samsung Internet and the Downloads folder.
+              </p>
+              <p>
                 Download only content you own, have permission to use, or may
                 lawfully save. SavePinner does not grant reuse rights and is
                 not affiliated with Pinterest.

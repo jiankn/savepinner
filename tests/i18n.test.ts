@@ -89,6 +89,17 @@ describe("locale pages", () => {
       expect(LOCALE_PAGES[locale].home.videoPath, locale).toBe(LOCALE_PATHS[locale].video);
     }
   });
+
+  it("gives the GSC-backed Italian video page unique practical guidance", () => {
+    const page = LOCALE_PAGES.it.video;
+    const text = JSON.stringify(page.sections);
+
+    expect(page.sections?.length).toBeGreaterThanOrEqual(4);
+    expect(text).toContain("senza filigrana");
+    expect(text).toContain("HLS");
+    expect(text).toContain("pin.it");
+    expect(text).toContain("finestra privata");
+  });
 });
 
 describe("hreflang", () => {

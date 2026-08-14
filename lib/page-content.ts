@@ -103,7 +103,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   home: {
     slug: "home",
     path: "/",
-    lastModified: "2026-07-28",
+    lastModified: "2026-08-15",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     // Brand prefix dropped: it cost 13 chars that the target keyword needs up
@@ -134,6 +134,46 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
           "Choose your preferred size and download the image in HD quality. No compression, no watermark.",
       },
     ],
+    sections: [
+      {
+        heading: "Original image or Pinterest thumbnail?",
+        body: [
+          "A Pinterest Pin can expose several versions of the same image. The small copy shown in a feed is a thumbnail made for fast browsing, while the largest available rendition keeps more of the creator's uploaded detail. SavePinner lists the image candidates it can verify for the public Pin so you can choose the file that fits your use instead of stretching a small preview after download.",
+          "Choose Original when it is available and you want the best source for a wallpaper, reference board or permitted design work. A 736x or 564x rendition is often enough for messaging and uses less storage. The 236x thumbnail is useful only when a small preview is the goal; downloading it does not unlock detail that was never present in that file.",
+        ],
+        bullets: [
+          "Original is the largest source Pinterest exposes for that public Pin.",
+          "736x and 564x are smaller renditions, not extra compression applied by SavePinner.",
+          "Thumbnail (236x) is intended for previews rather than full-size reuse.",
+        ],
+      },
+      {
+        heading: "Image formats and quality",
+        body: [
+          "SavePinner returns the media format Pinterest publishes. Most photo Pins are JPG or WebP, transparent graphics may be PNG, and an animated source may be GIF. The downloader does not rename a file to make it look like another format, convert a still image into an animation, or artificially enlarge a low-resolution upload.",
+          "Before saving, compare the format and dimensions shown with each result. Pixel dimensions tell you more about usable detail than the word HD on its own. Two Pins that look the same size in a feed can provide very different original files because their creators uploaded different sources.",
+        ],
+      },
+      {
+        heading: "Use the link for one public Pin",
+        body: [
+          "Copy the link from the Share menu on the individual Pin. Full pinterest.com/pin/ URLs, Pinterest country-domain Pin URLs and pin.it short links are accepted. A short link is followed only when it resolves to a public Pinterest Pin.",
+          "Board, profile, search-results and home-feed URLs do not identify one downloadable image. Open the item you want first, then copy that Pin's own link. If the link opens only while you are signed in, it may belong to a secret board or private account and cannot be resolved as public media.",
+        ],
+        bullets: [
+          "Paste one Pin URL rather than a board or profile URL.",
+          "Copy from Share to avoid using the address of a feed or search page.",
+          "Test the link in a private browser window if you are unsure whether it is public.",
+        ],
+      },
+      {
+        heading: "Why an image may be missing",
+        body: [
+          "A deleted Pin, a private Pin or a regional sign-in wall can prevent the public page from exposing its media. Some article and video Pins also provide only a cover image, while others expose a video but no separate full-size still. SavePinner reports the files it can verify instead of inventing an original that Pinterest did not publish.",
+          "If the expected image does not appear, copy the link again from the Pin's Share menu and confirm that the same URL opens without your Pinterest account. Downloading a visible file does not transfer copyright or permission to republish it, so save your own work, material you have permission to use, or content whose license fits your purpose.",
+        ],
+      },
+    ],
     faq: [
       {
         question: "How do I download Pinterest images without watermark?",
@@ -146,9 +186,13 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
           "Yes! By default Pinterest shows compressed thumbnails. Our Pinterest thumbnail downloader extracts the original image URL from Pinterest's CDN so you get the full resolution version.",
       },
       {
-        question: "Does this Pinterest image downloader work on iPhone?",
+        question: "Does this Pinterest image downloader work on iPhone or Android?",
         answer:
-          "Yes, SavePinner works on all devices — iPhone, Android, iPad, and desktop. Simply paste the Pin link and download.",
+          "Yes. Follow the Pinterest downloader for iPhone guide for Safari, Files and Photos, or the Pinterest downloader for Android guide for browser downloads, Gallery and Google Photos.",
+        links: [
+          { text: "Pinterest downloader for iPhone", href: "/pinterest-downloader-iphone/" },
+          { text: "Pinterest downloader for Android", href: "/pinterest-downloader-android/" },
+        ],
       },
       {
         question: "Is it free to download Pinterest videos?",
@@ -182,7 +226,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   video: {
     slug: "video",
     path: "/pinterest-video-downloader/",
-    lastModified: "2026-07-28",
+    lastModified: "2026-08-15",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     seoTitle: "Free Pinterest Video Downloader — Save HD Videos Online",
@@ -252,11 +296,13 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     faq: [
       {
         question: "Can I download Pinterest videos on iPhone?",
-        answer: "Yes. Copy the video Pin link, paste it into SavePinner in Safari, choose a quality, and download.",
+        answer: "Yes. The Pinterest downloader for iPhone guide shows how to use Safari, choose a quality, and move the downloaded video from Files into Photos.",
+        links: [{ text: "Pinterest downloader for iPhone", href: "/pinterest-downloader-iphone/" }],
       },
       {
         question: "Can I download Pinterest videos on Android?",
-        answer: "Yes. SavePinner works in mobile browsers on Android without an app or account.",
+        answer: "Yes. The Pinterest downloader for Android guide covers Chrome and Samsung Internet downloads, the Downloads folder, and saving without an app or account.",
+        links: [{ text: "Pinterest downloader for Android", href: "/pinterest-downloader-android/" }],
       },
       {
         question: "What video qualities can I download?",
