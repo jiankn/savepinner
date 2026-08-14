@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DownloaderForm from "./DownloaderForm";
 import Faq from "./Faq";
 import Guide from "./Guide";
@@ -8,6 +9,7 @@ import RelatedTools from "./RelatedTools";
 import TrustBadges from "./TrustBadges";
 import WhyChoose from "./WhyChoose";
 import { getMessages, HREFLANG } from "@/lib/i18n";
+import { HUB_BACKLINK_COPY, PINTEREST_DOWNLOADER_HUB } from "@/lib/hub-content";
 import type { ToolPageContent } from "@/lib/page-content";
 import { getPageJsonLd } from "@/lib/seo";
 
@@ -16,6 +18,7 @@ export default function ToolLandingPage({ content }: { content: ToolPageContent 
   const t = getMessages(content.locale);
   const isTranslated = content.locale !== "en";
   const pageKey = content.slug === "home" || content.slug === "video" ? content.slug : "other";
+  const hubLink = content.locale === "en" ? HUB_BACKLINK_COPY[content.slug] : null;
 
   return (
     <>
@@ -49,6 +52,20 @@ export default function ToolLandingPage({ content }: { content: ToolPageContent 
         {content.slug === "home" && <WhyChoose t={t} />}
         {content.sections && <Guide sections={content.sections} />}
         <Faq items={content.faq} heading={t.faqHeading} />
+        {hubLink && (
+          <section className="bg-brand-blush/60">
+            <div className="mx-auto max-w-4xl px-4 py-8 text-center text-base leading-7 text-gray-700 sm:px-6 sm:py-10">
+              {hubLink.before}{" "}
+              <Link
+                href={PINTEREST_DOWNLOADER_HUB.path}
+                className="font-semibold text-brand underline underline-offset-4"
+              >
+                {hubLink.anchor}
+              </Link>{" "}
+              {hubLink.after}
+            </div>
+          </section>
+        )}
         <RelatedTools tools={content.related} heading={t.relatedHeading} />
       </main>
       <Footer locale={content.locale} t={t} pageKey={pageKey} />

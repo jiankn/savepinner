@@ -77,5 +77,37 @@
 ## Deferred
 
 - No new pages, locales, redirects, canonical changes, hreflang changes, or bulk metadata rewrites.
-- Spanish, Portuguese, and German content expansion remains a later batch after these three changes accumulate 14 days of final GSC data.
+- Spanish and German content expansion remains a later batch after these changes accumulate 14 days of final GSC data.
 - Search Console recrawl requests and deployment were not performed.
+
+## Intent architecture follow-up
+
+- Evidence: 13 of the 28 visible query-page impressions assigned to the Portuguese image homepage were video/no-watermark queries. The intended Portuguese video primary page had 12 visible impressions at average position 68.25.
+- Primary-page decisions:
+  - Generic English downloader intent: `/pinterest-downloader/`.
+  - English image/photo/thumbnail intent: `/`.
+  - Portuguese image intent: `/pt/`.
+  - Portuguese video/no-watermark intent: `/pt/baixar-video-do-pinterest/`.
+  - English GIF intent: `/pinterest-gif-downloader/`.
+- Title, H1, URL, canonical and hreflang before/after: unchanged on every affected page.
+- Changes:
+  - Narrowed the English, Spanish, Indonesian and Portuguese image hero copy so it no longer claims the video task.
+  - Added four original Portuguese video sections covering creator-applied marks, real MP4 availability, 4K limits, HLS/DASH, public Pin links and failure diagnosis.
+  - Removed the repeated English GIF card from all twenty localized image/video pages; each localized pair now links within its own language.
+  - Added one contextual main-content link from each of the six English tool intents to the generic downloader hub, using six distinct natural anchors.
+  - Removed misleading language-switcher links from English-only intents that have no equivalent translated page.
+- Risk: low-to-medium; the changes reduce intent overlap without changing routing or search snippets. Portuguese rankings remain low and GSC detail is incomplete.
+- Confidence: medium for the link architecture and Portuguese intent correction; low-to-medium for ranking impact.
+
+## Follow-up verification
+
+- Targeted tests: 45/45 passed.
+- Full tests: 113/113 passed.
+- ESLint: passed.
+- TypeScript: passed.
+- Next.js production build: passed; 63 static pages generated.
+- All 52 sitemap URLs have one H1, a matching self-canonical and unique titles.
+- Generic hub contextual links: 6 links from 6 English tool pages with 6 distinct anchors, up from zero main-content sources.
+- English GIF contextual sources: reduced from 24 to 4; localized sources reduced from 20 to zero.
+- Portuguese image hero no longer contains the previous video claim; the Portuguese video page contains the expected `sem marca d'água`, HLS, 4K and `pin.it` guidance.
+- Deployment status at report creation: user-authorized GitHub push pending.

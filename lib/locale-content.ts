@@ -74,30 +74,14 @@ function tools(locale: ExistingLocale, self: LocalePageKey): RelatedTool[] {
       pt: "Baixe vídeos do Pinterest em qualidade HD",
     }[locale],
   };
-  // Cross-link to the English GIF tool so locale pages still feed the wider
-  // internal-link matrix while those pages await translation.
-  const gif: RelatedTool = {
-    kind: "gif",
-    href: "/pinterest-gif-downloader/",
-    title: {
-      es: "Descargar GIF de Pinterest",
-      id: "Download GIF Pinterest",
-      pt: "Baixar GIFs do Pinterest",
-    }[locale],
-    description: {
-      es: "Guarda GIF animados de Pinterest (en inglés)",
-      id: "Simpan GIF animasi dari Pinterest (bahasa Inggris)",
-      pt: "Salve GIFs animados do Pinterest (em inglês)",
-    }[locale],
-  };
-  return self === "home" ? [video, gif] : [home, gif];
+  return self === "home" ? [video] : [home];
 }
 
 const ES_HOME: ToolPageContent = {
   slug: "home",
   locale: "es",
   path: LOCALE_PATHS.es.home,
-  lastModified: "2026-07-27",
+  lastModified: "2026-08-15",
   videoPath: LOCALE_PATHS.es.video,
   seoTitle: "Descargar Imágenes de Pinterest HD Gratis sin Marca de Agua",
   metaDescription:
@@ -105,7 +89,7 @@ const ES_HOME: ToolPageContent = {
   keywords: ["descargar pines de pinterest", "descargar imagenes de pinterest", "descargar fotos de pinterest"],
   h1: "Descargar imágenes de Pinterest gratis",
   subtitle:
-    "Descarga cualquier pin de Pinterest —imagen, miniatura, GIF o vídeo— en su calidad HD original. Sin registro, sin marca de agua y 100 % gratis.",
+    "Descarga imágenes, fotos y miniaturas de Pinterest en la mayor calidad disponible. Sin registro, sin marca de agua y 100 % gratis.",
   placeholder: "Pega aquí tu enlace de Pinterest...",
   howToTitle: "Cómo descargar imágenes de Pinterest en 3 pasos",
   steps: [
@@ -230,7 +214,7 @@ const ID_HOME: ToolPageContent = {
   slug: "home",
   locale: "id",
   path: LOCALE_PATHS.id.home,
-  lastModified: "2026-07-27",
+  lastModified: "2026-08-15",
   videoPath: LOCALE_PATHS.id.video,
   seoTitle: "Download Gambar Pinterest Gratis HD Tanpa Watermark",
   metaDescription:
@@ -238,7 +222,7 @@ const ID_HOME: ToolPageContent = {
   keywords: ["download gambar pinterest", "download foto pinterest", "cara download gambar pinterest"],
   h1: "Download Gambar Pinterest Gratis",
   subtitle:
-    "Download gambar, thumbnail, GIF, atau video Pinterest apa pun dengan kualitas HD asli. Tanpa login, tanpa watermark, 100% gratis.",
+    "Download gambar, foto, dan thumbnail Pinterest dalam kualitas terbesar yang tersedia. Tanpa login, tanpa watermark, 100% gratis.",
   placeholder: "Tempel link Pinterest kamu di sini...",
   howToTitle: "Cara Download Gambar Pinterest dalam 3 Langkah",
   steps: [
@@ -362,7 +346,7 @@ const PT_HOME: ToolPageContent = {
   slug: "home",
   locale: "pt",
   path: LOCALE_PATHS.pt.home,
-  lastModified: "2026-07-27",
+  lastModified: "2026-08-15",
   videoPath: LOCALE_PATHS.pt.video,
   seoTitle: "Baixar Imagens do Pinterest Grátis em HD sem Marca d'Água",
   metaDescription:
@@ -370,7 +354,7 @@ const PT_HOME: ToolPageContent = {
   keywords: ["baixar imagens do pinterest", "baixar fotos do pinterest", "download de imagens do pinterest"],
   h1: "Baixar imagens do Pinterest grátis",
   subtitle:
-    "Baixe qualquer pin do Pinterest — imagem, miniatura, GIF ou vídeo — na qualidade HD original. Sem login, sem marca d'água e 100% grátis.",
+    "Baixe imagens, fotos e miniaturas do Pinterest na maior qualidade disponível. Sem login, sem marca d'água e 100% grátis.",
   placeholder: "Cole aqui o seu link do Pinterest...",
   howToTitle: "Como baixar imagens do Pinterest em 3 passos",
   steps: [
@@ -429,7 +413,7 @@ const PT_VIDEO: ToolPageContent = {
   slug: "video",
   locale: "pt",
   path: LOCALE_PATHS.pt.video,
-  lastModified: "2026-07-27",
+  lastModified: "2026-08-15",
   videoPath: LOCALE_PATHS.pt.video,
   seoTitle: "Baixar Vídeo do Pinterest Grátis — Qualidade HD Online",
   metaDescription:
@@ -455,6 +439,46 @@ const PT_VIDEO: ToolPageContent = {
         "Escolha a qualidade disponível e salve o arquivo MP4 no celular ou no computador. Sem marca d'água.",
     },
   ],
+  sections: [
+    {
+      heading: "Baixar vídeo do Pinterest sem marca d'água",
+      body: [
+        "O SavePinner entrega o arquivo de vídeo publicado para o Pin sem acrescentar logotipo ou marca d'água própria. Se o criador colocou texto, assinatura ou marca diretamente no vídeo original, esses elementos continuam no arquivo: o serviço não altera a obra nem remove créditos existentes.",
+        "Confira a prévia e a qualidade indicada antes de salvar. Assim, fica claro que “sem marca d'água” significa que o SavePinner não adiciona uma nova marca, e não que ele apaga uma identificação criada pelo autor do conteúdo.",
+      ],
+    },
+    {
+      heading: "Qualidade disponível e formato MP4",
+      body: [
+        "A página mostra os arquivos completos que o Pinterest disponibiliza para aquele Pin, normalmente em MP4. Pode haver várias resoluções ou apenas uma. O SavePinner não aumenta artificialmente a imagem e não transforma uma fonte de baixa resolução em HD ou 4K real.",
+        "Alguns Pins são reproduzidos pelo Pinterest como streams HLS ou DASH divididos em muitos segmentos. Quando não existe um arquivo progressivo completo e verificável, o vídeo pode tocar no Pinterest sem oferecer um único MP4 para download.",
+      ],
+      bullets: [
+        "Escolha a maior resolução disponível quando quiser preservar mais detalhes.",
+        "Uma opção 4K só pode aparecer se o próprio Pinterest publicar esse arquivo.",
+        "O formato e a faixa de áudio permanecem como estão no arquivo fornecido.",
+      ],
+    },
+    {
+      heading: "Use o link de um Pin público",
+      body: [
+        "Abra o vídeo individual no aplicativo Pinterest, toque em Compartilhar e escolha Copiar link. Links completos pinterest.com/pin/, domínios regionais e links curtos pin.it são aceitos quando levam a um Pin público.",
+        "Links de pastas, perfis, resultados de busca ou do feed não identificam um único vídeo. Abra primeiro o Pin desejado e copie o endereço pelo menu de compartilhamento; não é necessário instalar outro aplicativo.",
+      ],
+    },
+    {
+      heading: "Por que o vídeo pode não aparecer",
+      body: [
+        "Pins excluídos, privados, salvos em pastas secretas ou disponíveis apenas após login não expõem um arquivo público. Em outros casos, o Pinterest mostra uma animação no feed, mas publica somente a imagem de capa ou um stream segmentado sem arquivo completo.",
+        "Se o resultado esperado não aparecer, copie o link novamente e abra o mesmo endereço em uma janela anônima sem entrar no Pinterest. Se ele não abrir ou pedir login, repetir o download não pode contornar essa restrição de acesso.",
+      ],
+      bullets: [
+        "Use o endereço de um único Pin público.",
+        "Confirme que o vídeo funciona sem uma conta conectada.",
+        "Uma imagem de capa não é apresentada como um vídeo inventado.",
+      ],
+    },
+  ],
   faq: [
     {
       question: "Como baixar vídeo do Pinterest no celular?",
@@ -464,12 +488,12 @@ const PT_VIDEO: ToolPageContent = {
     {
       question: "Em qual qualidade os vídeos são baixados?",
       answer:
-        "Baixamos o arquivo MP4 na maior qualidade que o Pinterest publica para aquele vídeo, normalmente 720p. As outras versões que o Pinterest oferece são streaming fragmentado e não podem ser salvas como um arquivo único.",
+        "Mostramos os arquivos MP4 completos que o Pinterest publica para aquele Pin. As opções variam conforme a fonte, e streams HLS ou DASH fragmentados podem não existir como um arquivo único.",
     },
     {
       question: "Os vídeos vêm com marca d'água?",
       answer:
-        "Não. O arquivo é baixado exatamente como está no CDN do Pinterest, sem nenhum logo ou marca d'água adicionada por nós.",
+        "O SavePinner não adiciona marca d'água. Se o criador colocou um logotipo ou texto dentro do vídeo original, ele continuará no arquivo.",
     },
     {
       question: "Também dá para baixar imagens?",

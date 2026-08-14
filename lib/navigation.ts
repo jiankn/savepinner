@@ -81,6 +81,10 @@ export interface LanguageLink {
 export type LanguagePageKey = LocalePageKey | TrustPageKey | "other";
 
 export function languageLinks(locale: Locale, pageKey: LanguagePageKey): LanguageLink[] {
+  if (pageKey === "other") {
+    return [];
+  }
+
   if (pageKey === "privacy" || pageKey === "about") {
     return (Object.keys(TRUST_PATHS) as TrustLocale[]).map((targetLocale) => ({
       locale: targetLocale,
@@ -90,7 +94,7 @@ export function languageLinks(locale: Locale, pageKey: LanguagePageKey): Languag
     }));
   }
 
-  const key: LocalePageKey = pageKey === "other" ? "home" : pageKey;
+  const key: LocalePageKey = pageKey;
   return LOCALES.map((targetLocale) => ({
     locale: targetLocale,
     href: targetLocale === "en" ? TOOL_PAGES[key].path : LOCALE_PATHS[targetLocale][key],

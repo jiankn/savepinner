@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
 import {
   getPinterestDownloaderHubJsonLd,
+  HUB_BACKLINK_COPY,
   HUB_URL_FORMATS,
   PINTEREST_DOWNLOADER_HUB,
 } from "@/lib/hub-content";
@@ -114,6 +115,14 @@ describe("PRD v2 page matrix", () => {
     expect(PINTEREST_DOWNLOADER_HUB.path).toBe("/pinterest-downloader/");
     expect(PINTEREST_DOWNLOADER_HUB.seoTitle.startsWith("Pinterest Downloader")).toBe(true);
     expect(TOOL_PAGES.home.seoTitle).toBe("Free Pinterest Image Downloader — HD, No Watermark");
+  });
+
+  it("gives the generic hub a varied contextual vote from every English tool intent", () => {
+    expect(Object.keys(HUB_BACKLINK_COPY).sort()).toEqual(
+      Object.keys(TOOL_PAGES).sort(),
+    );
+    expect(new Set(Object.values(HUB_BACKLINK_COPY).map((copy) => copy.anchor)).size)
+      .toBe(Object.keys(TOOL_PAGES).length);
   });
 
   it("makes the generic hub a real tool and maintained reference", () => {

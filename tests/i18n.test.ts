@@ -90,6 +90,36 @@ describe("locale pages", () => {
     }
   });
 
+  it("keeps localized related-tool votes inside the same language", () => {
+    for (const locale of PREFIXED_LOCALES) {
+      for (const key of ["home", "video"] as const) {
+        const related = LOCALE_PAGES[locale][key].related;
+        expect(related.length, `${locale}/${key}`).toBeGreaterThan(0);
+        for (const tool of related) {
+          expect(tool.href.startsWith(`/${locale}/`), `${locale}/${key}:${tool.href}`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("keeps broad media claims out of image-page hero copy", () => {
+    expect(TOOL_PAGES.home.subtitle.toLowerCase()).not.toContain("video");
+    expect(LOCALE_PAGES.es.home.subtitle.toLowerCase()).not.toContain("vídeo");
+    expect(LOCALE_PAGES.id.home.subtitle.toLowerCase()).not.toContain("video");
+    expect(LOCALE_PAGES.pt.home.subtitle.toLowerCase()).not.toContain("vídeo");
+  });
+
+  it("gives the Portuguese video primary page its GSC-backed intent guidance", () => {
+    const page = LOCALE_PAGES.pt.video;
+    const text = JSON.stringify(page.sections);
+
+    expect(page.sections?.length).toBeGreaterThanOrEqual(4);
+    expect(text).toContain("sem marca d'água");
+    expect(text).toContain("HLS");
+    expect(text).toContain("4K");
+    expect(text).toContain("pin.it");
+  });
+
   it("gives the GSC-backed Italian video page unique practical guidance", () => {
     const page = LOCALE_PAGES.it.video;
     const text = JSON.stringify(page.sections);
@@ -184,5 +214,9 @@ describe("navigation", () => {
     expect(links.find((l) => l.locale === "ja")?.href).toBe(
       TRUST_PATHS.ja.privacy,
     );
+  });
+
+  it("does not imply translations for English-only page intents", () => {
+    expect(languageLinks("en", "other")).toEqual([]);
   });
 });

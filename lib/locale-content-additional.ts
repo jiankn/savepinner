@@ -25,42 +25,34 @@ export const ADDITIONAL_VIDEO_SLUGS: Record<AdditionalLocale, string> = {
 const RELATED_COPY: Record<AdditionalLocale, {
   home: [string, string];
   video: [string, string];
-  gif: [string, string];
 }> = {
   fr: {
     home: ["Télécharger des images Pinterest", "Enregistrez des images et miniatures Pinterest en HD"],
     video: ["Télécharger une vidéo Pinterest", "Enregistrez des vidéos Pinterest en qualité HD"],
-    gif: ["Télécharger un GIF Pinterest", "Enregistrez des GIF animés Pinterest (page en anglais)"],
   },
   de: {
     home: ["Pinterest-Bilder herunterladen", "Speichere Pinterest-Bilder und Vorschaubilder in HD"],
     video: ["Pinterest-Videos herunterladen", "Speichere Pinterest-Videos in HD-Qualität"],
-    gif: ["Pinterest-GIFs herunterladen", "Speichere animierte Pinterest-GIFs (englische Seite)"],
   },
   it: {
     home: ["Scaricare immagini Pinterest", "Salva immagini e miniature Pinterest in HD"],
     video: ["Scaricare video Pinterest", "Salva video Pinterest in qualità HD"],
-    gif: ["Scaricare GIF Pinterest", "Salva GIF animate da Pinterest (pagina in inglese)"],
   },
   nl: {
     home: ["Pinterest-afbeeldingen downloaden", "Sla Pinterest-afbeeldingen en miniaturen op in HD"],
     video: ["Pinterest-video’s downloaden", "Sla Pinterest-video’s op in HD-kwaliteit"],
-    gif: ["Pinterest-GIF’s downloaden", "Sla bewegende Pinterest-GIF’s op (Engelse pagina)"],
   },
   ja: {
     home: ["Pinterest画像ダウンロード", "Pinterestの画像とサムネイルをHD画質で保存"],
     video: ["Pinterest動画ダウンロード", "Pinterest動画をHD画質で保存"],
-    gif: ["Pinterest GIFダウンロード", "PinterestのアニメーションGIFを保存（英語ページ）"],
   },
   tr: {
     home: ["Pinterest görsel indir", "Pinterest görsellerini ve küçük resimlerini HD kaydedin"],
     video: ["Pinterest video indir", "Pinterest videolarını HD kalitede kaydedin"],
-    gif: ["Pinterest GIF indir", "Hareketli Pinterest GIF’lerini kaydedin (İngilizce sayfa)"],
   },
   pl: {
     home: ["Pobierz obrazy z Pinterest", "Zapisuj obrazy i miniatury z Pinterest w jakości HD"],
     video: ["Pobierz film z Pinterest", "Zapisuj filmy z Pinterest w jakości HD"],
-    gif: ["Pobierz GIF z Pinterest", "Zapisuj animowane GIF-y z Pinterest (strona po angielsku)"],
   },
 };
 
@@ -78,13 +70,7 @@ function related(locale: AdditionalLocale, self: LocalePageKey): RelatedTool[] {
     title: copy.video[0],
     description: copy.video[1],
   };
-  const gif: RelatedTool = {
-    kind: "gif",
-    href: "/pinterest-gif-downloader/",
-    title: copy.gif[0],
-    description: copy.gif[1],
-  };
-  return self === "home" ? [video, gif] : [home, gif];
+  return self === "home" ? [video] : [home];
 }
 
 const FR_HOME: ToolPageContent = {

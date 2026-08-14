@@ -7,6 +7,39 @@ export const PINTEREST_DOWNLOADER_HUB = {
   h1: "Pinterest Downloader for Every Public Pin",
 } as const;
 
+export const HUB_BACKLINK_COPY = {
+  home: {
+    before: "Need a video, GIF or Story Pin instead?",
+    anchor: "Compare every Pinterest downloader",
+    after: "and choose the tool for that media type.",
+  },
+  video: {
+    before: "Not sure whether the Pin contains a video, GIF or only a cover image?",
+    anchor: "Compare the Pinterest download tools",
+    after: "before choosing a format.",
+  },
+  gif: {
+    before: "If the Pin turns out to be a looping video or a static cover,",
+    anchor: "see all Pinterest download options",
+    after: "and use the matching tool.",
+  },
+  story: {
+    before: "For a standard image, video or GIF Pin,",
+    anchor: "choose the matching Pinterest downloader",
+    after: "from the complete tool guide.",
+  },
+  iphone: {
+    before: "Need instructions by media type as well as iOS?",
+    anchor: "Browse all Pinterest downloader tools",
+    after: "for images, videos, GIFs and Story Pins.",
+  },
+  android: {
+    before: "Need instructions by media type as well as Android?",
+    anchor: "Open the complete Pinterest downloader guide",
+    after: "and select the right tool.",
+  },
+} as const;
+
 export const HUB_TOOLS = [
   {
     title: "Pinterest Image Downloader",

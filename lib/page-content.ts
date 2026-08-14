@@ -114,7 +114,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
     keywords: ["pinterest image downloader", "pinterest thumbnail download", "pinterest photo downloader"],
     h1: "Free Pinterest Image Downloader",
     subtitle:
-      "Download any Pinterest image, thumbnail, GIF or video in original HD quality. No login, no watermark, 100% free.",
+      "Download Pinterest images, photos and thumbnails in the largest quality Pinterest makes available. No login, no watermark, 100% free.",
     placeholder: "Paste your Pinterest link here...",
     howToTitle: "How to Download Pinterest Images — 3 Easy Steps",
     steps: [
