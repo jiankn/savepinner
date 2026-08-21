@@ -146,10 +146,10 @@ const DE_HOME: ToolPageContent = {
 };
 
 const DE_VIDEO: ToolPageContent = {
-  slug: "video", locale: "de", path: ADDITIONAL_LOCALE_PATHS.de.video, lastModified: "2026-08-02", videoPath: ADDITIONAL_LOCALE_PATHS.de.video,
+  slug: "video", locale: "de", path: ADDITIONAL_LOCALE_PATHS.de.video, lastModified: "2026-08-22", videoPath: ADDITIONAL_LOCALE_PATHS.de.video,
   seoTitle: "Pinterest Video kostenlos in HD herunterladen",
   metaDescription: "Pinterest-Videos kostenlos in HD herunterladen. Ohne Anmeldung, Wasserzeichen oder Software. Funktioniert auf Handy, Tablet und Computer.",
-  keywords: ["pinterest video herunterladen", "video von pinterest herunterladen", "pinterest video download"],
+  keywords: ["pinterest video herunterladen", "wie kann ich videos von pinterest herunterladen", "pinterest video downloader kostenlos"],
   h1: "Pinterest-Video in HD herunterladen",
   subtitle: "Füge den Link eines öffentlichen Pinterest-Videos ein und speichere die MP4-Datei in HD. Kostenlos und ohne Anmeldung.",
   placeholder: "Link zum Pinterest-Video einfügen...",
@@ -160,7 +160,7 @@ const DE_VIDEO: ToolPageContent = {
     { title: "MP4-Datei speichern", description: "Wähle die angebotene Qualität und speichere das Video auf Handy oder Computer." },
   ],
   faq: [
-    { question: "Wie lade ich ein Pinterest-Video auf dem Handy herunter?", answer: "Kopiere den Videolink in der Pinterest-App, füge ihn hier ein und tippe auf Herunterladen. Das funktioniert auf Android und iPhone." },
+    { question: "Wie kann ich Videos von Pinterest herunterladen?", answer: "Kopiere den Videolink in der Pinterest-App, füge ihn hier ein und tippe auf Herunterladen. Das funktioniert kostenlos auf Android, iPhone und am Computer." },
     { question: "Welche Videoqualität kann ich herunterladen?", answer: "SavePinner bietet die beste MP4-Datei an, die Pinterest für den Pin veröffentlicht, häufig in HD, wenn diese Version vorhanden ist." },
     { question: "Enthält das Video ein Wasserzeichen?", answer: "Nein. SavePinner fügt der von Pinterest bereitgestellten Datei weder Logo noch Wasserzeichen hinzu." },
     { question: "Kann ich ebenfalls Pinterest-Bilder speichern?", answer: "Ja. Auf unserer Bildseite kannst du Fotos, Pins und Vorschaubilder in Originalauflösung herunterladen.", links: [{ text: "Pinterest-Bilder herunterladen", href: ADDITIONAL_LOCALE_PATHS.de.home }] },

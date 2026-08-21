@@ -148,17 +148,17 @@ const ES_VIDEO: ToolPageContent = {
   slug: "video",
   locale: "es",
   path: LOCALE_PATHS.es.video,
-  lastModified: "2026-07-27",
+  lastModified: "2026-08-22",
   videoPath: LOCALE_PATHS.es.video,
   seoTitle: "Descargar Vídeos de Pinterest Gratis — Calidad HD Online",
   metaDescription:
     "Descarga vídeos de Pinterest en calidad HD gratis y sin registro. Sin marca de agua, sin instalar programas. Compatible con móvil y ordenador.",
-  keywords: ["descargar videos de pinterest", "descargar video de pinterest", "bajar videos de pinterest"],
+  keywords: ["descargar videos de pinterest", "descargar videos de pinterest online", "bajar videos de pinterest"],
   h1: "Descargar vídeos de Pinterest en HD",
   subtitle:
     "Pega el enlace de cualquier vídeo de Pinterest y descárgalo en calidad HD. Sin registro, sin marca de agua y 100 % gratis.",
   placeholder: "Pega aquí el enlace del vídeo de Pinterest...",
-  howToTitle: "Cómo descargar vídeos de Pinterest en 3 pasos",
+  howToTitle: "Cómo descargar vídeos de Pinterest online en 3 pasos",
   steps: [
     {
       title: "Copia el enlace del vídeo",
@@ -413,17 +413,17 @@ const PT_VIDEO: ToolPageContent = {
   slug: "video",
   locale: "pt",
   path: LOCALE_PATHS.pt.video,
-  lastModified: "2026-08-15",
+  lastModified: "2026-08-22",
   videoPath: LOCALE_PATHS.pt.video,
   seoTitle: "Baixar Vídeo do Pinterest Grátis — Qualidade HD Online",
   metaDescription:
     "Baixe vídeos do Pinterest em qualidade HD, grátis e sem login. Sem marca d'água e sem instalar programas. Funciona no celular e no computador.",
-  keywords: ["baixar video do pinterest", "baixar videos do pinterest", "download de video do pinterest"],
+  keywords: ["baixar video do pinterest", "baixar video do pinterest online", "baixar videos do pinterest"],
   h1: "Baixar vídeo do Pinterest em HD",
   subtitle:
     "Cole o link de qualquer vídeo do Pinterest e baixe em qualidade HD. Sem login, sem marca d'água e 100% grátis.",
   placeholder: "Cole aqui o link do vídeo do Pinterest...",
-  howToTitle: "Como baixar vídeo do Pinterest em 3 passos",
+  howToTitle: "Como baixar vídeo do Pinterest online em 3 passos",
   steps: [
     {
       title: "Copie o link do vídeo",
@@ -467,6 +467,25 @@ const PT_VIDEO: ToolPageContent = {
       ],
     },
     {
+      heading: "Onde o vídeo fica salvo no celular",
+      body: [
+        "No Android, o arquivo normalmente vai para a pasta Downloads, acessível pelo app Arquivos, Files do Google ou Meus Arquivos em aparelhos Samsung. O vídeo também pode aparecer na Galeria depois que o sistema terminar de indexar o novo MP4.",
+        "No iPhone e no iPad, o Safari salva o arquivo no app Arquivos, dentro de Downloads no iCloud Drive ou em No Meu iPhone, conforme a configuração do navegador. Para colocar uma cópia no app Fotos, abra o MP4 em Arquivos, toque em Compartilhar e escolha Salvar Vídeo.",
+      ],
+      bullets: [
+        "Android: Arquivos ou Files do Google → Downloads.",
+        "Samsung: Meus Arquivos → Armazenamento interno → Download.",
+        "iPhone e iPad: Arquivos → Explorar → Downloads.",
+      ],
+    },
+    {
+      heading: "Baixar online sem instalar app ou APK",
+      body: [
+        "Todo o processo acontece no navegador: copie o link do Pin, cole no campo acima e escolha o arquivo disponível. Não é necessário instalar aplicativo, extensão, APK ou programa para computador, e o SavePinner não pede sua senha do Pinterest.",
+        "Evite aplicativos distribuídos fora das lojas oficiais apenas para executar esse trabalho. Um site não recebe acesso permanente ao armazenamento ou à sua conta; o navegador salva somente o arquivo que você escolhe baixar.",
+      ],
+    },
+    {
       heading: "Por que o vídeo pode não aparecer",
       body: [
         "Pins excluídos, privados, salvos em pastas secretas ou disponíveis apenas após login não expõem um arquivo público. Em outros casos, o Pinterest mostra uma animação no feed, mas publica somente a imagem de capa ou um stream segmentado sem arquivo completo.",
@@ -504,6 +523,11 @@ const PT_VIDEO: ToolPageContent = {
     {
       question: "Precisa se cadastrar ou pagar?",
       answer: "Não. Sem conta, sem e-mail e sem custo. É só colar o link e baixar.",
+    },
+    {
+      question: "Onde encontro o vídeo depois de baixar?",
+      answer:
+        "No Android, procure na pasta Downloads pelo app Arquivos. No iPhone ou iPad, abra Arquivos e entre em Downloads; depois use Compartilhar e Salvar Vídeo se quiser copiar o MP4 para o app Fotos.",
     },
     {
       question: "Quais pins de vídeo são compatíveis?",
