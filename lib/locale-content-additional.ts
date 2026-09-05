@@ -146,11 +146,11 @@ const DE_HOME: ToolPageContent = {
 };
 
 const DE_VIDEO: ToolPageContent = {
-  slug: "video", locale: "de", path: ADDITIONAL_LOCALE_PATHS.de.video, lastModified: "2026-08-22", videoPath: ADDITIONAL_LOCALE_PATHS.de.video,
-  seoTitle: "Pinterest Video kostenlos in HD herunterladen",
+  slug: "video", locale: "de", path: ADDITIONAL_LOCALE_PATHS.de.video, lastModified: "2026-09-05", videoPath: ADDITIONAL_LOCALE_PATHS.de.video,
+  seoTitle: "Pinterest Videos herunterladen & speichern — kostenlos",
   metaDescription: "Pinterest-Videos kostenlos in HD herunterladen. Ohne Anmeldung, Wasserzeichen oder Software. Funktioniert auf Handy, Tablet und Computer.",
   keywords: ["pinterest video herunterladen", "wie kann ich videos von pinterest herunterladen", "pinterest video downloader kostenlos"],
-  h1: "Pinterest-Video in HD herunterladen",
+  h1: "Pinterest-Videos herunterladen und speichern",
   subtitle: "Füge den Link eines öffentlichen Pinterest-Videos ein und speichere die MP4-Datei in HD. Kostenlos und ohne Anmeldung.",
   placeholder: "Link zum Pinterest-Video einfügen...",
   howToTitle: "Pinterest-Video in 3 Schritten herunterladen",
@@ -194,11 +194,11 @@ const IT_HOME: ToolPageContent = {
 };
 
 const IT_VIDEO: ToolPageContent = {
-  slug: "video", locale: "it", path: ADDITIONAL_LOCALE_PATHS.it.video, lastModified: "2026-08-15", videoPath: ADDITIONAL_LOCALE_PATHS.it.video,
-  seoTitle: "Scaricare Video Pinterest Gratis in Qualità HD",
+  slug: "video", locale: "it", path: ADDITIONAL_LOCALE_PATHS.it.video, lastModified: "2026-09-05", videoPath: ADDITIONAL_LOCALE_PATHS.it.video,
+  seoTitle: "Scaricare Video Pinterest Senza Filigrana in HD",
   metaDescription: "Scarica video Pinterest in qualità HD gratis, senza registrazione, filigrana o programmi. Compatibile con iPhone, Android e computer.",
   keywords: ["scaricare video pinterest", "scaricare video da pinterest", "download video pinterest"],
-  h1: "Scaricare video Pinterest in HD",
+  h1: "Scaricare video Pinterest senza filigrana",
   subtitle: "Incolla il link di un video Pinterest pubblico e salva il file MP4 in qualità HD. Gratis, senza account e senza software.",
   placeholder: "Incolla il link del video Pinterest...",
   howToTitle: "Come scaricare video Pinterest in 3 passaggi",

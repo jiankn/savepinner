@@ -87,7 +87,7 @@ const ES_HOME: ToolPageContent = {
   metaDescription:
     "Descarga imágenes y pines de Pinterest en calidad HD original, gratis y sin registro. Compatible con JPG, PNG, GIF y WebP. Sin marca de agua.",
   keywords: ["descargar pines de pinterest", "descargar imagenes de pinterest", "descargar fotos de pinterest"],
-  h1: "Descargar imágenes de Pinterest gratis",
+  h1: "Descargar imágenes de Pinterest sin marca de agua",
   subtitle:
     "Descarga imágenes, fotos y miniaturas de Pinterest en la mayor calidad disponible. Sin registro, sin marca de agua y 100 % gratis.",
   placeholder: "Pega aquí tu enlace de Pinterest...",
@@ -352,7 +352,7 @@ const PT_HOME: ToolPageContent = {
   metaDescription:
     "Baixe imagens do Pinterest em qualidade HD original, grátis e sem login. Compatível com JPG, PNG, GIF e WebP. Sem marca d'água e sem instalar nada.",
   keywords: ["baixar imagens do pinterest", "baixar fotos do pinterest", "download de imagens do pinterest"],
-  h1: "Baixar imagens do Pinterest grátis",
+  h1: "Baixar imagens do Pinterest sem marca d'água",
   subtitle:
     "Baixe imagens, fotos e miniaturas do Pinterest na maior qualidade disponível. Sem login, sem marca d'água e 100% grátis.",
   placeholder: "Cole aqui o seu link do Pinterest...",
@@ -415,11 +415,11 @@ const PT_VIDEO: ToolPageContent = {
   path: LOCALE_PATHS.pt.video,
   lastModified: "2026-08-22",
   videoPath: LOCALE_PATHS.pt.video,
-  seoTitle: "Baixar Vídeo do Pinterest Grátis — Qualidade HD Online",
+  seoTitle: "Baixar Vídeo do Pinterest sem Marca d'Água em HD",
   metaDescription:
     "Baixe vídeos do Pinterest em qualidade HD, grátis e sem login. Sem marca d'água e sem instalar programas. Funciona no celular e no computador.",
   keywords: ["baixar video do pinterest", "baixar video do pinterest online", "baixar videos do pinterest"],
-  h1: "Baixar vídeo do Pinterest em HD",
+  h1: "Baixar vídeo do Pinterest sem marca d'água",
   subtitle:
     "Cole o link de qualquer vídeo do Pinterest e baixe em qualidade HD. Sem login, sem marca d'água e 100% grátis.",
   placeholder: "Cole aqui o link do vídeo do Pinterest...",
