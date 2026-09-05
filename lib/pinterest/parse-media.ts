@@ -7,6 +7,8 @@
  * we never fabricate "original" URLs by string rewriting.
  */
 
+import { ApiError } from "@/lib/errors";
+
 export type MediaKind = "image" | "gif" | "video";
 
 export interface MediaCandidate {
@@ -299,7 +301,7 @@ function extractEmbeddedJson(html: string): unknown | null {
   }
 }
 
-function extractRelayJson(html: string): unknown[] {
+function extractRelayJson(html: string, pinId?: string): unknown[] {
   const payloads: unknown[] = [];
   const scriptPattern =
     /<script\b(?=[^>]*\bdata-relay-completed-request=["']true["'])[^>]*>([\s\S]*?)<\/script>/gi;
@@ -307,15 +309,33 @@ function extractRelayJson(html: string): unknown[] {
   for (const match of html.matchAll(scriptPattern)) {
     const wrapper = match[1].trim();
     const payloadMatch =
-      /^window\.__PWS_RELAY_REGISTER_COMPLETED_REQUEST__\("[^"]*",\s*([\s\S]+)\);\s*$/.exec(
+      /^window\.__PWS_RELAY_REGISTER_COMPLETED_REQUEST__\("([^"]*)",\s*([\s\S]+)\);\s*$/.exec(
         wrapper,
       );
-    if (!payloadMatch?.[1]) continue;
+    if (!payloadMatch?.[2]) continue;
+    let payload: unknown;
+    let requestedPinId: unknown;
     try {
-      payloads.push(JSON.parse(payloadMatch[1]));
+      const request = JSON.parse(decodeURIComponent(payloadMatch[1]));
+      requestedPinId = request?.variables?.pinId;
+    } catch {
+      // Older pages may use an opaque request key with a valid JSON payload.
+    }
+    try {
+      payload = JSON.parse(payloadMatch[2]);
     } catch {
       // A malformed relay payload must not prevent the documented fallbacks.
+      continue;
     }
+    if (pinId && requestedPinId && String(requestedPinId) !== pinId) continue;
+    const data = isRecord(payload) && isRecord(payload.data) ? payload.data : null;
+    const result = data && isRecord(data.v3GetPinQueryv2) ? data.v3GetPinQueryv2 : null;
+    if (pinId && String(requestedPinId) === pinId && result?.__typename === "PinNotFound") {
+      // Pinterest can return HTTP 200 and generic images for a deleted Pin.
+      // Do not turn those fallback images into a successful download.
+      throw new ApiError("MEDIA_NOT_FOUND", "Pinterest reports requested PinNotFound");
+    }
+    payloads.push(payload);
   }
   return payloads;
 }
@@ -341,7 +361,8 @@ export function parseMediaFromHtml(html: string, pinId?: string): ParsedMedia {
   let description: string | undefined;
 
   const data = extractEmbeddedJson(html);
-  const sources = data ? [data, ...extractRelayJson(html)] : extractRelayJson(html);
+  const relay = extractRelayJson(html, pinId);
+  const sources = data ? [data, ...relay] : relay;
   const pin = extractPinEntity(sources, pinId);
 
   if (pin) {

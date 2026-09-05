@@ -103,7 +103,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
   home: {
     slug: "home",
     path: "/",
-    lastModified: "2026-08-15",
+    lastModified: "2026-09-05",
     locale: "en",
     videoPath: "/pinterest-video-downloader/",
     // Brand prefix dropped: it cost 13 chars that the target keyword needs up
@@ -131,7 +131,7 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       {
         title: "Download the original-quality image",
         description:
-          "Choose your preferred size and download the image in HD quality. No compression, no watermark.",
+          "Choose Original when available, or another verified size. SavePinner saves the source file without recompressing it or adding a watermark.",
       },
     ],
     sections: [
@@ -178,12 +178,12 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       {
         question: "How do I download Pinterest images without watermark?",
         answer:
-          "All images downloaded through SavePinner are fetched directly from Pinterest's CDN in their original quality, without any watermark added by us.",
+          "Paste a public Pin link and choose an available image size. SavePinner fetches that file from Pinterest's CDN without adding a watermark. A watermark already embedded by the creator remains in the file.",
       },
       {
-        question: "Can I download Pinterest thumbnails in full resolution?",
+        question: "How do I download a Pinterest thumbnail or full-size image?",
         answer:
-          "Yes! By default Pinterest shows compressed thumbnails. Our Pinterest thumbnail downloader extracts the original image URL from Pinterest's CDN so you get the full resolution version.",
+          "Paste the public Pin link above, then choose Thumbnail (236x) for a small preview or Original for the largest source we can verify. Only available sizes are listed. A video Pin may return video files without a separate downloadable thumbnail, and a small source image cannot be enlarged into a true original.",
       },
       {
         question: "Does this Pinterest image downloader work on iPhone or Android?",
@@ -208,12 +208,12 @@ export const TOOL_PAGES: Record<ToolPageContent["slug"], ToolPageContent> = {
       {
         question: "Will the downloaded image lose quality?",
         answer:
-          "No. We fetch the original image from Pinterest's CDN (i.pinimg.com/originals/), so you get the exact same quality as uploaded.",
+          "SavePinner does not recompress the file. Choose Original when Pinterest exposes a working original source; otherwise choose one of the available renditions. The downloaded quality is limited by that source, and we cannot restore detail missing from it.",
       },
       {
         question: "Can I download an entire Pinterest board at once?",
         answer:
-          "Currently we support single Pin downloads. Board download is coming soon — stay tuned!",
+          "No. SavePinner accepts one public Pin link at a time. Open each image you need and copy its individual Pin link; a board, profile or search-results URL cannot be downloaded as a batch or ZIP here.",
       },
       {
         question: "Is SavePinner safe to use?",

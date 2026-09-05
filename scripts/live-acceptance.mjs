@@ -3,11 +3,10 @@ const baseUrl = (process.env.ACCEPTANCE_BASE_URL ?? "http://127.0.0.1:3000").rep
 const samples = [
   { label: "image-original", url: "https://www.pinterest.com/pin/424605071126047814/", type: "image" },
   { label: "image-renditions", url: "https://www.pinterest.com/pin/989243874418277815/", type: "image" },
-  // Regional host coverage. This Pin is a single-page video Idea Pin, so it
-  // resolves as a video — it only looked like an image while Story Pin clips
-  // went unparsed.
-  { label: "regional-host", url: "https://pinterest.de/pin/145804106683758606/", type: "video" },
-  { label: "idea-pin-video", url: "https://www.pinterest.com/pin/580471839512797064/", type: "video" },
+  { label: "regional-host", url: "https://pinterest.de/pin/68746366275/", type: "video" },
+  // Pinterest explicitly returned PinNotFound for this former Idea Pin on
+  // 2026-09-05. Generic page artwork must never become a successful download.
+  { label: "deleted-idea-pin", url: "https://www.pinterest.com/pin/580471839512797064/", error: "MEDIA_NOT_FOUND" },
   {
     label: "idea-pin-slideshow",
     url: "https://www.pinterest.com/pin/424605071126047814/",
@@ -29,7 +28,10 @@ const samples = [
 const allowedMediaHosts = new Set(["i.pinimg.com", "v.pinimg.com", "v1.pinimg.com"]);
 const results = [];
 
-for (const sample of samples) {
+for (const [index, sample] of samples.entries()) {
+  // Production allows ten resolves per minute. Keep the acceptance suite
+  // below that limit instead of reporting its own burst as a product defect.
+  if (index > 0) await new Promise((resolve) => setTimeout(resolve, 6500));
   const startedAt = Date.now();
   try {
     const response = await fetch(`${baseUrl}/api/resolve`, {
@@ -39,6 +41,13 @@ for (const sample of samples) {
       signal: AbortSignal.timeout(45_000),
     });
     const payload = await response.json();
+    if (sample.error) {
+      if (response.status !== 404 || payload?.error?.code !== sample.error) {
+        throw new Error(`expected 404 ${sample.error}, received ${response.status} ${payload?.error?.code ?? payload?.type}`);
+      }
+      results.push({ sample: sample.label, status: "PASS", type: "missing-pin", variants: 0, durationMs: Date.now() - startedAt });
+      continue;
+    }
     if (!response.ok) {
       throw new Error(`${response.status} ${payload?.error?.code ?? "UNKNOWN_ERROR"}`);
     }

@@ -20,6 +20,40 @@ function htmlWithRelayData(pinId: string, pin: Record<string, unknown>): string 
 }
 
 describe("parseMediaFromHtml", () => {
+  function missingPinHtml(pinId: string): string {
+    const key = encodeURIComponent(JSON.stringify({ variables: { pinId } }));
+    return `<meta property="og:image" content="https://i.pinimg.com/originals/generic.jpg">
+      <script data-relay-completed-request="true">window.__PWS_RELAY_REGISTER_COMPLETED_REQUEST__("${key}", {"data":{"v3GetPinQueryv2":{"__typename":"PinNotFound","__isError":"PinNotFound"}}});</script>`;
+  }
+
+  it("rejects a missing requested Pin even when generic image metadata exists", () => {
+    expect(() => parseMediaFromHtml(missingPinHtml("123"), "123")).toThrow(
+      expect.objectContaining({ code: "MEDIA_NOT_FOUND", status: 404 }),
+    );
+  });
+
+  it("does not reject a valid Pin because another relay request reports PinNotFound", () => {
+    const html = missingPinHtml("456") + htmlWithRelayData("123", {
+      images_orig: { url: "https://i.pinimg.com/originals/requested.jpg" },
+    });
+    expect(parseMediaFromHtml(html, "123").images[0].url).toContain("requested.jpg");
+  });
+
+  it("does not use an unrelated relay Pin when the requested Pin has only OG metadata", () => {
+    const other = htmlWithRelayData("456", {
+      images_orig: { url: "https://i.pinimg.com/originals/unrelated.jpg" },
+    });
+    const html = other + '<meta property="og:image" content="https://i.pinimg.com/originals/requested.jpg">';
+    expect(parseMediaFromHtml(html, "123").images[0].url).toContain("requested.jpg");
+  });
+
+  it("preserves valid relay payloads with legacy opaque request keys", () => {
+    const html = htmlWithRelayData("123", {
+      images_orig: { url: "https://i.pinimg.com/originals/requested.jpg" },
+    }).replace(/%7B[^\"]+/, "legacy-key");
+    expect(parseMediaFromHtml(html, "123").images[0].url).toContain("requested.jpg");
+  });
+
   it("parses image pins with sorted, deduped candidates", () => {
     const html = htmlWithPwsData(
       pwsData({
