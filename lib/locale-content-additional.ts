@@ -98,7 +98,7 @@ const FR_HOME: ToolPageContent = {
 };
 
 const FR_VIDEO: ToolPageContent = {
-  slug: "video", locale: "fr", path: ADDITIONAL_LOCALE_PATHS.fr.video, lastModified: "2026-08-02", videoPath: ADDITIONAL_LOCALE_PATHS.fr.video,
+  slug: "video", locale: "fr", path: ADDITIONAL_LOCALE_PATHS.fr.video, lastModified: "2026-10-29", videoPath: ADDITIONAL_LOCALE_PATHS.fr.video,
   seoTitle: "Télécharger une Vidéo Pinterest en HD Gratuitement",
   metaDescription: "Téléchargez une vidéo Pinterest en qualité HD gratuitement, sans inscription ni filigrane. Fonctionne sur iPhone, Android et ordinateur.",
   keywords: ["télécharger vidéo pinterest", "telecharger video pinterest", "enregistrer vidéo pinterest"],
@@ -113,9 +113,9 @@ const FR_VIDEO: ToolPageContent = {
   ],
   faq: [
     { question: "Comment télécharger une vidéo Pinterest sur mobile ?", answer: "Copiez le lien depuis l’application Pinterest, collez-le ici puis appuyez sur Télécharger. La méthode est identique sur iPhone et Android." },
+    { question: "Comment télécharger une image Pinterest ?", answer: "Cette page est faite pour les vidéos. Pour une photo, une épingle ou une miniature, utilisez la page dédiée : télécharger une image Pinterest. Elle affiche les tailles disponibles, dont l’original quand Pinterest le fournit.", links: [{ text: "télécharger une image Pinterest", href: ADDITIONAL_LOCALE_PATHS.fr.home }] },
     { question: "Dans quelle qualité la vidéo est-elle enregistrée ?", answer: "SavePinner propose le meilleur fichier MP4 publié par Pinterest pour cette épingle, généralement jusqu’en HD lorsque cette version existe." },
     { question: "La vidéo téléchargée contient-elle un filigrane ?", answer: "Non. SavePinner n’ajoute ni logo ni filigrane au fichier fourni par Pinterest." },
-    { question: "Puis-je également enregistrer des images ?", answer: "Oui. Revenez à notre outil d’images pour télécharger photos, épingles et miniatures en résolution originale.", links: [{ text: "outil de téléchargement d’images Pinterest", href: ADDITIONAL_LOCALE_PATHS.fr.home }] },
     { question: "Le service nécessite-t-il une inscription ?", answer: "Non. Il n’y a aucun compte à créer, aucun e-mail à fournir et aucun logiciel à installer." },
     { question: "Quelles vidéos Pinterest sont compatibles ?", answer: "Les épingles vidéo publiques sont prises en charge. Les contenus privés, supprimés ou réservés aux utilisateurs connectés ne sont pas accessibles." },
   ], related: related("fr", "video"),
