@@ -97,6 +97,34 @@ describe("parseMediaFromHtml", () => {
     expect(media.images).toHaveLength(1); // poster kept for preview
   });
 
+  it("reads the requested video Pin from __PWS_INITIAL_PROPS__ ahead of related Pins", () => {
+    // 2026-10-29 线上实测：约三成请求的 Pin 数据只出现在 __PWS_INITIAL_PROPS__，字段是 snake_case。
+    const related = {
+      id: "999",
+      type: "pin",
+      title: "Related clip",
+      images: { orig: { url: "https://i.pinimg.com/originals/aa/bb/cc/related.jpg" } },
+      videos: { video_list: { V_720P: { url: "https://v1.pinimg.com/videos/mc/720p/related.mp4" } } },
+    };
+    const requested = {
+      id: "68746366275",
+      type: "pin",
+      title: "Pineapple Roasted Chicken",
+      images: { orig: { url: "https://i.pinimg.com/originals/af/ed/89/poster.jpg" } },
+      videos: { video_list: { V_720P: { url: "https://v1.pinimg.com/videos/mc/720p/requested.mp4", width: 576, height: 1024 } } },
+    };
+    const props = { initialReduxState: { pins: { "999": related, "68746366275": requested } } };
+    const html = `<script id="__PWS_DATA__" type="application/json">{"props":{}}</script>
+      <script id="__PWS_INITIAL_PROPS__" type="application/json">${JSON.stringify(props)}</script>`;
+
+    const media = parseMediaFromHtml(html, "68746366275");
+    expect(media.kind).toBe("video");
+    expect(media.title).toBe("Pineapple Roasted Chicken");
+    expect(media.videos.map((candidate) => candidate.url)).toEqual([
+      "https://v1.pinimg.com/videos/mc/720p/requested.mp4",
+    ]);
+  });
+
   it("detects gif pins via the largest image extension", () => {
     const html = htmlWithPwsData(
       pwsData({

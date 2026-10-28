@@ -235,8 +235,13 @@ function imageFieldEntry(key: string, value: unknown): PinImageEntry | null {
 
 function pinEntityScore(entity: JsonRecord, pinId?: string): number {
   let score = 0;
-  if (pinId && String(entity.entityId ?? "") === pinId) score += 1_000;
-  if (pinId && typeof entity.seoUrl === "string" && entity.seoUrl.includes(`--${pinId}/`)) {
+  // 同一个 Pin 页面 Pinterest 会轮流给两种数据：Relay 里是 entityId/seoUrl，
+  // __PWS_DATA__ 里是 snake_case 的 id/seo_url。只认前者时，后者会被页面上
+  // 其他推荐 Pin 抢走，视频 Pin 因此被当成图片。`id` 太通用，只在 type 为 pin 时采信。
+  const ownId = entity.entityId ?? (entity.type === "pin" ? entity.id : undefined);
+  if (pinId && String(ownId ?? "") === pinId) score += 1_000;
+  const seoUrl = firstNonEmptyString(entity.seoUrl, entity.seo_url);
+  if (pinId && seoUrl?.includes(`--${pinId}/`)) {
     score += 900;
   }
   if (isRecord(entity.videos)) score += 40;
@@ -302,14 +307,21 @@ function metaContent(html: string, property: string): string | undefined {
   return undefined;
 }
 
-function extractEmbeddedJson(html: string): unknown | null {
-  const match = /<script[^>]+id=["']__PWS_DATA__["'][^>]*>([\s\S]*?)<\/script>/i.exec(html);
-  if (!match?.[1]) return null;
-  try {
-    return JSON.parse(match[1]);
-  } catch {
-    return null;
+/**
+ * Pinterest 的 Pin 数据可能在 __PWS_DATA__，也可能只在 __PWS_INITIAL_PROPS__
+ * （2026-10-29 实测约三成请求如此，只读前者会把视频 Pin 当成图片），两个都读。
+ */
+function extractEmbeddedJson(html: string): unknown[] {
+  const payloads: unknown[] = [];
+  const pattern = /<script[^>]+id=["']__PWS_(?:DATA|INITIAL_PROPS)__["'][^>]*>([\s\S]*?)<\/script>/gi;
+  for (const match of html.matchAll(pattern)) {
+    try {
+      payloads.push(JSON.parse(match[1]));
+    } catch {
+      // 某一份损坏不影响其他数据源和 Open Graph 兜底。
+    }
   }
+  return payloads;
 }
 
 function extractRelayJson(html: string, pinId?: string): unknown[] {
@@ -371,9 +383,7 @@ export function parseMediaFromHtml(html: string, pinId?: string): ParsedMedia {
   let title: string | undefined;
   let description: string | undefined;
 
-  const data = extractEmbeddedJson(html);
-  const relay = extractRelayJson(html, pinId);
-  const sources = data ? [data, ...relay] : relay;
+  const sources = [...extractEmbeddedJson(html), ...extractRelayJson(html, pinId)];
   const pin = extractPinEntity(sources, pinId);
 
   if (pin) {
