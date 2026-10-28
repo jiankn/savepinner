@@ -306,7 +306,7 @@ const NL_VIDEO: ToolPageContent = {
 };
 
 const JA_HOME: ToolPageContent = {
-  slug: "home", locale: "ja", path: ADDITIONAL_LOCALE_PATHS.ja.home, lastModified: "2026-08-02", videoPath: ADDITIONAL_LOCALE_PATHS.ja.video,
+  slug: "home", locale: "ja", path: ADDITIONAL_LOCALE_PATHS.ja.home, lastModified: "2026-10-29", videoPath: ADDITIONAL_LOCALE_PATHS.ja.video,
   seoTitle: "Pinterest画像を高画質で無料ダウンロード",
   metaDescription: "Pinterestの画像やピンをオリジナルの高画質で無料保存。ログイン、アプリ、透かしは不要。iPhone、Android、パソコンに対応しています。",
   keywords: ["pinterest 画像 ダウンロード", "pinterest 写真 保存", "ピンタレスト 画像 ダウンロード"],
@@ -318,6 +318,21 @@ const JA_HOME: ToolPageContent = {
     { title: "ピンのリンクをコピー", description: "Pinterestで保存したい画像を開き、共有ボタンから「リンクをコピー」を選びます。" },
     { title: "SavePinnerに貼り付け", description: "コピーしたリンクを上の入力欄に貼り付け、「ダウンロード」を押します。" },
     { title: "元画像を保存", description: "表示されたサイズを選び、スマートフォンやパソコンに高画質画像を保存します。" },
+  ],
+  sections: [
+    {
+      heading: "Pinterestの画像が粗くなる理由と、高画質で保存する方法",
+      body: [
+        "Pinterestはフィードを速く表示するため、幅236・564・736ピクセルの縮小画像を表示しています。スクリーンショットやアプリの保存機能で画質が悪くなりやすいのはこのためです。ピンのリンクを貼り付けると、SavePinnerはPinterestがその画像について保存しているサイズを一覧にし、実際にダウンロードできるか確認してから表示します。",
+        "高画質で保存したいときは「オリジナル」を選んでください。「オリジナル」が表示されない場合は、そのピンにはより大きな画像がなく、736xが最大サイズです。元のファイルにない細部は、どのツールでも復元できません。",
+      ],
+      bullets: [
+        "オリジナル：Pinterestがそのピンで公開している最大の画像。",
+        "736x・564x：縮小版。メッセージで送る程度なら十分です。",
+        "サムネイル（236px）：プレビュー用です。",
+        "投稿者が画像内に入れたロゴや透かしは残ります。SavePinnerが新たに追加することはありません。",
+      ],
+    },
   ],
   faq: [
     { question: "Pinterest画像を透かしなしで保存できますか？", answer: "はい。公開ピンのリンクを貼ると、Pinterestが提供するファイルを取得します。SavePinnerがロゴや透かしを追加することはありません。" },

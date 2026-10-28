@@ -4,9 +4,9 @@ const samples = [
   { label: "image-original", url: "https://www.pinterest.com/pin/424605071126047814/", type: "image" },
   { label: "image-renditions", url: "https://www.pinterest.com/pin/989243874418277815/", type: "image" },
   { label: "regional-host", url: "https://pinterest.de/pin/68746366275/", type: "video" },
-  // Pinterest explicitly returned PinNotFound for this former Idea Pin on
-  // 2026-09-05. Generic page artwork must never become a successful download.
-  { label: "deleted-idea-pin", url: "https://www.pinterest.com/pin/580471839512797064/", error: "MEDIA_NOT_FOUND" },
+  // 2026-09-05 时 Pinterest 对这个 Idea Pin 返回 PinNotFound；2026-10-28 复查已恢复为单页视频 Story。
+  // 约一半请求只带 HLS 地址，用来回归“由 HLS 推出 720p MP4”的逻辑，多跑几次才能覆盖到。
+  { label: "idea-pin-video", url: "https://www.pinterest.com/pin/580471839512797064/", type: "video" },
   {
     label: "idea-pin-slideshow",
     url: "https://www.pinterest.com/pin/424605071126047814/",

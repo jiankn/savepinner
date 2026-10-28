@@ -214,7 +214,7 @@ const ID_HOME: ToolPageContent = {
   slug: "home",
   locale: "id",
   path: LOCALE_PATHS.id.home,
-  lastModified: "2026-08-15",
+  lastModified: "2026-10-29",
   videoPath: LOCALE_PATHS.id.video,
   seoTitle: "Download Gambar Pinterest Gratis HD Tanpa Watermark",
   metaDescription:
@@ -241,16 +241,31 @@ const ID_HOME: ToolPageContent = {
         "Pilih ukuran yang kamu mau, lalu download gambarnya dengan kualitas HD. Tanpa kompresi, tanpa watermark.",
     },
   ],
+  sections: [
+    {
+      heading: "Kenapa gambar Pinterest jadi buram, dan cara download foto Pinterest HD",
+      body: [
+        "Di feed, Pinterest menampilkan versi kecil gambar (lebar 236, 564, atau 736 piksel) supaya halaman cepat dimuat. Karena itu screenshot atau tombol simpan di aplikasi sering menghasilkan foto yang kecil dan buram. Saat kamu menempel link pin, SavePinner menampilkan ukuran yang disimpan Pinterest untuk gambar itu dan mengecek setiap file sebelum ditampilkan.",
+        "Untuk download foto Pinterest HD tanpa watermark, pilih ukuran Asli kalau tersedia. Kalau pilihan Asli tidak muncul, berarti Pinterest tidak menyimpan versi yang lebih besar untuk pin tersebut, dan 736x adalah file terbesar. Tidak ada tool yang bisa mengembalikan detail yang memang tidak ada di file aslinya.",
+      ],
+      bullets: [
+        "Asli: file terbesar yang disediakan Pinterest untuk pin itu.",
+        "736x dan 564x: versi lebih kecil, cukup untuk dikirim lewat chat.",
+        "Thumbnail (236x): hanya untuk pratinjau.",
+        "Watermark yang sudah ditempel kreator di gambarnya tetap ada. SavePinner hanya tidak menambahkan watermark baru.",
+      ],
+    },
+  ],
   faq: [
     {
       question: "Bagaimana cara download gambar Pinterest tanpa watermark?",
       answer:
-        "Semua gambar yang kamu download lewat SavePinner diambil langsung dari CDN Pinterest dengan kualitas aslinya, dan kami tidak menambahkan watermark apa pun.",
+        "Semua gambar yang kamu download lewat SavePinner diambil langsung dari CDN Pinterest, dan kami tidak menambahkan watermark apa pun. Watermark yang sudah ada di gambar dari kreatornya tetap ada.",
     },
     {
       question: "Bisakah download gambar Pinterest dengan resolusi penuh?",
       answer:
-        "Bisa. Pinterest secara default menampilkan thumbnail yang sudah dikompres, tapi kami mengambil URL gambar asli dari CDN-nya sehingga kamu dapat versi resolusi penuh.",
+        "Bisa, kalau Pinterest menyediakan file asli untuk pin tersebut. Pilihan Asli akan muncul di daftar ukuran. Kalau yang paling besar hanya 736x, berarti itu versi terbesar yang ada untuk pin itu.",
     },
     {
       question: "Apakah bisa dipakai di HP Android dan iPhone?",
@@ -271,7 +286,7 @@ const ID_HOME: ToolPageContent = {
     {
       question: "Apakah kualitas gambarnya turun setelah didownload?",
       answer:
-        "Tidak. Kami mengambil gambar asli dari CDN Pinterest (i.pinimg.com/originals/), jadi kualitasnya persis sama dengan saat diunggah.",
+        "Tidak. SavePinner tidak mengompres ulang file, jadi kamu mendapat file yang sama persis dengan yang disimpan di CDN Pinterest. Kualitas akhirnya tergantung ukuran yang kamu pilih dan file yang diunggah kreator.",
     },
   ],
   related: tools("id", "home"),
@@ -346,7 +361,7 @@ const PT_HOME: ToolPageContent = {
   slug: "home",
   locale: "pt",
   path: LOCALE_PATHS.pt.home,
-  lastModified: "2026-08-15",
+  lastModified: "2026-10-29",
   videoPath: LOCALE_PATHS.pt.video,
   seoTitle: "Baixar Imagens do Pinterest Grátis em HD sem Marca d'Água",
   metaDescription:
@@ -373,16 +388,31 @@ const PT_HOME: ToolPageContent = {
         "Escolha o tamanho que preferir e baixe a imagem em qualidade HD. Sem compressão e sem marca d'água.",
     },
   ],
+  sections: [
+    {
+      heading: "Por que a imagem do Pinterest fica com baixa qualidade e como baixar em HD",
+      body: [
+        "No feed, o Pinterest mostra versões reduzidas da imagem (236, 564 ou 736 pixels de largura) para carregar mais rápido. Por isso um print ou o botão de salvar do app costuma gerar um arquivo pequeno e borrado. Quando você cola o link do pin, o SavePinner lista os tamanhos que o Pinterest guarda para aquela imagem e confere cada arquivo antes de mostrar.",
+        "Para baixar imagem do Pinterest em HD, escolha a opção original quando ela aparecer. Se ela não aparecer, o Pinterest não guardou uma versão maior desse pin, e o 736x é o maior arquivo disponível. Nenhuma ferramenta consegue recuperar detalhes que não existem no arquivo enviado.",
+      ],
+      bullets: [
+        "original: o maior arquivo que o Pinterest disponibiliza para o pin.",
+        "736x e 564x: versões menores, boas para mandar por mensagem.",
+        "miniatura (236x): só para pré-visualização.",
+        "A marca d'água que o criador colocou na própria imagem continua no arquivo. O SavePinner só não adiciona nenhuma.",
+      ],
+    },
+  ],
   faq: [
     {
       question: "Como baixar imagens do Pinterest sem marca d'água?",
       answer:
-        "Todas as imagens baixadas pelo SavePinner vêm direto do CDN do Pinterest na qualidade original, sem nenhuma marca d'água adicionada por nós.",
+        "Todas as imagens baixadas pelo SavePinner vêm direto do CDN do Pinterest, sem nenhuma marca d'água adicionada por nós. Marcas que o criador colocou na própria imagem continuam nela.",
     },
     {
       question: "Dá para baixar imagens do Pinterest em resolução total?",
       answer:
-        "Sim. O Pinterest mostra miniaturas comprimidas por padrão, mas nós extraímos a URL da imagem original no CDN, então você recebe a versão em resolução total.",
+        "Sim, quando o Pinterest disponibiliza o arquivo original do pin. Nesse caso a opção original aparece na lista de tamanhos. Se o maior tamanho for 736x, essa é a maior versão que existe para aquele pin.",
     },
     {
       question: "Funciona no celular Android e no iPhone?",
@@ -403,7 +433,7 @@ const PT_HOME: ToolPageContent = {
     {
       question: "A imagem perde qualidade ao baixar?",
       answer:
-        "Não. Buscamos a imagem original no CDN do Pinterest (i.pinimg.com/originals/), então a qualidade é exatamente a mesma do envio.",
+        "Não. O SavePinner não recomprime o arquivo: você recebe exatamente o arquivo que o Pinterest guarda no CDN. A qualidade final depende do tamanho escolhido e do que o criador enviou.",
     },
   ],
   related: tools("pt", "home"),

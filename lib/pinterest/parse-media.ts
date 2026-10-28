@@ -106,8 +106,19 @@ function toImageCandidate(entry: PinImageEntry): MediaCandidate | null {
   };
 }
 
+/**
+ * Pinterest 有时只在页面里给 HLS 地址，不给同一视频的 720p MP4 地址（同一个 Pin 多次请求，
+ * 结果时有时无）。两者在 CDN 上路径一一对应，只差 `hls`→`720p` 和扩展名，
+ * 所以由 HLS 地址推出 MP4 候选；推错的地址会在 verifyCandidates() 校验时被丢掉。
+ */
+const HLS_PATH = /^(https:\/\/v1?\.pinimg\.com\/videos\/[a-z]+)\/hls\/((?:[0-9a-f]{2}\/){3}[0-9a-f]{32})\.m3u8$/i;
+
 function toVideoCandidate(entry: PinVideoEntry, qualityHint?: string): MediaCandidate | null {
   if (!entry || typeof entry.url !== "string" || !entry.url.startsWith("https://")) return null;
+  const hls = HLS_PATH.exec(entry.url);
+  if (hls) {
+    return toVideoCandidate({ ...entry, url: `${hls[1]}/720p/${hls[2]}.mp4` }, "720P");
+  }
   const format = extFromUrl(entry.url);
   // Only progressive files are downloadable as single files; skip HLS/DASH.
   if (format !== "mp4" && format !== "mov" && format !== "webm") return null;

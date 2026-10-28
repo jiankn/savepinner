@@ -213,6 +213,41 @@ describe("parseMediaFromHtml", () => {
     expect(media.images.some((candidate) => candidate.url.includes("/236x/"))).toBe(true);
   });
 
+  it("derives the 720p MP4 when Pinterest only ships the Idea Pin's HLS stream", () => {
+    // 2026-10-28 线上实测：同一个 Pin 约一半请求里 videoList720P 只有 duration、没有 url。
+    const pinId = "580471839512797064";
+    const path = "9c/30/fe/9c30fe6d6f7b76bde4f732f94a4dca8a";
+    const hls = `https://v1.pinimg.com/videos/iht/hls/${path}.m3u8`;
+    const html = htmlWithRelayData(pinId, {
+      images_orig: { url: "https://i.pinimg.com/originals/63/96/20/cover.jpg" },
+      videos: null,
+      storyPinData: {
+        pages: [
+          {
+            blocks: [
+              {
+                __typename: "StoryPinVideoBlock",
+                videoDataV2: {
+                  videoListMobile: { vHLSV3MOBILE: { url: hls, width: 720, height: 1280 } },
+                  videoList720P: { v720P: { duration: 41367 } },
+                  videoList: { vHLSV3MOBILE: { url: hls, width: 720, height: 1280 } },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const media = parseMediaFromHtml(html, pinId);
+    expect(media.kind).toBe("video");
+    expect(media.videos).toHaveLength(1);
+    expect(media.videos[0]).toMatchObject({
+      url: `https://v1.pinimg.com/videos/iht/720p/${path}.mp4`,
+      qualityHint: "720P",
+    });
+  });
+
   it("keeps pin.videos ahead of storyPinData when a Pin carries both", () => {
     const pinId = "68746366275";
     const html = htmlWithRelayData(pinId, {
